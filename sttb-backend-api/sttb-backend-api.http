@@ -1,0 +1,6 @@
+@sttb_backend_api_HostAddress = http://localhost:5263
+
+GET {{sttb_backend_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
