@@ -355,16 +355,126 @@ public static class DataSeeder
 
         var mediaItems = new List<Media>
         {
-            new() { Id = Guid.NewGuid(), Title = "Konferensi Teologi Transformasi 2025", Url = "/uploads/media/media-1.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-1.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-30) },
-            new() { Id = Guid.NewGuid(), Title = "Upacara Wisuda Angkatan ke-45", Url = "/uploads/media/media-2.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-2.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-45) },
-            new() { Id = Guid.NewGuid(), Title = "Gedung Kampus STTB Bandung", Url = "/uploads/media/media-3.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-3.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-60) },
-            new() { Id = Guid.NewGuid(), Title = "Perpustakaan Digital STTB", Url = "/uploads/media/media-4.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-4.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-70) },
-            new() { Id = Guid.NewGuid(), Title = "Retreat Mahasiswa di Lembang", Url = "/uploads/media/media-5.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-5.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-80) },
-            new() { Id = Guid.NewGuid(), Title = "Seminar Pastoral STTB", Url = "/uploads/media/media-6.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-6.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-85) },
-            new() { Id = Guid.NewGuid(), Title = "Suasana Perkuliahan STTB", Url = "/uploads/media/media-7.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-7.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-90) },
-            new() { Id = Guid.NewGuid(), Title = "Kapel STTB Bandung", Url = "/uploads/media/media-8.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-8.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-95) },
-            new() { Id = Guid.NewGuid(), Title = "Profil STTB Bandung", Url = "https://youtu.be/xvnhsSWAkVY", Type = "video", ThumbnailUrl = "/uploads/media/media-9-thumb.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-100) },
-            new() { Id = Guid.NewGuid(), Title = "Momen Kebersamaan Mahasiswa STTB", Url = "/uploads/media/media-10.jpg", Type = "image", ThumbnailUrl = "/uploads/media/media-10.jpg", CreatedBy = adminUserId, CreatedAt = now.AddDays(-110) },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "City TransForMission #2: \"Fokus Strategis Misi Urban\"",
+                Url = "https://youtu.be/placeholder-1",
+                Type = "video",
+                ThumbnailUrl = "/uploads/media/media-1.jpg",
+                Category = "Misi & Penginjilan",
+                Tag = "LEAD",
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-30),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "City TransForMission #01: \"Urbanisasi & Misi\"",
+                Url = "https://youtu.be/placeholder-2",
+                Type = "video",
+                ThumbnailUrl = "/uploads/media/media-2.jpg",
+                Category = "Misi & Penginjilan",
+                Tag = "UMC",
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-45),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Persembahan Pujian STTB untuk Pelayanan Sekolah Minggu",
+                Url = "https://youtu.be/placeholder-3",
+                Type = "video",
+                ThumbnailUrl = "/uploads/media/media-3.jpg",
+                Category = "Pelayanan Anak",
+                Tag = "STT Bandung",
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-60),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Disciplesight: Figital Discipleship",
+                Url = "https://youtu.be/placeholder-4",
+                Type = "video",
+                ThumbnailUrl = "/uploads/media/media-4.jpg",
+                Category = "Pemuridan & Pembinaan",
+                Tag = "Disciplesight",
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-70),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Profil STTB Bandung 2022",
+                Url = "https://youtu.be/xvnhsSWAkVY",
+                Type = "video",
+                ThumbnailUrl = "/uploads/media/media-5.jpg",
+                Category = "Pendidikan Teologi",
+                Tag = "STT Bandung",
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-80),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Integrasi Iman dan Ilmu: Menuju Pendekatan yang Lebih Holistik",
+                Url = "/uploads/media/media-6.jpg",
+                Type = "article",
+                ThumbnailUrl = "/uploads/media/media-6.jpg",
+                Category = "Belajar & Mengajar",
+                Tag = null,
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-85),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Pendidikan Teologi Di Tengah Dunia Yang Sedang Berubah",
+                Url = "/uploads/media/media-7.jpg",
+                Type = "article",
+                ThumbnailUrl = "/uploads/media/media-7.jpg",
+                Category = "Pendidikan Teologi",
+                Tag = null,
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-90),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Menghadirkan Blended Learning dalam Pendidikan Teologi",
+                Url = "/uploads/media/media-8.jpg",
+                Type = "article",
+                ThumbnailUrl = "/uploads/media/media-8.jpg",
+                Category = "Pembelajaran Digital",
+                Tag = null,
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-95),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Lahirnya Normal Baru di Keluarga, Sekolah, dan Gereja",
+                Url = "/uploads/media/media-9.jpg",
+                Type = "article",
+                ThumbnailUrl = "/uploads/media/media-9.jpg",
+                Category = "Pelayanan Keluarga",
+                Tag = null,
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-100),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Pelatihan Mahasiswa STTB: Pembuatan Pupuk Kompos Dari Sampah Organik",
+                Url = "https://youtu.be/placeholder-10",
+                Type = "video",
+                ThumbnailUrl = "/uploads/media/media-10.jpg",
+                Category = "Pelayanan Dunia Kerja",
+                Tag = "STT Bandung",
+                CreatedBy = adminUserId,
+                CreatedAt = now.AddDays(-110),
+            },
         };
 
         db.Media.AddRange(mediaItems);
