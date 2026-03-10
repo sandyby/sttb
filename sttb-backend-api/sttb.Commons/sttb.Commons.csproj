@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>sttb.Commons</RootNamespace>
+  </PropertyGroup>
+
+  <!-- FrameworkReference gives class libraries access to all ASP.NET Core types
+       (Identity, RateLimiting, Authentication, IOptions, ILogger, etc.)
+       without standalone package version conflicts. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\sttb.Contracts\sttb.Contracts.csproj" />
+    <ProjectReference Include="..\sttb.Entities\sttb.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
