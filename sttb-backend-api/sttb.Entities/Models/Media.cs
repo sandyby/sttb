@@ -15,10 +15,16 @@ public class Media : IHaveCreateAndUpdateAudit
     public string Url { get; set; } = string.Empty;
 
     [StringLength(20)]
-    public string Type { get; set; } = string.Empty; // "image" or "video"
+    public string Type { get; set; } = string.Empty; // "video" | "article" | "image"
 
     [StringLength(1000)]
     public string? ThumbnailUrl { get; set; }
+
+    [StringLength(100)]
+    public string? Category { get; set; }
+
+    [StringLength(100)]
+    public string? Tag { get; set; }
 
     [StringLength(450)]
     public string CreatedBy { get; set; } = string.Empty;

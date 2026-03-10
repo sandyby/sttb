@@ -22,6 +22,9 @@ public class GetMediaListRequestHandler : IRequestHandler<GetMediaListRequest, G
         if (!string.IsNullOrWhiteSpace(request.Type))
             query = query.Where(m => m.Type == request.Type);
 
+        if (!string.IsNullOrWhiteSpace(request.Category))
+            query = query.Where(m => m.Category == request.Category);
+
         var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
@@ -35,6 +38,8 @@ public class GetMediaListRequestHandler : IRequestHandler<GetMediaListRequest, G
                 Url = m.Url,
                 Type = m.Type,
                 ThumbnailUrl = m.ThumbnailUrl,
+                Category = m.Category,
+                Tag = m.Tag,
                 CreatedAt = m.CreatedAt
             })
             .ToListAsync(cancellationToken);
