@@ -99,3 +99,14 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# .NET build artifacts
+bin/
+obj/
+
+# .NET user secrets (local dev)
+**/secrets.json
+
+# Serilog log files
+**/logs/*.txt
+**/logs/*.log
