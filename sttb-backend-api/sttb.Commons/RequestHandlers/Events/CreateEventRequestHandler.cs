@@ -37,6 +37,8 @@ public class CreateEventRequestHandler : IRequestHandler<CreateEventRequest, Gui
             EndDate = request.EndDate,
             Location = request.Location,
             ImageUrl = request.ImageUrl,
+            Category = request.Category,
+            RegistrationUrl = request.RegistrationUrl,
             IsPublished = request.IsPublished,
             CreatedBy = userId,
             CreatedAt = DateTime.UtcNow
