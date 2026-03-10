@@ -359,7 +359,7 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "City TransForMission #2: \"Fokus Strategis Misi Urban\"",
-                Url = "https://youtu.be/placeholder-1",
+                Url = "https://www.youtube.com/watch?v=Sop6nPCHyys",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-1.jpg",
                 Category = "Misi & Penginjilan",
@@ -371,7 +371,7 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "City TransForMission #01: \"Urbanisasi & Misi\"",
-                Url = "https://youtu.be/placeholder-2",
+                Url = "https://www.youtube.com/watch?v=Xjep62yfbG0",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-2.jpg",
                 Category = "Misi & Penginjilan",
@@ -383,7 +383,7 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Persembahan Pujian STTB untuk Pelayanan Sekolah Minggu",
-                Url = "https://youtu.be/placeholder-3",
+                Url = "https://www.youtube.com/watch?v=VMetVSDTX9o",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-3.jpg",
                 Category = "Pelayanan Anak",
@@ -395,7 +395,7 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Disciplesight: Figital Discipleship",
-                Url = "https://youtu.be/placeholder-4",
+                Url = "https://www.youtube.com/watch?v=uhA8g0MhRU8",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-4.jpg",
                 Category = "Pemuridan & Pembinaan",
@@ -407,7 +407,7 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Profil STTB Bandung 2022",
-                Url = "https://youtu.be/xvnhsSWAkVY",
+                Url = "https://www.youtube.com/watch?v=xvnhsSWAkVY",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-5.jpg",
                 Category = "Pendidikan Teologi",
@@ -418,8 +418,8 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Title = "Integrasi Iman dan Ilmu: Menuju Pendekatan yang Lebih Holistik",
-                Url = "/uploads/media/media-6.jpg",
+                Title = "Pendidikan Kristen Berbasis Alkitabiah: Membangun Fondasi Iman dan Spiritualitas Generasi Era Digital",
+                Url = "https://jurnal.sttkn.ac.id/index.php/Veritas/article/view/281",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-6.jpg",
                 Category = "Belajar & Mengajar",
@@ -430,8 +430,8 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Title = "Pendidikan Teologi Di Tengah Dunia Yang Sedang Berubah",
-                Url = "/uploads/media/media-7.jpg",
+                Title = "Pendidikan Agama Kristen: Mengintegrasikan Nilai-Nilai Spiritual dalam Era Globalisasi",
+                Url = "https://prin.or.id/index.php/JURRAFI/article/view/7676",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-7.jpg",
                 Category = "Pendidikan Teologi",
@@ -442,8 +442,8 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Title = "Menghadirkan Blended Learning dalam Pendidikan Teologi",
-                Url = "/uploads/media/media-8.jpg",
+                Title = "Inovasi Teknologi dalam Strategi Pembelajaran Pendidikan Agama Kristen",
+                Url = "https://prin.or.id/index.php/JURRAFI/article/view/7730",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-8.jpg",
                 Category = "Pembelajaran Digital",
@@ -454,8 +454,8 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Title = "Lahirnya Normal Baru di Keluarga, Sekolah, dan Gereja",
-                Url = "/uploads/media/media-9.jpg",
+                Title = "Pendidikan Agama Kristen dalam Keluarga di Era Digital: Membangun Remaja Bijak Menggunakan Media Sosial",
+                Url = "https://jurnal.sttkn.ac.id/index.php/Veritas/article/view/157",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-9.jpg",
                 Category = "Pelayanan Keluarga",
@@ -467,7 +467,7 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Pelatihan Mahasiswa STTB: Pembuatan Pupuk Kompos Dari Sampah Organik",
-                Url = "https://youtu.be/placeholder-10",
+                Url = "https://www.youtube.com/watch?v=dOw1w6J3hZk",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-10.jpg",
                 Category = "Pelayanan Dunia Kerja",
