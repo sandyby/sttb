@@ -23,6 +23,10 @@ public class UpdateNewsRequestValidator : AbstractValidator<UpdateNewsRequest>
         RuleFor(x => x.Content)
             .NotEmpty();
 
+        RuleFor(x => x.Excerpt)
+            .MaximumLength(500)
+            .When(x => x.Excerpt is not null);
+
         RuleFor(x => x.ThumbnailUrl)
             .MaximumLength(1000)
             .When(x => x.ThumbnailUrl is not null);
