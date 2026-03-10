@@ -16,11 +16,16 @@ public class News : IHaveCreateAndUpdateAudit
 
     public string Content { get; set; } = string.Empty;
 
+    [StringLength(500)]
+    public string? Excerpt { get; set; }
+
     [StringLength(1000)]
     public string? ThumbnailUrl { get; set; }
 
     [StringLength(100)]
     public string? Category { get; set; }
+
+    public bool IsFeatured { get; set; } = false;
 
     public bool IsPublished { get; set; } = false;
 

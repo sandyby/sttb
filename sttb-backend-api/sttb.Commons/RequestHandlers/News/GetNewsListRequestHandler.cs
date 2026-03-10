@@ -39,8 +39,10 @@ public class GetNewsListRequestHandler : IRequestHandler<GetNewsListRequest, Get
                 Id = n.Id,
                 Title = n.Title,
                 Slug = n.Slug,
+                Excerpt = n.Excerpt,
                 ThumbnailUrl = n.ThumbnailUrl,
                 Category = n.Category,
+                IsFeatured = n.IsFeatured,
                 IsPublished = n.IsPublished,
                 PublishedAt = n.PublishedAt,
                 CreatedAt = n.CreatedAt

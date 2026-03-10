@@ -36,8 +36,10 @@ public class UpdateNewsRequestHandler : IRequestHandler<UpdateNewsRequest>
         news.Title = request.Title;
         news.Slug = request.Slug;
         news.Content = request.Content;
+        news.Excerpt = request.Excerpt;
         news.ThumbnailUrl = request.ThumbnailUrl;
         news.Category = request.Category;
+        news.IsFeatured = request.IsFeatured;
 
         if (request.IsPublished && !news.IsPublished)
             news.PublishedAt = DateTime.UtcNow;
