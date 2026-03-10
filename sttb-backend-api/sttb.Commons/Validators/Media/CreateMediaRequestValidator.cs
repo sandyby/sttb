@@ -5,7 +5,7 @@ namespace sttb.Commons.Validators.Media;
 
 public class CreateMediaRequestValidator : AbstractValidator<CreateMediaRequest>
 {
-    private static readonly string[] AllowedTypes = { "image", "video" };
+    private static readonly string[] AllowedTypes = { "image", "video", "article" };
 
     public CreateMediaRequestValidator()
     {
@@ -20,10 +20,18 @@ public class CreateMediaRequestValidator : AbstractValidator<CreateMediaRequest>
         RuleFor(x => x.Type)
             .NotEmpty()
             .Must(t => AllowedTypes.Contains(t))
-            .WithMessage("Type must be 'image' or 'video'.");
+            .WithMessage("Type must be 'image', 'video', or 'article'.");
 
         RuleFor(x => x.ThumbnailUrl)
             .MaximumLength(1000)
             .When(x => x.ThumbnailUrl is not null);
+
+        RuleFor(x => x.Category)
+            .MaximumLength(100)
+            .When(x => x.Category is not null);
+
+        RuleFor(x => x.Tag)
+            .MaximumLength(100)
+            .When(x => x.Tag is not null);
     }
 }
