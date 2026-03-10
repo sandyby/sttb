@@ -20,8 +20,8 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
   "Server=localhost;Database=sttb;Trusted_Connection=True;TrustServerCertificate=True;"
 
 # SQL Server connection (SQL Auth)
-# dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
-#   "Server=localhost;Database=sttb;User Id=sa;Password=yourpassword;TrustServerCertificate=True;"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
+  "Server=localhost;Database=sttb;User Id=sa;Password=yourpassword;TrustServerCertificate=True;"
 
 # JWT secret — minimum 32 characters
 dotnet user-secrets set "Jwt:Secret" "your-super-secret-key-min-32-chars-here"
