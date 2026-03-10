@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
-  ArrowLeft, Bold, Italic, Underline, List, ListOrdered,
-  Image, Link2, Eye, EyeOff, Upload, X, AlertCircle,
+  ArrowLeft, Bold, Italic, Underline, List, ListOrdered, Link2, Eye, EyeOff, Upload, X, AlertCircle,
   CheckCircle, Heading1, Heading2, Quote, Save,
 } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 import type { NewsArticle } from "../../data/mock-data";
 
 /* ─── Types ──────────────────────────────────────────────── */
@@ -72,12 +72,12 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (v: stri
 
   const html = (t: string) =>
     t.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-     .replace(/_(.*?)_/g, "<em>$1</em>")
-     .replace(/^# (.*?)$/gm, "<h1 class='text-xl font-bold mt-3 mb-1'>$1</h1>")
-     .replace(/^## (.*?)$/gm, "<h2 class='text-lg font-bold mt-2 mb-1'>$1</h2>")
-     .replace(/^> (.*?)$/gm, "<blockquote class='border-l-4 border-gray-300 pl-3 italic text-gray-500 my-2'>$1</blockquote>")
-     .replace(/^- (.*?)$/gm, "<li class='ml-4 list-disc'>$1</li>")
-     .replace(/\n/g, "<br/>");
+      .replace(/_(.*?)_/g, "<em>$1</em>")
+      .replace(/^# (.*?)$/gm, "<h1 class='text-xl font-bold mt-3 mb-1'>$1</h1>")
+      .replace(/^## (.*?)$/gm, "<h2 class='text-lg font-bold mt-2 mb-1'>$1</h2>")
+      .replace(/^> (.*?)$/gm, "<blockquote class='border-l-4 border-gray-300 pl-3 italic text-gray-500 my-2'>$1</blockquote>")
+      .replace(/^- (.*?)$/gm, "<li class='ml-4 list-disc'>$1</li>")
+      .replace(/\n/g, "<br/>");
 
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
@@ -87,7 +87,7 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (v: stri
           return (
             <button key={btn.label} type="button" title={btn.label} onClick={() => apply(btn.action, btn.wrap)}
               className="px-2 py-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors">
-              <Icon className="w-3.5 h-3.5" />
+              <Icon className="w-3.5 h-3.5" src={""} alt={""} />
             </button>
           );
         })}
@@ -100,10 +100,10 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (v: stri
       </div>
       {preview
         ? <div className="min-h-[280px] p-5 text-sm text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900 prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: html(value) || "<p class='text-gray-400 italic'>Belum ada konten...</p>" }} />
+          dangerouslySetInnerHTML={{ __html: html(value) || "<p class='text-gray-400 italic'>Belum ada konten...</p>" }} />
         : <textarea ref={ref} value={value} onChange={e => onChange(e.target.value)} rows={12}
-            placeholder="Tulis konten berita... Gunakan toolbar di atas untuk format teks."
-            className="w-full p-4 bg-white dark:bg-gray-900 text-sm text-gray-800 dark:text-gray-200 focus:outline-none resize-none font-mono leading-relaxed placeholder-gray-400" />
+          placeholder="Tulis konten berita... Gunakan toolbar di atas untuk format teks."
+          className="w-full p-4 bg-white dark:bg-gray-900 text-sm text-gray-800 dark:text-gray-200 focus:outline-none resize-none font-mono leading-relaxed placeholder-gray-400" />
       }
       <div className="px-4 py-1.5 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400">
         {value.length} karakter · {value.split(/\s+/).filter(Boolean).length} kata
@@ -143,7 +143,7 @@ function TagInput({ tags, onChange }: { tags: string[]; onChange: (t: string[]) 
 /* ─── Main Form Component ────────────────────────────────── */
 
 export function NewsForm({ initialData, onSave, backHref = "/admin/news" }: NewsFormProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const isEdit = !!initialData?.id;
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof NewsFormData, string>>>({});
@@ -157,8 +157,8 @@ export function NewsForm({ initialData, onSave, backHref = "/admin/news" }: News
     author: initialData?.author ?? "Redaksi STTB",
     status: initialData?.status ?? "draft",
     featured: initialData?.featured ?? false,
-    coverImageUrl: initialData?.imageUrl ?? (initialData as any)?.coverImageUrl ?? "",
-    tags: (initialData as any)?.tags ?? [],
+    coverImageUrl: initialData?.imageUrl ?? initialData?.coverImageUrl ?? "",
+    tags: initialData?.tags ?? [],
   });
 
   const update = <K extends keyof NewsFormData>(key: K, value: NewsFormData[K]) => {
@@ -190,7 +190,7 @@ export function NewsForm({ initialData, onSave, backHref = "/admin/news" }: News
       {/* Header bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(backHref)} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
+          <button onClick={() => router.push(backHref)} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
@@ -324,17 +324,25 @@ export function NewsForm({ initialData, onSave, backHref = "/admin/news" }: News
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Gambar Sampul</h3>
             {form.coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
-                  <img src={form.coverImageUrl} alt="Cover" className="w-full h-32 object-cover" />
-                  <button type="button" onClick={() => update("coverImageUrl", "")} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                <Image
+                  src={form.coverImageUrl}
+                  alt="Cover"
+                  height={32}
+                  width={0}
+                  sizes="w-full"
+                  preload
+                  className="w-full h-32 object-cover" />
+                <button type="button" onClick={() => update("coverImageUrl", "")} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
               : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-5 text-center mb-3">
-                  <Upload className="w-6 h-6 text-gray-300 mx-auto mb-1" />
-                  <p className="text-xs text-gray-400">Masukkan URL gambar</p>
-                </div>
+                <Upload className="w-6 h-6 text-gray-300 mx-auto mb-1" />
+                <p className="text-xs text-gray-400">Masukkan URL gambar</p>
+              </div>
             }
-            <input type="url" value={form.coverImageUrl} onChange={e => update("coverImageUrl", e.target.value)}
+            {/* // ! TODO: fix error, type sekali langsung violate validation mungkin? atau terkait hydration? */}
+            <input type="url" value={form.coverImageUrl} onChange={e => update("coverImageUrl", `/${e.target.value}`)}
               placeholder="https://images.unsplash.com/..."
               className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:border-[#0A2C74]" />
           </div>

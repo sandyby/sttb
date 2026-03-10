@@ -1,8 +1,6 @@
-'use client';
-
-import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ReactNode } from "react";
 import "./globals.css"
+import { Toaster } from "sonner";
 
 export default function PublicRouteLayout({
     children,
@@ -12,11 +10,8 @@ export default function PublicRouteLayout({
     return (
         <html lang="en">
             <body>
-                <main>
-                    <PublicLayout>
-                        {children}
-                    </PublicLayout>
-                </main>
+                {children}
+                <Toaster position="top-right" richColors />
             </body>
         </html>
     )

@@ -2,12 +2,13 @@
 
 import React, { ReactNode, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Newspaper,
   Calendar,
-  Image,
+  Image as ImageIcon,
   FileText,
   LogOut,
   Menu,
@@ -67,7 +68,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Media",
     href: "/admin/media",
-    icon: Image,
+    icon: ImageIcon,
   },
   {
     label: "Halaman",
@@ -92,7 +93,7 @@ function SidebarItem({
 }) {
   const pathname = usePathname();
   const Icon = group.icon;
-  const isActive = location.pathname === group.href || location.pathname.startsWith(group.href + "/");
+  const isActive = pathname === group.href || pathname.startsWith(group.href + "/");
   const [expanded, setExpanded] = useState(isActive);
 
   if (!group.children) {
@@ -141,7 +142,7 @@ function SidebarItem({
         <ul className="mt-1 ml-3 pl-3 border-l border-white/10 space-y-0.5">
           {group.children.map(child => {
             const CIcon = child.icon;
-            const childActive = location.pathname === child.href;
+            const childActive = pathname === child.href;
             return (
               <li key={child.href}>
                 <Link
@@ -191,7 +192,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   const closeSidebar = () => setSidebarOpen(false);
-  const breadcrumb = getBreadcrumb(location.pathname);
+  const breadcrumb = getBreadcrumb(pathname);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex">
@@ -214,9 +215,19 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         {/* Logo */}
         <div className="px-4 py-4 border-b border-white/10 flex items-center justify-between">
           <Link href="/admin/dashboard" className="flex items-center gap-2.5" onClick={closeSidebar}>
-            <div className="w-8 h-8 rounded-lg bg-[#E62129] flex items-center justify-center text-white font-black text-sm shadow-md">
-              S
-            </div>
+            <Link
+              href="/"
+              className="w-fit flex-shrink-0"
+            >
+              <Image
+                src="/sttb-logo-only.png"
+                alt="STTB Logo"
+                width={120}
+                height={0}
+                sizes="h-auto"
+                priority
+              />
+            </Link>
             <div>
               <div className="font-bold text-sm leading-tight">STTB Admin</div>
               <div className="text-blue-300 text-xs opacity-80">Portal CMS</div>
@@ -228,20 +239,25 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* User info */}
-        {user && (
-          <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#E62129] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-              {user.name.charAt(0)}
+        {
+          user && (
+            <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2.5">
+              <div className="w-12 h-12 rounded-full bg-[#E62129] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {user.name.charAt(0)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="mb-1">
+                  <p className="text-white text-xs font-semibold truncate">{user.name}</p>
+                  <p className="text-white/50 text-xs font-semibold truncate">{user.email}</p>
+                </div>
+                <p className="text-blue-300 text-xs capitalize opacity-80">{user.role}</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-xs font-semibold truncate">{user.name}</p>
-              <p className="text-blue-300 text-xs capitalize opacity-80">{user.role}</p>
-            </div>
-          </div>
-        )}
+          )
+        }
 
         {/* Nav */}
-        <nav className="flex-1 py-3 px-3 overflow-y-auto space-y-1">
+        <nav className="flex-1 py-3 px-3 overflow-y-auto space-y-1 no-scrollbar">
           <p className="text-blue-300/60 text-xs font-semibold uppercase tracking-widest px-3 mb-2">Menu Utama</p>
           <ul className="space-y-0.5">
             {navGroups.map(group => (
@@ -280,7 +296,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         <div className="p-3 border-t border-white/10 space-y-0.5">
           <Link href="/admin/settings" onClick={closeSidebar}
             className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
-              location.pathname === "/admin/settings" ? "bg-[#E62129] text-white" : "text-blue-100/80 hover:bg-white/10 hover:text-white")}>
+              pathname === "/admin/settings" ? "bg-[#E62129] text-white" : "text-blue-100/80 hover:bg-white/10 hover:text-white")}>
             <Settings className="w-4 h-4" /> Pengaturan
           </Link>
           <button onClick={handleLogout}
@@ -288,12 +304,12 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             <LogOut className="w-4 h-4" /> Keluar
           </button>
         </div>
-      </aside>
+      </aside >
 
       {/* ─── Main content ─────────────────────────────────────── */}
-      <div className="flex-1 lg:ml-60 flex flex-col min-h-screen">
+      < div className="flex-1 lg:ml-60 flex flex-col min-h-screen" >
         {/* Topbar */}
-        <header className="sticky top-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center gap-3 shadow-sm">
+        < header className="sticky top-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center gap-3 shadow-sm" >
           <button onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             <Menu className="w-5 h-5" />
@@ -331,15 +347,15 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               </div>
             )}
           </div>
-        </header>
+        </header >
 
         {/* Page */}
-        <main className="flex-1 p-5 overflow-auto">
+        < main className="flex-1 p-5 overflow-auto" >
           {children}
-        </main>
-      </div>
+        </main >
+      </div >
 
       <Toaster position="top-right" richColors />
-    </div>
+    </div >
   );
 }

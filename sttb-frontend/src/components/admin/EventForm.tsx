@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { ReactNode, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft, Calendar, MapPin, Users, X, Upload,
   AlertCircle, CheckCircle, Link2, Tag, Eye, Save,
 } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
@@ -71,7 +72,7 @@ function TagInput({ tags, onChange }: { tags: string[]; onChange: (t: string[]) 
 
 /* ─── Field ──────────────────────────────────────────────── */
 
-function Field({ label, required, error, hint, children }: { label: string; required?: boolean; error?: string; hint?: string; children: React.ReactNode }) {
+function Field({ label, required, error, hint, children }: { label: string; required?: boolean; error?: string; hint?: string; children: ReactNode }) {
   return (
     <div>
       <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">
@@ -90,7 +91,8 @@ const inputCls = (error?: string) =>
 /* ─── Main Form ──────────────────────────────────────────── */
 
 export function EventForm({ initialData, onSave, backHref = "/admin/events" }: EventFormProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
+
   const isEdit = !!initialData?.id;
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof EventFormData, string>>>({});
@@ -106,12 +108,12 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
     location: initialData?.location ?? "",
     locationDetail: initialData?.locationDetail ?? "",
     description: initialData?.description ?? "",
-    coverImageUrl: (initialData as any)?.imgUrl ?? initialData?.coverImageUrl ?? "",
+    coverImageUrl: initialData?.coverImageUrl ?? initialData?.coverImageUrl ?? "",
     registrationUrl: initialData?.registrationUrl ?? "",
     registrationOpen: initialData?.registrationOpen ?? false,
     registrationDeadline: initialData?.registrationDeadline ?? "",
     maxParticipants: initialData?.maxParticipants ?? "",
-    status: (initialData as any)?.status ?? "draft",
+    status: initialData?.status ?? "draft",
     isOnline: initialData?.isOnline ?? false,
     streamingUrl: initialData?.streamingUrl ?? "",
     organizer: initialData?.organizer ?? "STTB Bandung",
@@ -153,7 +155,7 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(backHref)} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
+          <button onClick={() => router.push(backHref)} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
@@ -340,15 +342,23 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
           <Field label="Gambar Sampul / Cover">
             {form.coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
-                  <img src={form.coverImageUrl} alt="" className="w-full h-44 object-cover" />
-                  <button type="button" onClick={() => update("coverImageUrl", "")} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"><X className="w-4 h-4" /></button>
-                </div>
+                <Image
+                  src={form.coverImageUrl}
+                  alt=""
+                  height={176}
+                  width={0}
+                  sizes="w-full"
+                  preload
+                  className="w-full h-44 object-cover" />
+                <button type="button" onClick={() => update("coverImageUrl", "")} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"><X className="w-4 h-4" /></button>
+              </div>
               : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-3">
-                  <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">Masukkan URL gambar di bawah ini</p>
-                  <p className="text-xs text-gray-300 mt-1">Rekomendasi: 1200×630px</p>
-                </div>
+                <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-400">Masukkan URL gambar di bawah ini</p>
+                <p className="text-xs text-gray-300 mt-1">Rekomendasi: 1200×630px</p>
+              </div>
             }
+            {/* // ! TODO: fix error, type sekali langsung violate validation mungkin? atau terkait hydration? */}
             <input type="url" value={form.coverImageUrl} onChange={e => update("coverImageUrl", e.target.value)} placeholder="https://images.unsplash.com/..." className={inputCls()} />
           </Field>
           <Field label="Tags">
@@ -394,12 +404,12 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
           )}
           {tab !== "details"
             ? <button type="button" onClick={() => setTab(tab === "basic" ? "registration" : "details")}
-                className="px-4 py-2 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#081f52] transition-colors">Selanjutnya →</button>
+              className="px-4 py-2 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#081f52] transition-colors">Selanjutnya →</button>
             : <button type="button" onClick={() => handleSave(form.status)} disabled={!!saving}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
-                {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-                {form.status === "draft" ? "Simpan Draft" : "Terbitkan"}
-              </button>
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
+              {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+              {form.status === "draft" ? "Simpan Draft" : "Terbitkan"}
+            </button>
           }
         </div>
       </div>
