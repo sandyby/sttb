@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using sttb.Commons.Behaviors;
+using sttb.Commons.Constants;
 using sttb.Commons.Extensions;
 using sttb.Commons.RequestHandlers.Auth;
 using sttb.Commons.Validators.Auth;
@@ -91,6 +92,48 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+}
+
+// ─── Seed Admin User ─────────────────────────────────────────────────────────
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+    // Ensure roles exist
+    foreach (var role in new[] { Roles.Admin, Roles.Staff })
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+    }
+
+    // Seed admin user from config (loaded from user-secrets)
+    var adminEmail = config["AdminSeed:Email"];
+    var adminPassword = config["AdminSeed:Password"];
+
+    if (!string.IsNullOrEmpty(adminEmail) && !string.IsNullOrEmpty(adminPassword)
+        && adminEmail != "LOADED_FROM_USER_SECRETS")
+    {
+        var existing = await userManager.FindByEmailAsync(adminEmail);
+        if (existing is null)
+        {
+            var admin = new User { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+            var result = await userManager.CreateAsync(admin, adminPassword);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(admin, Roles.Admin);
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogInformation("Admin user {Email} seeded successfully.", adminEmail);
+            }
+            else
+            {
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                logger.LogError("Failed to seed admin user. Errors: {Errors}", errors);
+            }
+        }
+    }
 }
 
 // ─── Security Headers ───────────────────────────────────────────────────────

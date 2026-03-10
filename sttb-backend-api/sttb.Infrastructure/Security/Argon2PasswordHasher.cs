@@ -1,6 +1,7 @@
 using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Identity;
 using sttb.Entities.Models;
+using System.Security.Cryptography;
 
 namespace sttb.Infrastructure.Security;
 
@@ -18,6 +19,10 @@ public class Argon2PasswordHasher : IPasswordHasher<User>
 
     public string HashPassword(User user, string password)
     {
+        // Must generate a unique salt for each password
+        var salt = new byte[16];
+        RandomNumberGenerator.Fill(salt);
+
         // Use Argon2Config for full control — stable API in Isopoh.Cryptography.Argon2 2.x
         var config = new Argon2Config
         {
@@ -26,6 +31,7 @@ public class Argon2PasswordHasher : IPasswordHasher<User>
             MemoryCost = MemoryKilobytes,
             Lanes = Parallelism,
             Threads = Parallelism,
+            Salt = salt,
             HashLength = HashLength,
             Password = System.Text.Encoding.UTF8.GetBytes(password)
         };
