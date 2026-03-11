@@ -1,147 +1,90 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft, Calendar, MapPin, Users, X, Upload,
-  AlertCircle, CheckCircle, Link2, Tag, Eye, Save,
+  AlertCircle, CheckCircle, Link2, Tag, Save, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { createEventSchema, type CreateEventFormValues } from "../../libs/schemas/event-schema";
+import { useUploadImage } from "../../hooks/useUpload";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
-export interface EventFormData {
-  title: string;
-  category: string;
-  date: string;
-  endDate: string;
-  time: string;
-  endTime: string;
-  location: string;
-  locationDetail: string;
-  description: string;
-  coverImageUrl: string;
-  registrationUrl: string;
-  registrationOpen: boolean;
-  registrationDeadline: string;
-  maxParticipants: string;
-  status: "draft" | "published";
-  isOnline: boolean;
-  streamingUrl: string;
-  organizer: string;
-  contactEmail: string;
-  tags: string[];
-}
-
 interface EventFormProps {
-  initialData?: Partial<EventFormData & { id?: string }>;
-  onSave: (data: EventFormData, status: "draft" | "published") => Promise<void>;
+  initialData?: Partial<CreateEventFormValues & { id?: string }>;
+  onSave: (data: CreateEventFormValues) => Promise<void>;
   backHref?: string;
+  isSaving?: boolean;
 }
 
 /* ─── Constants ──────────────────────────────────────────── */
 
 export const EVENT_CATEGORIES = ["Admisi", "Seminar", "Akademik", "Misi", "Konferensi", "Pembinaan", "Ibadah", "Alumni", "LEAD", "Lainnya"];
-const TAG_SUGGESTIONS = ["STTB", "Reformed", "Pelayanan", "Akademik", "Misi", "Kepemimpinan", "Online"];
-
-/* ─── Tag Input ──────────────────────────────────────────── */
-
-function TagInput({ tags, onChange }: { tags: string[]; onChange: (t: string[]) => void }) {
-  const [input, setInput] = useState("");
-  const add = (t: string) => { const v = t.trim(); if (v && !tags.includes(v) && tags.length < 8) { onChange([...tags, v]); setInput(""); } };
-  const remove = (t: string) => onChange(tags.filter(x => x !== t));
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-1.5 min-h-[28px]">
-        {tags.map(t => (
-          <span key={t} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#0A2C74]/10 text-[#0A2C74] dark:bg-blue-900/30 dark:text-blue-300">
-            #{t}<button type="button" onClick={() => remove(t)} className="hover:text-[#E62129] ml-0.5"><X className="w-2.5 h-2.5" /></button>
-          </span>
-        ))}
-        <input value={input} onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(input); } else if (e.key === "Backspace" && !input && tags.length) remove(tags[tags.length - 1]); }}
-          placeholder="Tambah tag..." className="flex-1 min-w-16 text-sm bg-transparent text-gray-700 dark:text-gray-300 focus:outline-none placeholder-gray-400" />
-      </div>
-      <div className="flex flex-wrap gap-1">
-        {TAG_SUGGESTIONS.filter(t => !tags.includes(t)).map(t => (
-          <button key={t} type="button" onClick={() => add(t)} className="px-2 py-0.5 rounded text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-[#E62129]/10 hover:text-[#E62129] transition-colors">+{t}</button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Field ──────────────────────────────────────────────── */
-
-function Field({ label, required, error, hint, children }: { label: string; required?: boolean; error?: string; hint?: string; children: ReactNode }) {
-  return (
-    <div>
-      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">
-        {label} {required && <span className="text-[#E62129]">*</span>}
-      </label>
-      {children}
-      {error && <p className="flex items-center gap-1 text-[#E62129] text-xs mt-1"><AlertCircle className="w-3 h-3 flex-shrink-0" />{error}</p>}
-      {hint && !error && <p className="text-gray-400 text-xs mt-1">{hint}</p>}
-    </div>
-  );
-}
-
-const inputCls = (error?: string) =>
-  `w-full px-3 py-2.5 rounded-xl border text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 focus:outline-none transition-all ${error ? "border-[#E62129]" : "border-gray-200 dark:border-gray-700 focus:border-[#0A2C74]"}`;
 
 /* ─── Main Form ──────────────────────────────────────────── */
 
-export function EventForm({ initialData, onSave, backHref = "/admin/events" }: EventFormProps) {
+export function EventForm({ initialData, onSave, backHref = "/admin/events", isSaving = false }: EventFormProps) {
   const router = useRouter();
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const isEdit = !!initialData?.id;
-  const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
-  const [errors, setErrors] = useState<Partial<Record<keyof EventFormData, string>>>({});
   const [tab, setTab] = useState<"basic" | "registration" | "details">("basic");
 
-  const [form, setForm] = useState<EventFormData>({
-    title: initialData?.title ?? "",
-    category: initialData?.category ?? "Seminar",
-    date: initialData?.date ?? "",
-    endDate: initialData?.endDate ?? "",
-    time: initialData?.time ?? "08:00",
-    endTime: initialData?.endTime ?? "17:00",
-    location: initialData?.location ?? "",
-    locationDetail: initialData?.locationDetail ?? "",
-    description: initialData?.description ?? "",
-    coverImageUrl: initialData?.coverImageUrl ?? initialData?.coverImageUrl ?? "",
-    registrationUrl: initialData?.registrationUrl ?? "",
-    registrationOpen: initialData?.registrationOpen ?? false,
-    registrationDeadline: initialData?.registrationDeadline ?? "",
-    maxParticipants: initialData?.maxParticipants ?? "",
-    status: initialData?.status ?? "draft",
-    isOnline: initialData?.isOnline ?? false,
-    streamingUrl: initialData?.streamingUrl ?? "",
-    organizer: initialData?.organizer ?? "STTB Bandung",
-    contactEmail: initialData?.contactEmail ?? "info@sttb.ac.id",
-    tags: initialData?.tags ?? [],
+  const { mutateAsync: uploadImage, isPending: isUploadingImage } = useUploadImage();
+
+  // The DB schema expects startDate and endDate as ISO strings.
+  // Assuming the UI inputs 'YYYY-MM-DDTHH:mm' (datetime-local format), we can use that directly, 
+  // or build it from separated date and time inputs. Let's use datetime-local for simpler binding.
+  const formatForInput = (isoString?: string) => {
+      if (!isoString) return "";
+      const d = new Date(isoString);
+      if (isNaN(d.getTime())) return "";
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0, 16);
+  };
+
+  const form = useForm<CreateEventFormValues>({
+    resolver: zodResolver(createEventSchema),
+    defaultValues: {
+      title: initialData?.title ?? "",
+      description: initialData?.description ?? "",
+      startDate: formatForInput(initialData?.startDate),
+      endDate: formatForInput(initialData?.endDate),
+      location: initialData?.location ?? "",
+      imageUrl: initialData?.imageUrl ?? "",
+      category: initialData?.category ?? "Seminar",
+      registrationUrl: initialData?.registrationUrl ?? "",
+      isPublished: initialData?.isPublished ?? false,
+    },
   });
 
-  const update = <K extends keyof EventFormData>(key: K, value: EventFormData[K]) => {
-    setForm(f => ({ ...f, [key]: value }));
-    setErrors(e => ({ ...e, [key]: undefined }));
+  const errors = form.formState.errors;
+
+  const handleImageUpload = async (file: File) => {
+    try {
+      const res = await uploadImage({ file, uploadType: "event" });
+      form.setValue("imageUrl", res.url, { shouldValidate: true });
+      toast.success("Gambar berhasil diupload!");
+    } catch (error) {
+       toast.error(error instanceof Error ? error.message : "Gagal mengupload gambar");
+    }
   };
 
-  const validate = () => {
-    const errs: typeof errors = {};
-    if (!form.title.trim()) errs.title = "Judul wajib diisi";
-    if (!form.date) errs.date = "Tanggal wajib diisi";
-    if (!form.location.trim()) errs.location = "Lokasi wajib diisi";
-    if (!form.description.trim()) errs.description = "Deskripsi wajib diisi";
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) setTab("basic");
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleSave = async (status: "draft" | "published") => {
-    if (!validate()) { toast.error("Lengkapi semua field yang diperlukan"); return; }
-    setSaving(status === "draft" ? "draft" : "publish");
-    try { await onSave({ ...form, status }, status); }
-    finally { setSaving(null); }
+  const onSubmit = async (data: CreateEventFormValues, setPublished: boolean) => {
+    try {
+        await onSave({
+            ...data,
+            // Convert datetime-local strings back to proper ISO before saving
+            startDate: new Date(data.startDate).toISOString(),
+            endDate: data.endDate ? new Date(data.endDate).toISOString() : undefined,
+            isPublished: setPublished,
+        });
+    } catch (e) {
+        toast.error("Terjadi kesalahan saat menyimpan");
+    }
   };
 
   const TABS = [
@@ -149,6 +92,28 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
     { id: "registration" as const, label: "Pendaftaran", icon: Users },
     { id: "details" as const, label: "Detail & Media", icon: Tag },
   ];
+
+  const imageUrl = form.watch("imageUrl");
+  const isPublished = form.watch("isPublished");
+  const watchStartDate = form.watch("startDate");
+  const watchLocation = form.watch("location");
+  const watchCategory = form.watch("category");
+
+  // Helper renderer
+  const Field = ({ label, required, error, hint, children }: { label: string; required?: boolean; error?: string; hint?: string; children: ReactNode }) => (
+    <div>
+      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">
+        {label} {required && <span className="text-[#E62129]">*</span>}
+      </label>
+      {children}
+      {error && <p className="flex items-center gap-1 text-[#E62129] text-xs mt-1.5"><AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />{error}</p>}
+      {hint && !error && <p className="text-gray-400 text-xs mt-1">{hint}</p>}
+    </div>
+  );
+
+  const inputCls = (error?: string) =>
+    `w-full px-4 py-3 rounded-xl border text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 focus:outline-none transition-all ${error ? "border-[#E62129] focus:ring-1 focus:ring-[#E62129]" : "border-gray-200 dark:border-gray-700 focus:border-[#0A2C74] focus:ring-1 focus:ring-[#0A2C74]"}`;
+
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -160,58 +125,55 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
           </button>
           <div>
             <h1 className="text-gray-900 dark:text-white font-bold text-xl">{isEdit ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{isEdit ? `Mengedit: ${form.title || "—"}` : "Buat event dan kegiatan kampus STTB"}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{isEdit ? `Mengedit: ${form.watch("title") || "—"}` : "Buat event dan kegiatan kampus STTB"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => handleSave("draft")} disabled={!!saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
-            {saving === "draft" ? <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
-            Draft
+        <div className="flex items-center gap-3">
+          <button 
+             onClick={form.handleSubmit((d) => onSubmit(d, false))} 
+             disabled={isSaving || isUploadingImage}
+             className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+          >
+            {isSaving && !isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Simpan Draft
           </button>
-          <button onClick={() => handleSave("published")} disabled={!!saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
-            {saving === "publish" ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+          <button 
+            onClick={form.handleSubmit((d) => onSubmit(d, true))} 
+             disabled={isSaving || isUploadingImage}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50"
+          >
+            {isSaving && isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
             {isEdit ? "Perbarui" : "Terbitkan"}
           </button>
         </div>
       </div>
 
-      {/* Edit mode banner */}
-      {isEdit && (
-        <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
-          <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-          <p className="text-blue-700 dark:text-blue-300 text-sm">Mode Edit — perubahan akan menggantikan data kegiatan ini.</p>
-          <span className={`ml-auto px-2 py-0.5 rounded-full text-xs font-semibold ${form.status === "published" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-            {form.status === "published" ? "Terbit" : "Draft"}
-          </span>
-        </div>
-      )}
-
       {/* Live preview */}
-      {form.title && (
-        <div className="bg-gradient-to-r from-[#0A2C74] to-[#0570CD] rounded-2xl p-4 text-white">
-          <p className="text-blue-200 text-xs uppercase tracking-wider mb-1">Preview</p>
-          <h2 className="font-bold text-lg leading-snug">{form.title}</h2>
-          <div className="flex flex-wrap gap-4 mt-2 text-blue-200 text-sm">
-            {form.date && <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(form.date).toLocaleDateString("id-ID", { dateStyle: "long" })}{form.time && ` · ${form.time}`}</span>}
-            {form.location && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{form.location}</span>}
-            {form.category && <span className="flex items-center gap-1"><Tag className="w-3.5 h-3.5" />{form.category}</span>}
+      {form.watch("title") && (
+        <div className="bg-gradient-to-r from-[#0A2C74] to-[#0570CD] rounded-2xl p-5 text-white shadow-sm">
+          <p className="text-blue-200 text-xs uppercase tracking-widest font-semibold mb-2">Preview Card</p>
+          <h2 className="font-bold text-xl leading-snug">{form.watch("title")}</h2>
+          <div className="flex flex-wrap gap-x-5 gap-y-2 mt-3 text-blue-100 text-sm">
+            {watchStartDate && <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" />{new Date(watchStartDate).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" })}</span>}
+            {watchLocation && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" />{watchLocation}</span>}
+            {watchCategory && <span className="flex items-center gap-1.5"><Tag className="w-4 h-4" />{watchCategory}</span>}
           </div>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl">
+      <div className="flex gap-1.5 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-2xl">
         {TABS.map(t => {
           const Icon = t.icon;
-          const hasError = t.id === "basic" && (errors.title || errors.date || errors.location || errors.description);
+          const hasError = t.id === "basic" && (errors.title || errors.startDate || errors.location || errors.description) || 
+                           t.id === "registration" && (errors.registrationUrl) ||
+                           t.id === "details" && (errors.imageUrl);
           return (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative ${tab === t.id ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative ${tab === t.id ? "bg-white dark:bg-gray-900 text-[#0A2C74] dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>
               <Icon className="w-4 h-4" />
               <span className="hidden sm:inline">{t.label}</span>
-              {hasError && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#E62129] rounded-full" />}
+              {hasError && <span className="absolute top-2 right-2 w-2 h-2 bg-[#E62129] rounded-full" />}
             </button>
           );
         })}
@@ -219,196 +181,167 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
 
       {/* Tab: Basic */}
       {tab === "basic" && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-5">
-          <Field label="Judul Kegiatan" required error={errors.title}>
-            <input type="text" value={form.title} onChange={e => update("title", e.target.value)} placeholder="Masukkan judul kegiatan..." className={inputCls(errors.title)} />
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-6 shadow-sm">
+          <Field label="Judul Kegiatan" required error={errors.title?.message}>
+            <input 
+                {...form.register("title")} 
+                placeholder="Konser Natal STTB 2026..." 
+                className={inputCls(errors.title?.message)} 
+            />
           </Field>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Kategori">
-              <select value={form.category} onChange={e => update("category", e.target.value)} className={inputCls()}>
-                {EVENT_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+          <div className="grid sm:grid-cols-2 gap-6">
+            <Field label="Kategori" error={errors.category?.message}>
+              <select {...form.register("category")} className={inputCls(errors.category?.message)}>
+                <option value="">Pilih Kategori...</option>
+                {EVENT_CATEGORIES.map(c => <option value={c} key={c}>{c}</option>)}
               </select>
             </Field>
-            <Field label="Penyelenggara">
-              <input type="text" value={form.organizer} onChange={e => update("organizer", e.target.value)} className={inputCls()} />
-            </Field>
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Tanggal Mulai" required error={errors.date}>
-              <div className="flex gap-2">
-                <input type="date" value={form.date} onChange={e => update("date", e.target.value)} className={inputCls(errors.date) + " flex-1"} />
-                <input type="time" value={form.time} onChange={e => update("time", e.target.value)} className={inputCls() + " w-28"} />
-              </div>
+          <div className="grid sm:grid-cols-2 gap-6">
+            <Field label="Waktu Mulai" required error={errors.startDate?.message}>
+              <input 
+                 {...form.register("startDate")} 
+                 type="datetime-local" 
+                 className={inputCls(errors.startDate?.message)} 
+              />
             </Field>
-            <Field label="Tanggal Selesai" hint="Opsional untuk acara multi-hari">
-              <div className="flex gap-2">
-                <input type="date" value={form.endDate} onChange={e => update("endDate", e.target.value)} className={inputCls() + " flex-1"} />
-                <input type="time" value={form.endTime} onChange={e => update("endTime", e.target.value)} className={inputCls() + " w-28"} />
-              </div>
+            <Field label="Waktu Selesai" hint="Opsional, jika ada batas waktu jelas" error={errors.endDate?.message}>
+              <input 
+                 {...form.register("endDate")} 
+                 type="datetime-local" 
+                 className={inputCls(errors.endDate?.message)} 
+              />
             </Field>
           </div>
           <div>
-            <div className="flex items-center gap-3 mb-3">
-              <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Mode Acara</p>
-              {["Offline", "Online", "Hybrid"].map((mode, mi) => (
-                <button key={mode} type="button" onClick={() => update("isOnline", mi === 1)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${(mi === 1 ? form.isOnline : !form.isOnline) ? "bg-[#0A2C74] text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500"}`}>
-                  {mode}
-                </button>
-              ))}
-            </div>
-            <div className="space-y-3">
-              <Field label={form.isOnline ? "Platform / Link" : "Nama Venue"} required error={errors.location}>
+            <Field label="Lokasi Acara" error={errors.location?.message}>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input type="text" value={form.location} onChange={e => update("location", e.target.value)}
-                    placeholder={form.isOnline ? "Zoom, Google Meet, YouTube Live..." : "Nama gedung / aula / tempat"}
-                    className={inputCls(errors.location) + " pl-9"} />
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input 
+                    {...form.register("location")}
+                    placeholder="Aula Utama STTB, Zoom Meeting, dsb."
+                    className={inputCls(errors.location?.message) + " pl-10"} 
+                  />
                 </div>
-              </Field>
-              <Field label="Detail Lokasi" hint="Alamat lengkap, nomor ruangan, petunjuk jalan">
-                <textarea value={form.locationDetail} onChange={e => update("locationDetail", e.target.value)} rows={2} placeholder="Jl. Contoh No. 123, Bandung..." className={inputCls() + " resize-none"} />
-              </Field>
-              {form.isOnline && (
-                <Field label="Link Streaming">
-                  <div className="relative"><Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input type="url" value={form.streamingUrl} onChange={e => update("streamingUrl", e.target.value)} placeholder="https://zoom.us/j/..." className={inputCls() + " pl-9"} />
-                  </div>
-                </Field>
-              )}
-            </div>
+            </Field>
           </div>
-          <Field label="Deskripsi Kegiatan" required error={errors.description}>
-            <textarea value={form.description} onChange={e => update("description", e.target.value)} rows={5}
-              placeholder="Jelaskan kegiatan secara lengkap — tema, tujuan, pembicara, agenda..." className={inputCls(errors.description) + " resize-none"} />
+          <Field label="Deskripsi Kegiatan" required error={errors.description?.message}>
+            <textarea 
+                {...form.register("description")} 
+                rows={5}
+                placeholder="Jelaskan kegiatan secara detail — tema, pembicara, agenda..." 
+                className={inputCls(errors.description?.message) + " resize-none"} 
+            />
           </Field>
         </div>
       )}
 
       {/* Tab: Registration */}
       {tab === "registration" && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-5">
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div>
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Buka Pendaftaran</p>
-              <p className="text-xs text-gray-400 mt-0.5">Aktifkan jika kegiatan memerlukan registrasi peserta</p>
-            </div>
-            <button type="button" onClick={() => update("registrationOpen", !form.registrationOpen)}
-              className="relative rounded-full transition-colors flex-shrink-0" style={{ width: 44, height: 24, backgroundColor: form.registrationOpen ? "#22C55E" : "#D1D5DB" }}>
-              <span className="absolute top-0.5 rounded-full bg-white shadow transition-transform" style={{ width: 20, height: 20, left: 2, transform: form.registrationOpen ? "translateX(20px)" : "translateX(0)" }} />
-            </button>
-          </div>
-          {form.registrationOpen && (
-            <div className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Field label="Link Formulir Pendaftaran">
-                  <div className="relative"><Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input type="url" value={form.registrationUrl} onChange={e => update("registrationUrl", e.target.value)} placeholder="https://forms.google.com/..." className={inputCls() + " pl-9"} />
-                  </div>
-                </Field>
-                <Field label="Batas Pendaftaran">
-                  <input type="date" value={form.registrationDeadline} onChange={e => update("registrationDeadline", e.target.value)} className={inputCls()} />
-                </Field>
-              </div>
-              <Field label="Kapasitas Peserta" hint="Kosongkan jika tidak ada batas maksimum">
-                <div className="relative"><Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input type="number" min={1} value={form.maxParticipants} onChange={e => update("maxParticipants", e.target.value)} placeholder="Contoh: 100" className={inputCls() + " pl-9"} />
-                </div>
-              </Field>
-            </div>
-          )}
-          <div className="border-t border-gray-100 dark:border-gray-800 pt-5">
-            <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-4">Kontak Panitia</p>
-            <Field label="Email Kontak">
-              <input type="email" value={form.contactEmail} onChange={e => update("contactEmail", e.target.value)} placeholder="panitia@sttb.ac.id" className={inputCls()} />
-            </Field>
-          </div>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-6 shadow-sm">
+           <Field label="Link Formulir Pendaftaran" hint="Isi link ke Google Form atau platform registrasi eksternal" error={errors.registrationUrl?.message}>
+             <div className="relative"><Link2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+               <input 
+                  {...form.register("registrationUrl")} 
+                  type="url" 
+                  placeholder="https://forms.google.com/..." 
+                  className={inputCls(errors.registrationUrl?.message) + " pl-10"} 
+               />
+             </div>
+           </Field>
         </div>
       )}
 
       {/* Tab: Details */}
       {tab === "details" && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-5">
-          <Field label="Status Publikasi">
-            <div className="grid grid-cols-2 gap-3">
-              {(["draft", "published"] as const).map(s => (
-                <button key={s} type="button" onClick={() => update("status", s)}
-                  className={`py-3 rounded-xl text-sm font-medium border transition-all ${form.status === s ? (s === "published" ? "bg-green-500 text-white border-green-500 shadow-md" : "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-300") : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-100"}`}>
-                  {s === "draft" ? "📝 Draft" : "✅ Terbitkan"}
-                </button>
-              ))}
-            </div>
-          </Field>
-          <Field label="Gambar Sampul / Cover">
-            {form.coverImageUrl
-              ? <div className="relative rounded-xl overflow-hidden mb-3">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-6 shadow-sm">
+          <Field label="Gambar Sampul / Poster Event" error={errors.imageUrl?.message}>
+            {imageUrl ? (
+              <div className="relative rounded-xl overflow-hidden mb-4 border border-gray-200 dark:border-gray-700">
                 <Image
-                  src={form.coverImageUrl}
+                  src={imageUrl.startsWith("http") ? imageUrl : `${process.env.NEXT_PUBLIC_API_BASE_URL}${imageUrl}`}
                   alt=""
                   height={176}
                   width={0}
                   sizes="w-full"
-                  preload
-                  className="w-full h-44 object-cover" />
-                <button type="button" onClick={() => update("coverImageUrl", "")} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"><X className="w-4 h-4" /></button>
+                  className="w-full h-44 object-cover" 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => form.setValue("imageUrl", "", { shouldValidate: true })} 
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-gray-900/90 shadow-sm flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-[#E62129] transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-3">
-                <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-400">Masukkan URL gambar di bawah ini</p>
-                <p className="text-xs text-gray-300 mt-1">Rekomendasi: 1200×630px</p>
-              </div>
-            }
-            {/* // ! TODO: fix error, type sekali langsung violate validation mungkin? atau terkait hydration? */}
-            <input type="url" value={form.coverImageUrl} onChange={e => update("coverImageUrl", e.target.value)} placeholder="https://images.unsplash.com/..." className={inputCls()} />
+            ) : (
+                <div 
+                    className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer group"
+                    onClick={() => fileInputRef.current?.click()}
+                >
+                    {isUploadingImage ? (
+                        <Loader2 className="w-8 h-8 text-[#0A2C74] animate-spin mx-auto mb-2" />
+                    ) : (
+                        <Upload className="w-8 h-8 text-gray-300 group-hover:text-[#0A2C74] transition-colors mx-auto mb-2" />
+                    )}
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Upload Poster</p>
+                    <p className="text-xs text-gray-400 mt-1">PNG, JPG up to 5MB (16:9 disarankan)</p>
+                    <input 
+                        ref={fileInputRef}
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload(file);
+                        }} 
+                    />
+                </div>
+            )}
+            
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5 flex justify-between">
+                <span>Atau gunakan URL</span>
+            </label>
+            <input 
+                {...form.register("imageUrl")} 
+                type="url" 
+                placeholder="https://..." 
+                className={inputCls(errors.imageUrl?.message)} 
+            />
           </Field>
-          <Field label="Tags">
-            <div className="p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <TagInput tags={form.tags} onChange={t => update("tags", t)} />
-            </div>
-          </Field>
-          {/* Checklist */}
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 text-xs space-y-2">
-            <p className="font-semibold text-gray-700 dark:text-gray-300 text-sm mb-3">Status Kelengkapan</p>
-            {[
-              { label: "Judul", ok: !!form.title },
-              { label: "Kategori", ok: !!form.category },
-              { label: "Tanggal Mulai", ok: !!form.date },
-              { label: "Lokasi", ok: !!form.location },
-              { label: "Deskripsi", ok: !!form.description, extra: form.description ? `${form.description.split(/\s+/).filter(Boolean).length} kata` : "" },
-              { label: "Pendaftaran", ok: form.registrationOpen, optional: true },
-              { label: "Gambar", ok: !!form.coverImageUrl, optional: true },
-            ].map(({ label, ok, extra, optional }) => (
-              <div key={label} className="flex items-center justify-between">
-                <span className="text-gray-500 dark:text-gray-400">{label}</span>
-                <span className={ok ? "text-green-600 font-medium" : optional ? "text-gray-300 dark:text-gray-600" : "text-yellow-500"}>
-                  {ok ? (extra || "✓") : (optional ? "—" : "Belum diisi")}
-                </span>
-              </div>
-            ))}
+          
+          <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Status Agenda</h3>
+               <div className="flex items-center gap-3">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${isPublished ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800" : "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800"}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isPublished ? "bg-green-500" : "bg-yellow-500"}`} />
+                    {isPublished ? "Dipublikasikan & Hadir di Jadwal" : "Draft (Belum Tampil)"}
+                  </span>
+               </div>
           </div>
         </div>
       )}
 
       {/* Wizard nav */}
-      <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+      <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 shadow-sm">
         <div className="flex gap-1.5">
           {TABS.map(t => (
             <button key={t.id} type="button" onClick={() => setTab(t.id)}
-              className="rounded-full transition-all" style={{ width: tab === t.id ? 20 : 8, height: 8, backgroundColor: tab === t.id ? "#E62129" : "#D1D5DB" }} />
+              className="rounded-full transition-all" style={{ width: tab === t.id ? 20 : 8, height: 8, backgroundColor: tab === t.id ? "#0A2C74" : "#D1D5DB" }} />
           ))}
         </div>
         <div className="flex items-center gap-2">
           {tab !== "basic" && (
             <button type="button" onClick={() => setTab(tab === "details" ? "registration" : "basic")}
-              className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm hover:bg-gray-50 transition-colors">← Sebelumnya</button>
+              className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">← Sebelumnya</button>
           )}
           {tab !== "details"
             ? <button type="button" onClick={() => setTab(tab === "basic" ? "registration" : "details")}
-              className="px-4 py-2 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#081f52] transition-colors">Selanjutnya →</button>
-            : <button type="button" onClick={() => handleSave(form.status)} disabled={!!saving}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
-              {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-              {form.status === "draft" ? "Simpan Draft" : "Terbitkan"}
+              className="px-4 py-2.5 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#081f52] transition-colors shadow-sm">Selanjutnya →</button>
+            : <button type="button" onClick={form.handleSubmit((d) => onSubmit(d, isPublished))} disabled={isSaving || isUploadingImage}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-50">
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+               Simpan Sekarang
             </button>
           }
         </div>

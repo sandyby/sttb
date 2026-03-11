@@ -1,90 +1,73 @@
 "use client";
 
-import { ElementType, useState, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { Upload, Search, Trash2, Copy, Grid, List, Image as ImageIcon, FileText, Film, Music, Filter, CheckCircle } from "lucide-react";
+import { Upload, Search, Trash2, Copy, Grid, List, Newspaper, Film, Filter, CheckCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
+import { useMediaList, useDeleteMedia } from "@/hooks/useMedia";
+import { UploadMediaDialog } from "@/components/admin/media/UploadMediaDialog";
 
-type MediaType = "image" | "video" | "document" | "audio";
-
-interface MediaItem {
-    id: string;
-    name: string;
-    type: MediaType;
-    url: string;
-    size: string;
-    uploadedAt: string;
-    usedIn?: string;
-}
-
-const initialMedia: MediaItem[] = [
-    { id: "1", name: "sttb-kampus-depan.jpg", type: "image", url: "https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?w=300", size: "1.2 MB", uploadedAt: "2026-03-01", usedIn: "Beranda" },
-    { id: "2", name: "chapel-ibadah.jpg", type: "image", url: "https://images.unsplash.com/photo-1758413350815-7b06dbbfb9a7?w=300", size: "980 KB", uploadedAt: "2026-02-25", usedIn: "Pembinaan" },
-    { id: "3", name: "wisuda-2025.jpg", type: "image", url: "https://images.unsplash.com/photo-1757143137392-0b1e1a27a7de?w=300", size: "2.4 MB", uploadedAt: "2026-02-20" },
-    { id: "4", name: "mission-trip.jpg", type: "image", url: "https://images.unsplash.com/photo-1764072970350-2ce4f354a483?w=300", size: "1.8 MB", uploadedAt: "2026-02-15", usedIn: "Kegiatan" },
-    { id: "5", name: "seminar-kepemimpinan.jpg", type: "image", url: "https://images.unsplash.com/photo-1675099124977-5aab6e554dbd?w=300", size: "756 KB", uploadedAt: "2026-02-10" },
-    { id: "6", name: "perpustakaan.jpg", type: "image", url: "https://images.unsplash.com/photo-1722962674485-d34e69a9a406?w=300", size: "1.1 MB", uploadedAt: "2026-02-05", usedIn: "Perpustakaan" },
-    { id: "7", name: "brosur-admisi-2026.pdf", type: "document", url: "#", size: "3.2 MB", uploadedAt: "2026-01-30" },
-    { id: "8", name: "video-profil-sttb.mp4", type: "video", url: "#", size: "45.6 MB", uploadedAt: "2026-01-20", usedIn: "Beranda" },
-    { id: "9", name: "mars-sttb.mp3", type: "audio", url: "#", size: "4.8 MB", uploadedAt: "2026-01-10", usedIn: "Mars STTB" },
-];
-
-const typeIcons: Record<MediaType, ElementType> = {
-    image: ImageIcon,
+const typeIcons: Record<string, React.ElementType> = {
+    image: Newspaper,
     video: Film,
-    document: FileText,
-    audio: Music,
 };
 
-const typeColors: Record<MediaType, string> = {
+const typeColors: Record<string, string> = {
     image: "#0570CD",
     video: "#E62129",
-    document: "#0A2C74",
-    audio: "#059669",
 };
 
-const filterTypes = ["Semua", "image", "video", "document", "audio"];
+const filterTypes = ["semua", "article", "video"];
 
 export default function AdminMediaPage() {
-    const [media, setMedia] = useState(initialMedia);
     const [search, setSearch] = useState("");
-    const [filterType, setFilterType] = useState("Semua");
+    const [filterType, setFilterType] = useState("semua");
+    const [sortBy, setSortBy] = useState<"newest" | "oldest" | "az" | "za">("newest");
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [selected, setSelected] = useState<Set<string>>(new Set());
-    const [dragOver, setDragOver] = useState(false);
     const [deleteConfirm, setDeleteConfirm] = useState<string[] | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploadOpen, setIsUploadOpen] = useState(false);
 
-    const filtered = media.filter((m) => {
-        const matchSearch = search === "" || m.name.toLowerCase().includes(search.toLowerCase());
-        const matchType = filterType === "Semua" || m.type === filterType;
-        return matchSearch && matchType;
+    // Fetch live API data!
+    const { data: mediaResponse, isLoading } = useMediaList({
+        pageSize: 100, // Show a lot for now until pagination is built
+        type: filterType.toLowerCase() !== "semua" ? filterType : undefined,
+    });
+    const media = mediaResponse?.items ?? [];
+
+    const { mutateAsync: deleteMedia, isPending: isDeleting } = useDeleteMedia();
+
+    // Filter frontend search since search param isn't bound to API search yet
+    const filtered = media.filter(
+        (m) => search === "" || m.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    // Sort frontend array
+    filtered.sort((a, b) => {
+        if (sortBy === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        if (sortBy === "az") return a.title.localeCompare(b.title);
+        if (sortBy === "za") return b.title.localeCompare(a.title);
+        return 0;
     });
 
-    const handleUpload = (files: FileList | null) => {
-        if (!files) return;
-        const newItems: MediaItem[] = Array.from(files).map((file, i) => ({
-            id: String(Date.now() + i),
-            name: file.name,
-            type: file.type.startsWith("image") ? "image" : file.type.startsWith("video") ? "video" : file.type.startsWith("audio") ? "audio" : "document",
-            url: URL.createObjectURL(file),
-            size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
-            uploadedAt: new Date().toISOString().split("T")[0],
-        }));
-        setMedia((prev) => [...newItems, ...prev]);
-        toast.success(`${files.length} file berhasil diupload`);
-    };
-
-    const handleDelete = (ids: string[]) => {
-        setMedia((prev) => prev.filter((m) => !ids.includes(m.id)));
-        setSelected(new Set());
-        setDeleteConfirm(null);
-        toast.success(`${ids.length} file berhasil dihapus`);
+    const handleDelete = async (ids: string[]) => {
+        try {
+            // Delete sequentially or via Promise.all (API endpoint takes 1 ID at a time)
+            await Promise.all(ids.map((id) => deleteMedia(id)));
+            setSelected(new Set());
+            setDeleteConfirm(null);
+            toast.success(`${ids.length} file berhasil dihapus`);
+        } catch (error) {
+            toast.error("Gagal menghapus beberapa file");
+        }
     };
 
     const handleCopyUrl = (url: string) => {
-        navigator.clipboard.writeText(url).then(() => toast.success("URL berhasil disalin")).catch(() => toast.error("Gagal menyalin URL"));
+        navigator.clipboard.writeText(url)
+            .then(() => toast.success("URL berhasil disalin"))
+            .catch(() => toast.error("Gagal menyalin URL"));
     };
 
     const toggleSelect = (id: string) => {
@@ -102,6 +85,8 @@ export default function AdminMediaPage() {
 
     return (
         <div className="space-y-5">
+            <UploadMediaDialog isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
+
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
@@ -118,96 +103,119 @@ export default function AdminMediaPage() {
                         </button>
                     )}
                     <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors"
+                        onClick={() => setIsUploadOpen(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors shadow-sm"
                     >
                         <Upload className="w-4 h-4" /> Upload Media
                     </button>
-                    <input ref={fileInputRef} type="file" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx" className="hidden" onChange={(e) => handleUpload(e.target.files)} />
                 </div>
             </div>
 
-            {/* Drop zone */}
-            <div
-                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${dragOver ? "border-[#E62129] bg-red-50 dark:bg-red-900/10" : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"}`}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => { e.preventDefault(); setDragOver(false); handleUpload(e.dataTransfer.files); }}
-                onClick={() => fileInputRef.current?.click()}
-            >
-                <Upload className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
-                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Seret & lepas file di sini, atau klik untuk memilih</p>
-                <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Mendukung gambar, video, audio, dan dokumen PDF/Word</p>
-            </div>
-
             {/* Filters & view toggle */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 shadow-sm">
                 <div className="flex flex-wrap gap-3 items-center">
                     <div className="relative flex-1 min-w-56">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari file..." className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E62129]" />
+                        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari file..." className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0A2C74]" />
                     </div>
                     <div className="flex items-center gap-1.5">
                         <Filter className="w-4 h-4 text-gray-400" />
                         {filterTypes.map((t) => (
-                            <button key={t} onClick={() => setFilterType(t)} className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${filterType === t ? "bg-[#E62129] text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"}`}>{t}</button>
+                            <button key={t} onClick={() => setFilterType(t)} className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${filterType === t ? "bg-[#0A2C74] text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"}`}>
+                                {t}
+                            </button>
                         ))}
                     </div>
-                    <div className="flex items-center gap-1 ml-auto">
-                        <button onClick={() => setViewMode("grid")} className={`p-2 rounded-lg ${viewMode === "grid" ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}><Grid className="w-4 h-4" /></button>
-                        <button onClick={() => setViewMode("list")} className={`p-2 rounded-lg ${viewMode === "list" ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}><List className="w-4 h-4" /></button>
+                    <div className="flex items-center gap-1.5 ml-auto">
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value as any)}
+                            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#0A2C74]"
+                        >
+                            <option value="newest">Terbaru</option>
+                            <option value="oldest">Terlama</option>
+                            <option value="az">A-Z</option>
+                            <option value="za">Z-A</option>
+                        </select>
+                        <div className="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1 border-none visible"></div>
+                        <div className="flex items-center gap-1">
+                            <button onClick={() => setViewMode("grid")} className={`p-2 rounded-lg transition-colors ${viewMode === "grid" ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}><Grid className="w-4 h-4" /></button>
+                            <button onClick={() => setViewMode("list")} className={`p-2 rounded-lg transition-colors ${viewMode === "list" ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}><List className="w-4 h-4" /></button>
+                        </div>
                     </div>
                 </div>
                 {filtered.length > 0 && (
                     <div className="mt-3 flex items-center gap-2">
-                        <input type="checkbox" checked={selected.size === filtered.length && filtered.length > 0} onChange={toggleSelectAll} className="w-4 h-4 rounded accent-[#E62129]" />
+                        <input type="checkbox" checked={selected.size === filtered.length && filtered.length > 0} onChange={toggleSelectAll} className="w-4 h-4 rounded accent-[#0A2C74]" />
                         <span className="text-gray-500 dark:text-gray-400 text-xs">{selected.size > 0 ? `${selected.size} dipilih` : `${filtered.length} file`}</span>
                     </div>
                 )}
             </div>
 
-            {/* Grid */}
-            {viewMode === "grid" ? (
+            {/* Grid / Loader */}
+            {isLoading ? (
+                <div className="min-h-64 flex flex-col items-center justify-center gap-3">
+                    <Loader2 className="w-8 h-8 text-[#0A2C74] animate-spin" />
+                    <span className="text-gray-500 font-medium text-sm">Memuat aset media...</span>
+                </div>
+            ) : filtered.length === 0 ? (
+                <div className="min-h-64 flex flex-col items-center justify-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-800">
+                    <Newspaper className="w-12 h-12 text-gray-300 dark:text-gray-600" />
+                    <span className="text-gray-500 font-medium text-sm">Belum ada media ditemukan</span>
+                </div>
+            ) : viewMode === "grid" ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {filtered.map((item) => {
-                        const Icon = typeIcons[item.type];
+                        const Icon = typeIcons[item.type] || Newspaper;
                         const isSelected = selected.has(item.id);
                         return (
                             <motion.div
                                 key={item.id}
                                 layout
-                                className={`bg-white dark:bg-gray-900 rounded-xl border-2 overflow-hidden hover:shadow-md transition-all cursor-pointer group ${isSelected ? "border-[#E62129]" : "border-gray-100 dark:border-gray-800"}`}
+                                className={`bg-white dark:bg-gray-900 rounded-xl border-2 overflow-hidden shadow-sm hover:shadow-md transition-all group ${isSelected ? "border-primary" : "border-gray-100 dark:border-gray-800"}`}
                             >
-                                <div className="relative aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden" onClick={() => toggleSelect(item.id)}>
-                                    {item.type === "image" ? (
+                                <div className="relative aspect-video cursor-pointer bg-gray-100 dark:bg-gray-800/50 overflow-hidden" onClick={() => toggleSelect(item.id)}>
+                                    {item.type && <span className={`shadow-lg absolute top-2 right-2 capitalize font-semibold text-[10px] px-2 py-1 rounded-full line-clamp-1 max-w-25 text-white truncate ${`${item.type === "video" ? "bg-primary text-white" : "bg-secondary text-white"} : "bg-accent"`} `}>
+                                        {item.type}
+                                    </span>}
+                                    {(item.thumbnailUrl) ? (
                                         <Image
-                                            src={item.url}
-                                            alt={item.name}
+                                            src={item.thumbnailUrl ? (item.thumbnailUrl.startsWith("http") ? item.thumbnailUrl : `http://localhost:5001${item.thumbnailUrl}`) : (item.url.startsWith("http") ? item.url : `http://localhost:5001${item.url}`)}
+                                            alt={item.title}
                                             height={0}
                                             width={0}
                                             sizes="w-full h-full"
-                                            preload
-                                            className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                            className="w-full h-full object-cover select-none" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                                        />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
-                                            <Icon className="w-8 h-8" style={{ color: typeColors[item.type] }} />
+                                            <Icon className="w-8 h-8" style={{ color: typeColors[item.type] || "#0A2C74" }} />
                                         </div>
                                     )}
                                     {isSelected && (
-                                        <div className="absolute inset-0 bg-[#E62129]/20 flex items-center justify-center">
-                                            <CheckCircle className="w-8 h-8 text-[#E62129]" />
+                                        <div className="absolute inset-0 bg-primary/20 flex items-center justify-center backdrop-blur-[0.5px]">
+                                            <CheckCircle className="w-8 h-8 text-primary bg-white rounded-full shadow-sm" />
                                         </div>
                                     )}
-                                    <div className="absolute top-1.5 left-1.5">
-                                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(item.id)} onClick={(e) => e.stopPropagation()} className="w-3.5 h-3.5 rounded accent-[#E62129]" />
+                                    <div className="absolute top-2 left-2">
+                                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(item.id)} onClick={(e) => e.stopPropagation()} className="w-4 h-4 rounded accent-primary " />
                                     </div>
                                 </div>
-                                <div className="p-2.5">
-                                    <p className="text-gray-900 dark:text-white text-xs font-medium truncate" title={item.name}>{item.name}</p>
-                                    <p className="text-gray-400 text-xs">{item.size}</p>
-                                    <div className="flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={() => handleCopyUrl(item.url)} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0570CD] transition-colors"><Copy className="w-3.5 h-3.5" /></button>
-                                        <button onClick={() => setDeleteConfirm([item.id])} className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-[#E62129] transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                <div className="p-3">
+                                    <p className="text-gray-900 dark:text-white text-xs font-semibold truncate" title={item.title}>{item.title}</p>
+                                    <div className="flex items-center justify-between mt-0.5">
+                                        <p className="text-gray-400 text-[10px]">{new Date(item.createdAt).toLocaleDateString("id-ID")}</p>
+                                        {item.tag && <span className="text-[10px] text-[#0A2C74] bg-[#0A2C74]/10 dark:text-blue-300 dark:bg-blue-900/30 px-1.5 py-0.5 rounded-sm line-clamp-1 max-w-25 truncate">
+                                            #{item.tag}
+                                        </span>}
+                                    </div>
+                                    <div className="flex w-fit items-center gap-1.5 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => handleCopyUrl(item.url.startsWith("http") ? item.url : `${process.env.NEXT_PUBLIC_API_BASE_URL}${item.url}`)} className="p-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-[#0570CD] transition-colors" title="Copy URL">
+                                            <Copy className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button onClick={() => setDeleteConfirm([item.id])} className="p-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/10 dark:hover:bg-red-900/30 rounded-md text-red-500 transition-colors" title="Hapus">
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
                                     </div>
                                 </div>
                             </motion.div>
@@ -215,50 +223,52 @@ export default function AdminMediaPage() {
                     })}
                 </div>
             ) : (
-                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-gray-100 dark:border-gray-800">
-                                <th className="w-8 px-4 py-3"><input type="checkbox" checked={selected.size === filtered.length && filtered.length > 0} onChange={toggleSelectAll} className="w-4 h-4 rounded accent-[#E62129]" /></th>
+                            <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+                                <th className="w-12 px-4 py-3"><input type="checkbox" checked={selected.size === filtered.length && filtered.length > 0} onChange={toggleSelectAll} className="w-4 h-4 rounded accent-[#0A2C74]" /></th>
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">File</th>
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">Tipe</th>
-                                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">Ukuran</th>
-                                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">Digunakan di</th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">Kategori/Tag</th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">Tanggal</th>
                                 <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filtered.map((item) => {
-                                const Icon = typeIcons[item.type];
+                                const Icon = typeIcons[item.type] || Newspaper;
                                 return (
-                                    <tr key={item.id} className={`border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors ${selected.has(item.id) ? "bg-red-50/30 dark:bg-red-900/10" : ""}`}>
-                                        <td className="px-4 py-3"><input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleSelect(item.id)} className="w-4 h-4 rounded accent-[#E62129]" /></td>
+                                    <tr key={item.id} className={`border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors ${selected.has(item.id) ? "bg-blue-50/30 dark:bg-blue-900/10" : ""}`}>
+                                        <td className="px-4 py-3"><input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleSelect(item.id)} className="w-4 h-4 rounded accent-[#0A2C74]" /></td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 flex items-center justify-center">
-                                                    {item.type === "image" ? <Image
-                                                        src={item.url}
-                                                        alt=""
-                                                        width={0}
-                                                        height={0}
-                                                        sizes="w-full h-full"
-                                                        preload
-                                                        className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} /> : <Icon className="w-5 h-5" style={{ color: typeColors[item.type] }} />}
+                                                <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                                                    {(item.thumbnailUrl || item.type === "video" || item.type === "article") ? <Image
+                                                        src={item.thumbnailUrl ? (item.thumbnailUrl.startsWith("http") ? item.thumbnailUrl : `http://localhost:5001${item.thumbnailUrl}`) : (item.url.startsWith("http") ? item.url : `http://localhost:5001${item.url}`)}
+                                                        alt="" width={0} height={0} sizes="w-full h-full"
+                                                        className="w-full h-full object-cover select-none" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} /> : <Icon className="w-5 h-5" style={{ color: typeColors[item.type] || "#0A2C74" }} />}
                                                 </div>
-                                                <span className="text-gray-900 dark:text-white text-sm font-medium truncate max-w-48">{item.name}</span>
+                                                <span className="text-gray-900 dark:text-white text-sm font-medium truncate max-w-48">{item.title}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 hidden sm:table-cell">
-                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium capitalize" style={{ backgroundColor: `${typeColors[item.type]}15`, color: typeColors[item.type] }}>
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize border" style={{ backgroundColor: `${typeColors[item.type]}10`, color: typeColors[item.type], borderColor: `${typeColors[item.type]}30` }}>
                                                 <Icon className="w-3 h-3" /> {item.type}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 hidden md:table-cell text-gray-500 dark:text-gray-400 text-sm">{item.size}</td>
-                                        <td className="px-4 py-3 hidden lg:table-cell text-gray-500 dark:text-gray-400 text-sm">{item.usedIn ?? "—"}</td>
+                                        <td className="px-4 py-3 hidden lg:table-cell text-gray-500 dark:text-gray-400 text-xs">
+                                            {item.category && <span className="block">{item.category}</span>}
+                                            {item.tag && <span className="block text-gray-400">#{item.tag}</span>}
+                                            {!item.category && !item.tag && "—"}
+                                        </td>
+                                        <td className="px-4 py-3 hidden md:table-cell text-gray-500 dark:text-gray-400 text-sm">
+                                            {new Date(item.createdAt).toLocaleDateString("id-ID")}
+                                        </td>
                                         <td className="px-4 py-3">
-                                            <div className="flex items-center justify-end gap-1">
-                                                <button onClick={() => handleCopyUrl(item.url)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0570CD] transition-colors"><Copy className="w-4 h-4" /></button>
-                                                <button onClick={() => setDeleteConfirm([item.id])} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-[#E62129] transition-colors"><Trash2 className="w-4 h-4" /></button>
+                                            <div className="flex items-center justify-end gap-1.5">
+                                                <button onClick={() => handleCopyUrl(item.url.startsWith("http") ? item.url : `${process.env.NEXT_PUBLIC_API_BASE_URL}${item.url}`)} className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-500 hover:text-[#0570CD] transition-colors"><Copy className="w-4 h-4" /></button>
+                                                <button onClick={() => setDeleteConfirm([item.id])} className="p-1.5 rounded-lg border border-red-100 dark:border-red-900/30 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-[#E62129] transition-colors"><Trash2 className="w-4 h-4" /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -269,17 +279,22 @@ export default function AdminMediaPage() {
                 </div>
             )}
 
-            {/* Delete confirm */}
+            {/* Delete confirm Dialog */}
             <AnimatePresence>
                 {deleteConfirm && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)} />
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative bg-white dark:bg-gray-900 rounded-xl p-6 shadow-2xl max-w-sm w-full">
-                            <h3 className="text-gray-900 dark:text-white font-bold mb-2">Hapus {deleteConfirm.length} File?</h3>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-5">File yang dihapus tidak dapat dikembalikan.</p>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={isDeleting ? undefined : () => setDeleteConfirm(null)} />
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl max-w-sm w-full border border-gray-100 dark:border-gray-800">
+                            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+                                <Trash2 className="w-6 h-6 text-[#E62129]" />
+                            </div>
+                            <h3 className="text-gray-900 dark:text-white font-bold text-lg mb-2">Hapus {deleteConfirm.length} File?</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">File akan dihapus secara permanen dari server dan tidak dapat dikembalikan. Apakah Anda yakin?</p>
                             <div className="flex gap-3 justify-end">
-                                <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm">Batal</button>
-                                <button onClick={() => handleDelete(deleteConfirm)} className="px-4 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium">Hapus</button>
+                                <button onClick={() => setDeleteConfirm(null)} disabled={isDeleting} className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors">Batal</button>
+                                <button onClick={() => handleDelete(deleteConfirm)} disabled={isDeleting} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium disabled:opacity-70 transition-colors">
+                                    {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Ya, Hapus"}
+                                </button>
                             </div>
                         </motion.div>
                     </div>

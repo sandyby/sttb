@@ -214,19 +214,14 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         {/* Logo */}
         <div className="px-4 py-4 border-b border-white/10 flex items-center justify-between">
           <Link href="/admin/dashboard" className="flex items-center gap-2.5" onClick={closeSidebar}>
-            <Link
-              href="/"
-              className="w-fit flex-shrink-0"
-            >
-              <Image
-                src="/sttb-logo-only.png"
-                alt="STTB Logo"
-                width={120}
-                height={0}
-                sizes="h-auto"
-                priority
-              />
-            </Link>
+            <Image
+              src="/sttb-logo-only.png"
+              alt="STTB Logo"
+              width={120}
+              height={0}
+              sizes="h-auto"
+              priority
+            />
             <div>
               <div className="font-bold text-sm leading-tight">STTB Admin</div>
               <div className="text-blue-300 text-xs opacity-80">Portal CMS</div>

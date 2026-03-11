@@ -9,7 +9,7 @@ export interface MediaListItem {
   id: string;              // Guid → string
   title: string;
   url: string;
-  type: string;            // "image" | "video"
+  type: "video" | "article";
   thumbnailUrl?: string | null;
   category?: string | null;
   tag?: string | null;
@@ -33,9 +33,9 @@ export interface UploadResponse {
 export interface CreateMediaRequest {
   title: string;
   url: string;
-  type: string;
+  type: "image" | "video" | "article";
   thumbnailUrl?: string | null;
-  category?: string | null;
+  categoryId?: string | null;
   tag?: string | null;
 }
 
