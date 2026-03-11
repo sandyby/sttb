@@ -102,7 +102,10 @@ export function KegiatanClient() {
   const { data: eventData, isLoading: eventsLoading } = useEventList({ pageSize: 100 });
   const { data: categories = [] } = useEventCategories();
 
-  const events = eventData?.items ?? [];
+  const nowMs = now.getTime();
+  const events = [...(eventData?.items ?? [])].sort(
+    (a, b) => Math.abs(new Date(a.startDate).getTime() - nowMs) - Math.abs(new Date(b.startDate).getTime() - nowMs),
+  );
 
   const filtered =
     activeCategory === "Semua"
