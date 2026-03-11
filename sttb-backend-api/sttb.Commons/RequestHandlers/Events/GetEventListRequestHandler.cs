@@ -38,6 +38,8 @@ public class GetEventListRequestHandler : IRequestHandler<GetEventListRequest, G
                 EndDate = e.EndDate,
                 Location = e.Location,
                 ImageUrl = e.ImageUrl,
+                Category = e.Category,
+                RegistrationUrl = e.RegistrationUrl,
                 IsPublished = e.IsPublished,
                 CreatedAt = e.CreatedAt
             })

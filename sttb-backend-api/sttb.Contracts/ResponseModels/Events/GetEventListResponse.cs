@@ -17,6 +17,8 @@ public class EventListItem
     public DateTime? EndDate { get; set; }
     public string? Location { get; set; }
     public string? ImageUrl { get; set; }
+    public string? Category { get; set; }
+    public string? RegistrationUrl { get; set; }
     public bool IsPublished { get; set; }
     public DateTime CreatedAt { get; set; }
 }

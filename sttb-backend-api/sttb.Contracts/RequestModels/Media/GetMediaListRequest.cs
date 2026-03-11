@@ -7,5 +7,6 @@ public class GetMediaListRequest : IRequest<GetMediaListResponse>
 {
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 20;
-    public string? Type { get; set; } // "image" or "video"
+    public string? Type { get; set; } // "video" | "article" | "image"
+    public string? Category { get; set; }
 }

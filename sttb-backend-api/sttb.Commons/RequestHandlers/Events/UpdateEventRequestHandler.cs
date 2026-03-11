@@ -39,6 +39,8 @@ public class UpdateEventRequestHandler : IRequestHandler<UpdateEventRequest>
         eventEntity.EndDate = request.EndDate;
         eventEntity.Location = request.Location;
         eventEntity.ImageUrl = request.ImageUrl;
+        eventEntity.Category = request.Category;
+        eventEntity.RegistrationUrl = request.RegistrationUrl;
         eventEntity.IsPublished = request.IsPublished;
         eventEntity.UpdatedBy = userId;
         eventEntity.UpdatedAt = DateTime.UtcNow;

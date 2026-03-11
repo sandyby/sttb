@@ -15,6 +15,7 @@ using sttb.Infrastructure.FileStorage;
 using sttb.Infrastructure.Security;
 using sttb.WebAPI.Extensions;
 using sttb.WebAPI.Middleware;
+using sttb.WebAPI.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -133,6 +134,23 @@ using (var scope = app.Services.CreateScope())
                 logger.LogError("Failed to seed admin user. Errors: {Errors}", errors);
             }
         }
+    }
+}
+
+// ─── Seed Content Data ───────────────────────────────────────────────────────
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+    var adminEmail = config["AdminSeed:Email"];
+    if (!string.IsNullOrEmpty(adminEmail) && adminEmail != "LOADED_FROM_USER_SECRETS")
+    {
+        var admin = await userManager.FindByEmailAsync(adminEmail);
+        if (admin is not null)
+            await DataSeeder.SeedAsync(db, admin.Id);
     }
 }
 
