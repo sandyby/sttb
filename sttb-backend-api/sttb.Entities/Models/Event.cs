@@ -23,8 +23,8 @@ public class Event : IHaveCreateAndUpdateAudit
     [StringLength(1000)]
     public string? ImageUrl { get; set; }
 
-    [StringLength(100)]
-    public string? Category { get; set; }
+    public Guid? CategoryId { get; set; }
+    public EventCategory? Category { get; set; }
 
     [StringLength(1000)]
     public string? RegistrationUrl { get; set; }

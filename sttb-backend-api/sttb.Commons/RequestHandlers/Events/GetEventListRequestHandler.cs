@@ -24,7 +24,7 @@ public class GetEventListRequestHandler : IRequestHandler<GetEventListRequest, G
             query = query.Where(e => e.Title.Contains(request.Search));
 
         if (!string.IsNullOrWhiteSpace(request.Category))
-            query = query.Where(e => e.Category == request.Category);
+            query = query.Where(e => e.Category != null && e.Category.Name == request.Category);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -41,7 +41,7 @@ public class GetEventListRequestHandler : IRequestHandler<GetEventListRequest, G
                 EndDate = e.EndDate,
                 Location = e.Location,
                 ImageUrl = e.ImageUrl,
-                Category = e.Category,
+                Category = e.Category != null ? e.Category.Name : null,
                 RegistrationUrl = e.RegistrationUrl,
                 IsPublished = e.IsPublished,
                 CreatedAt = e.CreatedAt

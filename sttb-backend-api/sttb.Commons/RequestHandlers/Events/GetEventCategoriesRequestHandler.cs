@@ -16,12 +16,10 @@ public class GetEventCategoriesRequestHandler : IRequestHandler<GetEventCategori
 
     public async Task<List<string>> Handle(GetEventCategoriesRequest request, CancellationToken cancellationToken)
     {
-        return await _dbContext.Events
+        return await _dbContext.EventCategories
             .AsNoTracking()
-            .Where(e => e.IsPublished && e.Category != null)
-            .Select(e => e.Category!)
-            .Distinct()
-            .OrderBy(c => c)
+            .OrderBy(c => c.Name)
+            .Select(c => c.Name)
             .ToListAsync(cancellationToken);
     }
 }
