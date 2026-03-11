@@ -13,6 +13,9 @@ import Image from "next/image";
 import { newsFormSchema, type NewsFormValues } from "@/libs/schemas/news-schema";
 import type { CategoryResponse } from "@/types/shared";
 import { getImageUrl } from "@/lib/api";
+import { CreateCategoryDialog } from "@/components/shared/CreateCategoryDialog";
+import { useCreateNewsCategory } from "@/hooks/useNews";
+import { Plus } from "lucide-react";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
@@ -138,6 +141,7 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
   const router = useRouter();
   const isEdit = !!initialData?.id;
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const isFirstRender = useRef(true);
 
   const {
@@ -313,11 +317,20 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
             <div className="space-y-3">
               <div>
                 <label className="block text-xs text-gray-400 mb-1.5">Kategori <span className="text-[#E62129]">*</span></label>
-                <select {...register("categoryId")}
-                  className={`w-full px-3 py-2.5 rounded-xl border bg-gray-50 dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-[#0A2C74] ${errors.categoryId ? "border-[#E62129]" : "border-gray-200 dark:border-gray-700"}`}>
-                  <option value="">— Pilih Kategori —</option>
-                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                <div className="flex gap-2">
+                  <select {...register("categoryId")}
+                    className={`flex-1 px-3 py-2.5 rounded-xl border bg-gray-50 dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-[#0A2C74] ${errors.categoryId ? "border-[#E62129]" : "border-gray-200 dark:border-gray-700"}`}>
+                    <option value="">— Pilih Kategori —</option>
+                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setIsCategoryDialogOpen(true)}
+                    className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <Plus className="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
                 {errors.categoryId && <p className="flex items-center gap-1 text-[#E62129] text-xs mt-1"><AlertCircle className="w-3 h-3" />{errors.categoryId.message}</p>}
               </div>
               <div>
@@ -335,6 +348,17 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
               </div>
             </div>
           </div>
+
+          <CreateCategoryDialog
+            isOpen={isCategoryDialogOpen}
+            onClose={() => setIsCategoryDialogOpen(false)}
+            onSuccess={(category) => {
+              setValue("categoryId", category.id);
+            }}
+            title="Tambah Kategori Berita"
+            mutationHook={useCreateNewsCategory}
+          />
+
 
           {/* Cover image */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
