@@ -64,6 +64,7 @@ export async function getEventList(params: {
 } = {}): Promise<GetEventListResponse> {
   const { data } = await apiClient.get<GetEventListResponse>("/api/events/list", {
     params: {
+      isPublished: true,
       ...(params.page && { page: params.page }),
       ...(params.pageSize && { pageSize: params.pageSize }),
       ...(params.category && { category: params.category }),
