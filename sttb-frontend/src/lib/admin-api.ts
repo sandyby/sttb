@@ -1,6 +1,7 @@
 import apiClient from "./axios";
 import type { GetNewsListResponse } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
+import type { GetMediaListResponse, GetMediaListRequest } from "@/types/media";
 
 function authHeader(token: string) {
   return { Authorization: `Bearer ${token}` };
@@ -103,4 +104,17 @@ export async function adminUpdateEvent(token: string, id: string, payload: Event
 
 export async function adminDeleteEvent(token: string, id: string): Promise<void> {
   await apiClient.delete(`/api/events/delete/${id}`, { headers: authHeader(token) });
+}
+
+// ─── Media ────────────────────────────────────────────────────────────────────
+
+export async function adminGetMediaList(
+  token: string,
+  params: GetMediaListRequest = {},
+): Promise<GetMediaListResponse> {
+  const { data } = await apiClient.get<GetMediaListResponse>("/api/media/list", {
+    headers: authHeader(token),
+    params,
+  });
+  return data;
 }
