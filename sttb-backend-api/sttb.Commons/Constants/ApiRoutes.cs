@@ -13,6 +13,8 @@ public static class ApiRoutes
     {
         public const string List = "list";
         public const string Categories = "categories";
+        public const string CategoriesCreate = "categories/create";
+        public const string CategoriesDelete = "categories/delete/{id}";
         public const string Detail = "{slug}";
         public const string Create = "create";
         public const string Update = "update/{id}";
@@ -23,6 +25,8 @@ public static class ApiRoutes
     {
         public const string List = "list";
         public const string Categories = "categories";
+        public const string CategoriesCreate = "categories/create";
+        public const string CategoriesDelete = "categories/delete/{id}";
         public const string Create = "create";
         public const string Update = "update/{id}";
         public const string Delete = "delete/{id}";
@@ -32,6 +36,8 @@ public static class ApiRoutes
     {
         public const string List = "list";
         public const string Categories = "categories";
+        public const string CategoriesCreate = "categories/create";
+        public const string CategoriesDelete = "categories/delete/{id}";
         public const string Create = "create";
         public const string Delete = "delete/{id}";
     }
