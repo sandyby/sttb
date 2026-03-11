@@ -366,6 +366,15 @@ export default function SejarahPage() {
                     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="text-center mb-12">
                         <p className="text-[#E62129] text-xs font-semibold uppercase tracking-widest mb-2">Arti Logo</p>
                         <h2 className="text-gray-900 dark:text-white font-bold" style={{ fontSize: "clamp(1.4rem, 2.5vw, 1.8rem)" }}>Makna di Balik Logo STTB</h2>
+                        <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="my-6 flex justify-center">
+                            <Image 
+                                src="/logo/Logo-STT-Bdg.jpg" 
+                                alt="Logo STTB" 
+                                width={250} 
+                                height={250} 
+                                className="rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 p-6"
+                            />
+                        </motion.div>
                         <p className="text-gray-400 text-sm max-w-xl mx-auto mt-2 leading-relaxed">Logo STTB menggambarkan pola pendidikan teologi yang memperlengkapi para mahasiswa menjadi hamba Allah yang baik, setia, dan penuh hikmat.</p>
                     </motion.div>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -375,7 +384,7 @@ export default function SejarahPage() {
                                     transition={{ delay: i * 0.1 + 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                                     whileHover={{ y: -6 }}
                                     className="group p-6 rounded-2xl border border-gray-100 dark:border-gray-800 text-center hover:shadow-xl transition-all cursor-default">
-                                    <motion.div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 p-2"
+                                    <motion.div className="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-4 p-3"
                                         whileHover={{ rotate: 10 }} transition={{ type: "spring", stiffness: 300 }}>
                                         <Image
                                             src={item.img}
