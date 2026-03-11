@@ -6,7 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft, Bold, Italic, Underline, List, ListOrdered, Link2, Eye, EyeOff, Upload, X, AlertCircle,
-  CheckCircle, Heading1, Heading2, Quote, Save,
+  CheckCircle, Heading1, Heading2, Quote, Save, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -23,12 +23,13 @@ interface NewsFormProps {
   initialData?: Partial<NewsFormValues & { id?: string }>;
   onSave: (data: NewsFormValues, status: "draft" | "published") => Promise<void>;
   backHref?: string;
+  isSaving?: boolean;
 }
 
 const TAG_SUGGESTIONS = ["STTB", "Teologi", "Reformed", "Akademik", "Pelayanan", "Misi", "Mahasiswa", "Alumni"];
 
 export function slugify(text: string) {
-  return text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").slice(0, 80);
+  return text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
 }
 
 /* ─── Rich Text Editor ───────────────────────────────────── */
@@ -72,7 +73,7 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (v: stri
       .replace(/\n/g, "<br/>");
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden focus-within:border-[#0A2C74] transition-colors">
       <div className="flex items-center gap-0.5 p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex-wrap">
         {TOOLBAR.map((btn) => {
           const Icon = btn.icon;
@@ -85,48 +86,20 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (v: stri
         })}
         <div className="flex-1" />
         <button type="button" onClick={() => setPreview(p => !p)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${preview ? "bg-[#0A2C74] text-white" : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100"}`}>
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${preview ? "bg-[#0A2C74] text-white" : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"}`}>
           {preview ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
           {preview ? "Edit" : "Preview"}
         </button>
       </div>
       {preview
-        ? <div className="min-h-[280px] p-5 text-sm text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900 prose prose-sm max-w-none"
+        ? <div className="min-h-[280px] p-5 text-sm text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900 prose prose-sm max-w-none break-words"
           dangerouslySetInnerHTML={{ __html: html(value) || "<p class='text-gray-400 italic'>Belum ada konten...</p>" }} />
         : <textarea ref={ref} value={value} onChange={e => onChange(e.target.value)} rows={12}
           placeholder="Tulis konten berita... Gunakan toolbar di atas untuk format teks."
           className="w-full p-4 bg-white dark:bg-gray-900 text-sm text-gray-800 dark:text-gray-200 focus:outline-none resize-none font-mono leading-relaxed placeholder-gray-400" />
       }
-      <div className="px-4 py-1.5 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400">
-        {value.length} karakter · {value.split(/\s+/).filter(Boolean).length} kata
-      </div>
-    </div>
-  );
-}
-
-/* ─── Tag Input ──────────────────────────────────────────── */
-
-function TagInput({ tags, onChange }: { tags: string[]; onChange: (t: string[]) => void }) {
-  const [input, setInput] = useState("");
-  const add = (t: string) => { const v = t.trim(); if (v && !tags.includes(v) && tags.length < 8) { onChange([...tags, v]); setInput(""); } };
-  const remove = (t: string) => onChange(tags.filter(x => x !== t));
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-1.5 min-h-[28px]">
-        {tags.map(t => (
-          <span key={t} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#0A2C74]/10 text-[#0A2C74] dark:bg-blue-900/30 dark:text-blue-300">
-            #{t}<button type="button" onClick={() => remove(t)} className="hover:text-[#E62129] ml-0.5"><X className="w-2.5 h-2.5" /></button>
-          </span>
-        ))}
-        <input value={input} onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(input); } else if (e.key === "Backspace" && !input && tags.length) remove(tags[tags.length - 1]); }}
-          placeholder="Tambah tag, Enter" className="flex-1 min-w-20 text-sm bg-transparent text-gray-700 dark:text-gray-300 focus:outline-none placeholder-gray-400" />
-      </div>
-      <div className="flex flex-wrap gap-1">
-        {TAG_SUGGESTIONS.filter(t => !tags.includes(t)).map(t => (
-          <button key={t} type="button" onClick={() => add(t)}
-            className="px-2 py-0.5 rounded text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-[#E62129]/10 hover:text-[#E62129] transition-colors">+{t}</button>
-        ))}
+      <div className="px-4 py-1.5 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 flex justify-between">
+        <span>{value.length} karakter · {value.split(/\s+/).filter(Boolean).length} kata</span>
       </div>
     </div>
   );
@@ -202,16 +175,22 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
             <p className="text-gray-500 dark:text-gray-400 text-sm">{isEdit ? `Mengedit: ${titleValue || "—"}` : "Buat dan terbitkan artikel berita STTB"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => handleSave("draft")} disabled={!!saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
-            {saving === "draft" ? <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={form.handleSubmit((d) => onSubmit(d, false))}
+            disabled={isSaving || isUploadingImage}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+          >
+            {isSaving && !isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Simpan Draft
           </button>
-          <button onClick={() => handleSave("published")} disabled={!!saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
-            {saving === "publish" ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-            {isEdit ? "Perbarui" : "Terbitkan"}
+          <button
+            onClick={form.handleSubmit((d) => onSubmit(d, true))}
+            disabled={isSaving || isUploadingImage}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0A2C74] hover:bg-[#072054] text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
+          >
+            {isSaving && isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+            {isEdit ? "Perbarui & Terbitkan" : "Terbitkan"}
           </button>
         </div>
       </div>
@@ -251,7 +230,7 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
           </div>
 
           {/* Content */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
               Konten <span className="text-[#E62129]">*</span>
             </label>
@@ -262,9 +241,9 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
           </div>
 
           {/* Excerpt */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Ringkasan / Excerpt <span className="text-[#E62129]">*</span>
+              Ringkasan / Excerpt <span className="text-gray-400 font-normal text-xs ml-1">(Bila dikosongkan akan diambil dari konten)</span>
             </label>
             <textarea {...register("excerpt")} rows={3} maxLength={280}
               placeholder="Ringkasan singkat yang muncul di daftar berita (maks. 280 karakter)..."
@@ -308,9 +287,9 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
           </div>
 
           {/* Category */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Klasifikasi</h3>
-            <div className="space-y-3">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Klasifikasi</h3>
+            <div className="space-y-4">
               <div>
                 <label className="block text-xs text-gray-400 mb-1.5">Kategori <span className="text-[#E62129]">*</span></label>
                 <select {...register("categoryId")}
