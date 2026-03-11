@@ -63,9 +63,9 @@ const logoMeanings = [
 ];
 
 const founders = [
-    { name: "Rev. DR. Caleb Tong (Alm.)", role: "Pendiri", period: "1992–1999", img: "https://images.unsplash.com/photo-1623880840102-7df0a9f3545b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=300&q=80" },
-    { name: "Rev. DR. Joseph Tong, Ph.D.", role: "Pendiri & Rektor", period: "1999–2017", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=300&q=80" },
-    { name: "Rev. Dorothy I. Marx (Alm.)", role: "Pendiri & Rektor", period: "1999–2005", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=300&q=80" },
+    { name: "Rev. DR. Caleb Tong (Alm.)", role: "Pendiri", period: "1992–1999", img: "/assets/caleb-tong-rev-1.png" },
+    { name: "Rev. DR. Joseph Tong, Ph.D.", role: "Pendiri & Rektor", period: "1999–2017", img: "/assets/joseph-tong-rev-1.png" },
+    { name: "Rev. Dorothy I. Marx (Alm.)", role: "Pendiri & Rektor", period: "1999–2005", img: "/assets/dorothy-marx-rev-1.png" },
 ];
 
 /* ─── HERO ───────────────────────────────────────────────── */
