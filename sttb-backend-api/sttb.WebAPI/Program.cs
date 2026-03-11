@@ -159,7 +159,6 @@ app.UseSecurityHeaders();
 
 app.UseCors("Frontend");
 app.UseStaticFiles();         // Serve wwwroot/uploads/
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
