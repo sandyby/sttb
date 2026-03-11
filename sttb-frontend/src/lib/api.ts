@@ -1,5 +1,6 @@
 import type { GetNewsListResponse, NewsDetail } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
+import type { GetMediaListResponse } from "@/types/media";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001";
 
@@ -74,6 +75,39 @@ export async function getEventList(params: {
 export async function getEventCategories(): Promise<string[]> {
   try {
     const res = await fetch(`${API_URL}/api/events/categories`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+// ─── Media ────────────────────────────────────────────────────────────────────
+
+export async function getMediaList(params: {
+  page?: number;
+  pageSize?: number;
+  type?: string;
+  category?: string;
+  search?: string;
+} = {}): Promise<GetMediaListResponse> {
+  const url = new URL(`${API_URL}/api/media/list`);
+  if (params.page) url.searchParams.set("page", String(params.page));
+  if (params.pageSize) url.searchParams.set("pageSize", String(params.pageSize));
+  if (params.type) url.searchParams.set("type", params.type);
+  if (params.category) url.searchParams.set("category", params.category);
+  if (params.search) url.searchParams.set("search", params.search);
+
+  const res = await fetch(url.toString(), { next: { revalidate: 60 } });
+  if (!res.ok) throw new Error("Failed to fetch media list");
+  return res.json();
+}
+
+export async function getMediaCategories(): Promise<string[]> {
+  try {
+    const res = await fetch(`${API_URL}/api/media/categories`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return [];
