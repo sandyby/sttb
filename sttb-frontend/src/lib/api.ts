@@ -1,3 +1,4 @@
+import apiClient from "./axios";
 import type { GetNewsListResponse, NewsDetail } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
 import type { GetMediaListResponse } from "@/types/media";
@@ -18,39 +19,38 @@ export async function getNewsList(params: {
   category?: string;
   search?: string;
 } = {}): Promise<GetNewsListResponse> {
-  const url = new URL(`${API_URL}/api/news/list`);
-  url.searchParams.set("isPublished", "true");
-  if (params.page) url.searchParams.set("page", String(params.page));
-  if (params.pageSize) url.searchParams.set("pageSize", String(params.pageSize));
-  if (params.category) url.searchParams.set("category", params.category);
-  if (params.search) url.searchParams.set("search", params.search);
-
-  const res = await fetch(url.toString(), { next: { revalidate: 60 } });
-  if (!res.ok) throw new Error("Failed to fetch news list");
-  return res.json();
+  const { data } = await apiClient.get<GetNewsListResponse>("/api/news/list", {
+    params: {
+      isPublished: true,
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
+      ...(params.category && { category: params.category }),
+      ...(params.search && { search: params.search }),
+    },
+  });
+  return data;
 }
 
 export async function getNewsCategories(): Promise<string[]> {
   try {
-    const res = await fetch(`${API_URL}/api/news/categories`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return [];
-    return res.json();
+    const { data } = await apiClient.get<string[]>("/api/news/categories");
+    return data;
   } catch {
     return [];
   }
 }
 
-// ─── News (detail) ────────────────────────────────────────────────────────────
-
 export async function getNewsDetail(slug: string): Promise<NewsDetail | null> {
-  const res = await fetch(`${API_URL}/api/news/${slug}`, {
-    next: { revalidate: 60 },
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error("Failed to fetch news detail");
-  return res.json();
+  try {
+    const { data } = await apiClient.get<NewsDetail>(`/api/news/${slug}`);
+    return data;
+  } catch (err: unknown) {
+    if (err && typeof err === "object" && "response" in err) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr.response?.status === 404) return null;
+    }
+    throw err;
+  }
 }
 
 // ─── Events ───────────────────────────────────────────────────────────────────
@@ -61,24 +61,21 @@ export async function getEventList(params: {
   category?: string;
   search?: string;
 } = {}): Promise<GetEventListResponse> {
-  const url = new URL(`${API_URL}/api/events/list`);
-  if (params.page) url.searchParams.set("page", String(params.page));
-  if (params.pageSize) url.searchParams.set("pageSize", String(params.pageSize));
-  if (params.category) url.searchParams.set("category", params.category);
-  if (params.search) url.searchParams.set("search", params.search);
-
-  const res = await fetch(url.toString(), { next: { revalidate: 60 } });
-  if (!res.ok) throw new Error("Failed to fetch event list");
-  return res.json();
+  const { data } = await apiClient.get<GetEventListResponse>("/api/events/list", {
+    params: {
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
+      ...(params.category && { category: params.category }),
+      ...(params.search && { search: params.search }),
+    },
+  });
+  return data;
 }
 
 export async function getEventCategories(): Promise<string[]> {
   try {
-    const res = await fetch(`${API_URL}/api/events/categories`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return [];
-    return res.json();
+    const { data } = await apiClient.get<string[]>("/api/events/categories");
+    return data;
   } catch {
     return [];
   }
@@ -93,25 +90,22 @@ export async function getMediaList(params: {
   category?: string;
   search?: string;
 } = {}): Promise<GetMediaListResponse> {
-  const url = new URL(`${API_URL}/api/media/list`);
-  if (params.page) url.searchParams.set("page", String(params.page));
-  if (params.pageSize) url.searchParams.set("pageSize", String(params.pageSize));
-  if (params.type) url.searchParams.set("type", params.type);
-  if (params.category) url.searchParams.set("category", params.category);
-  if (params.search) url.searchParams.set("search", params.search);
-
-  const res = await fetch(url.toString(), { next: { revalidate: 60 } });
-  if (!res.ok) throw new Error("Failed to fetch media list");
-  return res.json();
+  const { data } = await apiClient.get<GetMediaListResponse>("/api/media/list", {
+    params: {
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
+      ...(params.type && { type: params.type }),
+      ...(params.category && { category: params.category }),
+      ...(params.search && { search: params.search }),
+    },
+  });
+  return data;
 }
 
 export async function getMediaCategories(): Promise<string[]> {
   try {
-    const res = await fetch(`${API_URL}/api/media/categories`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return [];
-    return res.json();
+    const { data } = await apiClient.get<string[]>("/api/media/categories");
+    return data;
   } catch {
     return [];
   }
