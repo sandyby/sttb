@@ -44,3 +44,18 @@ export async function adminCreateNews(token: string, payload: CreateNewsPayload)
 export async function adminDeleteNews(token: string, id: string): Promise<void> {
   await apiClient.delete(`/api/news/delete/${id}`, { headers: authHeader(token) });
 }
+
+export interface UpdateNewsPayload {
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string | null;
+  thumbnailUrl?: string | null;
+  categoryId?: string | null;
+  isFeatured: boolean;
+  isPublished: boolean;
+}
+
+export async function adminUpdateNews(token: string, id: string, payload: UpdateNewsPayload): Promise<void> {
+  await apiClient.put(`/api/news/update/${id}`, payload, { headers: authHeader(token) });
+}
