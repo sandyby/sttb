@@ -3,14 +3,12 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useRef, useEffect } from "react";
 import { Search, ChevronDown } from "lucide-react";
+import { useNewsCategories } from "@/hooks/useNews";
 
-interface NewsFiltersProps {
-  categories: string[];
-}
-
-export function NewsFilters({ categories }: NewsFiltersProps) {
+export function NewsFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: categories = [] } = useNewsCategories();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
