@@ -4,7 +4,7 @@ import type { GetEventListResponse } from "@/types/events";
 import type { GetMediaListResponse } from "@/types/media";
 import type { CategoryResponse } from "@/types/shared";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001";
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5001";
 
 export function getImageUrl(path: string | null | undefined): string | null {
   if (!path) return null;

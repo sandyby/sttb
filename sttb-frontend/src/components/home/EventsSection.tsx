@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { useEventList } from "@/hooks/useEvents";
 import { getImageUrl } from "@/lib/api";
+import { EventListItem } from "@/types/events";
 
 export function EventsSection() {
   const { data, isLoading } = useEventList({ pageSize: 100 });
