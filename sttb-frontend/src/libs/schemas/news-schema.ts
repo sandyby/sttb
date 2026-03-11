@@ -29,3 +29,23 @@ export type CreateNewsFormValues = z.infer<typeof createNewsSchema>;
 
 export const updateNewsSchema = createNewsSchema;
 export type UpdateNewsFormValues = CreateNewsFormValues;
+
+// ─── Internal form schema (used by NewsForm component) ────────────────────────
+
+export const newsFormSchema = z.object({
+  title: z.string().min(1, "Judul wajib diisi"),
+  slug: z
+    .string()
+    .min(1, "Slug wajib diisi")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug: huruf kecil, angka, dan tanda hubung saja"),
+  excerpt: z.string().min(1, "Ringkasan wajib diisi").max(280, "Maks. 280 karakter"),
+  content: z.string().min(1, "Konten wajib diisi"),
+  categoryId: z.string().min(1, "Kategori wajib dipilih"),
+  author: z.string(),
+  status: z.enum(["draft", "published"]),
+  featured: z.boolean(),
+  coverImageUrl: z.string(),
+  tags: z.array(z.string()),
+});
+
+export type NewsFormValues = z.infer<typeof newsFormSchema>;

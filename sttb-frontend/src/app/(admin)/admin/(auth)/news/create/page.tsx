@@ -3,12 +3,25 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { NewsForm, type NewsFormData } from "@/components/admin/NewsForm";
+import { useCreateNews } from "@/hooks/useAdminNews";
+import { useNewsCategories } from "@/hooks/useNews";
 
 export default function AdminNewsCreatePage() {
     const router = useRouter();
+    const createNews = useCreateNews();
+    const { data: categories = [] } = useNewsCategories();
 
     const handleSave = async (data: NewsFormData, status: "draft" | "published") => {
-        await new Promise(r => setTimeout(r, 900));
+        await createNews.mutateAsync({
+            title: data.title,
+            slug: data.slug,
+            content: data.content,
+            excerpt: data.excerpt || null,
+            thumbnailUrl: data.coverImageUrl || null,
+            categoryId: data.categoryId || null,
+            isFeatured: data.featured,
+            isPublished: status === "published",
+        });
 
         toast.success(status === "draft" ? "Berita disimpan sebagai draft" : "Berita berhasil diterbitkan!");
         router.push("/admin/news");
@@ -16,9 +29,7 @@ export default function AdminNewsCreatePage() {
 
     return (
         <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Buat Berita Baru</h1>
-            <NewsForm onSave={handleSave} backHref="/admin/news" />
+            <NewsForm categories={categories} onSave={handleSave} backHref="/admin/news" />
         </div>
-        // <NewsForm onSave={handleSave} backHref="/admin/news" />
     );
 }

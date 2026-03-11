@@ -10,4 +10,5 @@ public class GetNewsListRequest : IRequest<GetNewsListResponse>
     public string? Category { get; set; }
     public string? Search { get; set; }
     public bool? IsPublished { get; set; }
+    public bool? IsFeatured { get; set; }
 }

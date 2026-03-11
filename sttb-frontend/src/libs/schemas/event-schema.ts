@@ -32,3 +32,30 @@ export type CreateEventFormValues = z.infer<typeof createEventSchema>;
 // Update form uses the same fields — id goes in the URL
 export const updateEventSchema = createEventSchema;
 export type UpdateEventFormValues = CreateEventFormValues;
+
+// ─── Internal form schema (used by EventForm component) ───────────────────────
+
+export const eventFormSchema = z.object({
+  title: z.string().min(1, "Judul wajib diisi"),
+  category: z.string().min(1, "Kategori wajib dipilih"),
+  date: z.string().min(1, "Tanggal mulai wajib diisi"),
+  endDate: z.string(),
+  time: z.string(),
+  endTime: z.string(),
+  location: z.string().min(1, "Lokasi wajib diisi"),
+  locationDetail: z.string(),
+  description: z.string().min(1, "Deskripsi wajib diisi"),
+  coverImageUrl: z.string(),
+  registrationUrl: z.string(),
+  registrationOpen: z.boolean(),
+  registrationDeadline: z.string(),
+  maxParticipants: z.string(),
+  status: z.enum(["draft", "published"]),
+  isOnline: z.boolean(),
+  streamingUrl: z.string(),
+  organizer: z.string(),
+  contactEmail: z.string(),
+  tags: z.array(z.string()),
+});
+
+export type EventFormValues = z.infer<typeof eventFormSchema>;

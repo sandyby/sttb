@@ -17,8 +17,10 @@ public class GetEventListRequestHandler : IRequestHandler<GetEventListRequest, G
 
     public async Task<GetEventListResponse> Handle(GetEventListRequest request, CancellationToken cancellationToken)
     {
-        var query = _dbContext.Events.AsNoTracking()
-            .Where(e => e.IsPublished);
+        var query = _dbContext.Events.AsNoTracking();
+
+        if (request.IsPublished.HasValue)
+            query = query.Where(e => e.IsPublished == request.IsPublished.Value);
 
         if (!string.IsNullOrWhiteSpace(request.Search))
             query = query.Where(e => e.Title.Contains(request.Search));
@@ -29,7 +31,7 @@ public class GetEventListRequestHandler : IRequestHandler<GetEventListRequest, G
         var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
-            .OrderByDescending(e => e.StartDate)
+            .OrderByDescending(e => e.CreatedAt)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(e => new EventListItem

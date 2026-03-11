@@ -9,4 +9,5 @@ public class GetEventListRequest : IRequest<GetEventListResponse>
     public int PageSize { get; set; } = 10;
     public string? Search { get; set; }
     public string? Category { get; set; }
+    public bool? IsPublished { get; set; }
 }
