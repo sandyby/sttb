@@ -16,12 +16,10 @@ public class GetNewsCategoriesRequestHandler : IRequestHandler<GetNewsCategories
 
     public async Task<List<string>> Handle(GetNewsCategoriesRequest request, CancellationToken cancellationToken)
     {
-        return await _dbContext.News
+        return await _dbContext.NewsCategories
             .AsNoTracking()
-            .Where(n => n.IsPublished && n.Category != null)
-            .Select(n => n.Category!)
-            .Distinct()
-            .OrderBy(c => c)
+            .OrderBy(c => c.Name)
+            .Select(c => c.Name)
             .ToListAsync(cancellationToken);
     }
 }

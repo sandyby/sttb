@@ -22,8 +22,8 @@ public class News : IHaveCreateAndUpdateAudit
     [StringLength(1000)]
     public string? ThumbnailUrl { get; set; }
 
-    [StringLength(100)]
-    public string? Category { get; set; }
+    public Guid? CategoryId { get; set; }
+    public NewsCategory? Category { get; set; }
 
     public bool IsFeatured { get; set; } = false;
 
