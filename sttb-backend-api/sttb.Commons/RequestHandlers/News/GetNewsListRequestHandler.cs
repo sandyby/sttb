@@ -22,6 +22,9 @@ public class GetNewsListRequestHandler : IRequestHandler<GetNewsListRequest, Get
         if (request.IsPublished.HasValue)
             query = query.Where(n => n.IsPublished == request.IsPublished.Value);
 
+        if (request.IsFeatured.HasValue)
+            query = query.Where(n => n.IsFeatured == request.IsFeatured.Value);
+
         if (!string.IsNullOrWhiteSpace(request.Category))
             query = query.Where(n => n.Category != null && n.Category.Name == request.Category);
 

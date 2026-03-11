@@ -6,6 +6,7 @@ import { ArrowRight, Calendar, Tag, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useGetNews, NewsListItem } from "@/hooks/useNews";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getImageUrl } from "@/lib/api";
 
 function NewsCardSkeleton() {
   return (
@@ -33,7 +34,7 @@ function NewsCard({ article, index }: { article: NewsListItem; index: number }) 
       {/* Image */}
       <div className="relative overflow-hidden h-48">
         <Image
-          src={article.thumbnailUrl ?? "https://placehold.co/192/png"}
+          src={getImageUrl(article.thumbnailUrl) ?? "https://placehold.co/192/png"}
           alt={article.title}
           fill
           priority
@@ -83,7 +84,12 @@ function NewsCard({ article, index }: { article: NewsListItem; index: number }) 
 }
 
 export function NewsSection() {
-  const { data, isLoading, error } = useGetNews(1, 4);
+  const { data, isLoading, error } = useGetNews({
+    page: 1,
+    pageSize: 4,
+    isFeatured: true,
+    isPublished: true,
+  });
 
   if (error) {
     return (
@@ -98,8 +104,8 @@ export function NewsSection() {
   }
 
   const allNews = data?.items || [];
-  const featuredNews = allNews.find((n) => n.isFeatured) || allNews[0];
-  const regularNews = allNews.slice(1, 4);
+  const featuredNews = allNews[0];
+  const regularNews = allNews.slice(1);
 
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-950">
@@ -148,7 +154,7 @@ export function NewsSection() {
                 <Link href={`/berita/${featuredNews.slug}`} className="block">
                   <div className="relative overflow-hidden rounded-xl h-72 lg:h-80 mb-4">
                     <Image
-                      src={featuredNews.thumbnailUrl || "/images/placeholder.jpg"}
+                      src={getImageUrl(featuredNews.thumbnailUrl) || "/images/placeholder.jpg"}
                       alt={featuredNews.title}
                       fill
                       priority
@@ -194,7 +200,7 @@ export function NewsSection() {
                   >
                     <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
                       <Image
-                        src={article.thumbnailUrl || "/images/placeholder.jpg"}
+                        src={getImageUrl(article.thumbnailUrl) || "/images/placeholder.jpg"}
                         alt={article.title}
                         fill
                         priority
