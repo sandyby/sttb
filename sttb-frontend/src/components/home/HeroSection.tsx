@@ -19,7 +19,7 @@ const slides = [
     secondaryCta: "Jadwal Admisi",
     secondaryHref: "/jadwal-admisi",
     imageUrl:
-      "https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80",
+      "/cathedral-of-our-lady-of-peace_highres_web.jpg",
     accent: "#E62129",
   },
   {
