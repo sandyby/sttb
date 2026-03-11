@@ -26,10 +26,6 @@ public class CreateMediaRequestValidator : AbstractValidator<CreateMediaRequest>
             .MaximumLength(1000)
             .When(x => x.ThumbnailUrl is not null);
 
-        RuleFor(x => x.Category)
-            .MaximumLength(100)
-            .When(x => x.Category is not null);
-
         RuleFor(x => x.Tag)
             .MaximumLength(100)
             .When(x => x.Tag is not null);

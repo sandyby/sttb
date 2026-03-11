@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const from = searchParams.get("from") || searchParams.get("callbackUrl") || "/admin";
+    const from = searchParams.get("from") || searchParams.get("callbackUrl") || "/admin/dashboard";
 
     // Redirect if already authenticated
     useEffect(() => {

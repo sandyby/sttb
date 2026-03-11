@@ -8,14 +8,82 @@ public static class DataSeeder
 {
     public static async Task SeedAsync(ApplicationDbContext db, string adminUserId)
     {
-        await SeedNewsAsync(db, adminUserId);
-        await SeedEventsAsync(db, adminUserId);
-        await SeedMediaAsync(db, adminUserId);
+        var newsCategories = await SeedNewsCategoriesAsync(db);
+        var eventCategories = await SeedEventCategoriesAsync(db);
+        var mediaCategories = await SeedMediaCategoriesAsync(db);
+
+        await SeedNewsAsync(db, adminUserId, newsCategories);
+        await SeedEventsAsync(db, adminUserId, eventCategories);
+        await SeedMediaAsync(db, adminUserId, mediaCategories);
+    }
+
+    // ─── Categories ──────────────────────────────────────────────────────────
+
+    private static async Task<Dictionary<string, NewsCategory>> SeedNewsCategoriesAsync(ApplicationDbContext db)
+    {
+        if (!await db.NewsCategories.AnyAsync())
+        {
+            var categories = new List<NewsCategory>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Konferensi", Slug = "konferensi" },
+                new() { Id = Guid.NewGuid(), Name = "Akademik", Slug = "akademik" },
+                new() { Id = Guid.NewGuid(), Name = "Beasiswa", Slug = "beasiswa" },
+                new() { Id = Guid.NewGuid(), Name = "Kerjasama", Slug = "kerjasama" },
+                new() { Id = Guid.NewGuid(), Name = "Seminar", Slug = "seminar" },
+                new() { Id = Guid.NewGuid(), Name = "Fasilitas", Slug = "fasilitas" },
+                new() { Id = Guid.NewGuid(), Name = "Admisi", Slug = "admisi" },
+                new() { Id = Guid.NewGuid(), Name = "Prestasi", Slug = "prestasi" },
+            };
+            db.NewsCategories.AddRange(categories);
+            await db.SaveChangesAsync();
+        }
+        return await db.NewsCategories.ToDictionaryAsync(c => c.Name);
+    }
+
+    private static async Task<Dictionary<string, EventCategory>> SeedEventCategoriesAsync(ApplicationDbContext db)
+    {
+        if (!await db.EventCategories.AnyAsync())
+        {
+            var categories = new List<EventCategory>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Admisi", Slug = "admisi" },
+                new() { Id = Guid.NewGuid(), Name = "Kerohanian", Slug = "kerohanian" },
+                new() { Id = Guid.NewGuid(), Name = "LEAD", Slug = "lead" },
+                new() { Id = Guid.NewGuid(), Name = "Seminar", Slug = "seminar" },
+                new() { Id = Guid.NewGuid(), Name = "Akademik", Slug = "akademik" },
+                new() { Id = Guid.NewGuid(), Name = "Misi", Slug = "misi" },
+                new() { Id = Guid.NewGuid(), Name = "Pelatihan", Slug = "pelatihan" },
+            };
+            db.EventCategories.AddRange(categories);
+            await db.SaveChangesAsync();
+        }
+        return await db.EventCategories.ToDictionaryAsync(c => c.Name);
+    }
+
+    private static async Task<Dictionary<string, MediaCategory>> SeedMediaCategoriesAsync(ApplicationDbContext db)
+    {
+        if (!await db.MediaCategories.AnyAsync())
+        {
+            var categories = new List<MediaCategory>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Misi & Penginjilan", Slug = "misi-penginjilan" },
+                new() { Id = Guid.NewGuid(), Name = "Pelayanan Anak", Slug = "pelayanan-anak" },
+                new() { Id = Guid.NewGuid(), Name = "Pemuridan & Pembinaan", Slug = "pemuridan-pembinaan" },
+                new() { Id = Guid.NewGuid(), Name = "Pendidikan Teologi", Slug = "pendidikan-teologi" },
+                new() { Id = Guid.NewGuid(), Name = "Belajar & Mengajar", Slug = "belajar-mengajar" },
+                new() { Id = Guid.NewGuid(), Name = "Pembelajaran Digital", Slug = "pembelajaran-digital" },
+                new() { Id = Guid.NewGuid(), Name = "Pelayanan Keluarga", Slug = "pelayanan-keluarga" },
+                new() { Id = Guid.NewGuid(), Name = "Pelayanan Dunia Kerja", Slug = "pelayanan-dunia-kerja" },
+            };
+            db.MediaCategories.AddRange(categories);
+            await db.SaveChangesAsync();
+        }
+        return await db.MediaCategories.ToDictionaryAsync(c => c.Name);
     }
 
     // ─── News ────────────────────────────────────────────────────────────────
 
-    private static async Task SeedNewsAsync(ApplicationDbContext db, string adminUserId)
+    private static async Task SeedNewsAsync(ApplicationDbContext db, string adminUserId, Dictionary<string, NewsCategory> categories)
     {
         if (await db.News.AnyAsync()) return;
 
@@ -30,7 +98,7 @@ public static class DataSeeder
                 Slug = "konferensi-teologi-transformasi-2025",
                 Excerpt = "Sekolah Tinggi Teologi Bandung menyelenggarakan konferensi teologi internasional bertema 'Transformasi Gereja di Era Digital' yang dihadiri lebih dari 500 peserta.",
                 Content = "<p>Sekolah Tinggi Teologi Bandung (STTB) sukses menyelenggarakan Konferensi Teologi Transformasi 2025 pada tanggal 15-17 Maret 2025 di Gedung Serbaguna STTB.</p><p>Konferensi yang bertema \"Transformasi Gereja di Era Digital\" ini dihadiri oleh lebih dari 500 peserta dari berbagai denominasi gereja di seluruh Indonesia, termasuk para pendeta, penatua, mahasiswa teologi, dan aktivis Kristen.</p><p>Pembicara utama dalam konferensi ini antara lain Dr. Samuel Gunawan, Pdt. Prof. Benyamin Intan, Ph.D., dan Dr. Lena Purbawaseso.</p>",
-                Category = "Konferensi",
+                CategoryId = categories["Konferensi"].Id,
                 ThumbnailUrl = "/uploads/news/news-1.jpg",
                 IsFeatured = true,
                 IsPublished = true,
@@ -45,7 +113,7 @@ public static class DataSeeder
                 Slug = "wisuda-sttb-angkatan-45",
                 Excerpt = "STTB dengan bangga meluluskan 120 mahasiswa terbaik dalam upacara wisuda yang khidmat dan penuh sukacita.",
                 Content = "<p>Sekolah Tinggi Teologi Bandung kembali meluluskan generasi pelayan Tuhan yang baru. Pada tanggal 20 Februari 2025, STTB menyelenggarakan Upacara Wisuda Angkatan ke-45 di Kampus STTB Bandung.</p><p>Sebanyak 120 mahasiswa diwisuda dalam upacara yang dihadiri oleh keluarga, dosen, dan tamu undangan. Para wisudawan terdiri dari 65 lulusan program Sarjana Teologi, 28 lulusan Sarjana Pendidikan Kristen, dan 27 lulusan dari berbagai program Magister.</p>",
-                Category = "Akademik",
+                CategoryId = categories["Akademik"].Id,
                 ThumbnailUrl = "/uploads/news/news-2.jpg",
                 IsFeatured = true,
                 IsPublished = true,
@@ -60,7 +128,7 @@ public static class DataSeeder
                 Slug = "beasiswa-sttb-2025",
                 Excerpt = "STTB membuka pendaftaran beasiswa penuh dan parsial untuk tahun akademik 2025/2026 bagi calon mahasiswa berprestasi.",
                 Content = "<p>Sekolah Tinggi Teologi Bandung kembali membuka program beasiswa untuk tahun akademik 2025/2026. Tersedia beasiswa penuh (full scholarship) dan beasiswa parsial bagi calon mahasiswa yang memenuhi kriteria.</p><p>Pendaftaran beasiswa dibuka mulai 1 Januari hingga 31 Maret 2025. Calon penerima beasiswa akan melalui seleksi akademik, wawancara, dan penilaian karakter pelayanan.</p>",
-                Category = "Beasiswa",
+                CategoryId = categories["Beasiswa"].Id,
                 ThumbnailUrl = "/uploads/news/news-3.jpg",
                 IsFeatured = false,
                 IsPublished = true,
@@ -75,7 +143,7 @@ public static class DataSeeder
                 Slug = "kerjasama-akademik-internasional",
                 Excerpt = "STTB menandatangani MoU dengan Gordon-Conwell Theological Seminary dan Calvin Theological Seminary untuk program pertukaran mahasiswa.",
                 Content = "<p>Dalam upaya memperluas wawasan dan meningkatkan kualitas pendidikan teologi, STTB telah menandatangani Memorandum of Understanding (MoU) dengan dua institusi teologi terkemuka di Amerika Serikat.</p><p>Kerjasama ini mencakup program pertukaran mahasiswa, penelitian bersama, dan pengembangan kurikulum yang relevan dengan konteks Asia Tenggara.</p>",
-                Category = "Kerjasama",
+                CategoryId = categories["Kerjasama"].Id,
                 ThumbnailUrl = "/uploads/news/news-4.jpg",
                 IsFeatured = false,
                 IsPublished = true,
@@ -90,7 +158,7 @@ public static class DataSeeder
                 Slug = "seminar-pastoral-kesehatan-mental",
                 Excerpt = "STTB mengadakan seminar pastoral intensif tentang pendekatan Alkitabiah terhadap kesehatan mental dan konseling pastoral.",
                 Content = "<p>Tantangan kesehatan mental semakin nyata di era post-pandemi. STTB menjawab kebutuhan ini dengan menyelenggarakan Seminar Pastoral intensif berjudul 'Pemimpin Gereja dan Isu Kesehatan Mental'.</p><p>Seminar ini menghadirkan pakar konseling pastoral dan psikologi Kristen untuk membekali para pemimpin gereja dalam menghadapi isu-isu kesehatan mental di jemaat mereka.</p>",
-                Category = "Seminar",
+                CategoryId = categories["Seminar"].Id,
                 ThumbnailUrl = "/uploads/news/news-5.jpg",
                 IsFeatured = false,
                 IsPublished = true,
@@ -105,7 +173,7 @@ public static class DataSeeder
                 Slug = "perpustakaan-digital-internasional",
                 Excerpt = "Perpustakaan STTB kini menyediakan akses ke lebih dari 50.000 judul buku digital dan jurnal akademik teologi internasional.",
                 Content = "<p>Perpustakaan Sekolah Tinggi Teologi Bandung terus berkembang untuk mendukung kebutuhan akademik mahasiswa dan dosen. Mulai tahun 2025, perpustakaan STTB menyediakan akses penuh ke ATLA Religion Database, repositori jurnal teologi terbesar di dunia.</p>",
-                Category = "Fasilitas",
+                CategoryId = categories["Fasilitas"].Id,
                 ThumbnailUrl = "/uploads/news/news-6.jpg",
                 IsFeatured = false,
                 IsPublished = true,
@@ -120,7 +188,7 @@ public static class DataSeeder
                 Slug = "penerimaan-mahasiswa-baru-2025-2026",
                 Excerpt = "STTB membuka pendaftaran mahasiswa baru untuk program S1 Teologi, S1 Pendidikan Kristen, dan berbagai program Magister.",
                 Content = "<p>Sekolah Tinggi Teologi Bandung dengan bangga mengumumkan pembukaan penerimaan mahasiswa baru untuk tahun akademik 2025/2026. Tersedia program Sarjana dan Pascasarjana di bidang teologi dan pendidikan Kristen.</p><p>Pendaftaran dapat dilakukan secara online melalui website resmi STTB atau langsung ke kampus di Bandung.</p>",
-                Category = "Admisi",
+                CategoryId = categories["Admisi"].Id,
                 ThumbnailUrl = "/uploads/news/news-7.jpg",
                 IsFeatured = true,
                 IsPublished = true,
@@ -135,7 +203,7 @@ public static class DataSeeder
                 Slug = "dosen-sttb-raih-penghargaan-penelitian",
                 Excerpt = "Dr. Grace Liem dari STTB meraih penghargaan penelitian terbaik dari Asosiasi Sekolah Teologi Indonesia atas karyanya tentang Teologi Hikmat.",
                 Content = "<p>Kebanggaan besar datang bagi keluarga besar STTB. Dr. Grace Liem, dosen Studi Perjanjian Lama di STTB, berhasil meraih penghargaan Penelitian Teologi Terbaik dari Asosiasi Sekolah Teologi Indonesia (ASTI) 2024.</p><p>Penelitian beliau berjudul \"Relevansi Teologi Hikmat Perjanjian Lama bagi Spiritualitas Urban Indonesia\" dinilai memberikan kontribusi signifikan bagi pengembangan teologi kontekstual Indonesia.</p>",
-                Category = "Prestasi",
+                CategoryId = categories["Prestasi"].Id,
                 ThumbnailUrl = "/uploads/news/news-8.jpg",
                 IsFeatured = false,
                 IsPublished = true,
@@ -150,7 +218,7 @@ public static class DataSeeder
                 Slug = "program-studi-online-pelayan-gereja",
                 Excerpt = "Menjawab kebutuhan jemaat di daerah terpencil, STTB meluncurkan program pendidikan teologi jarak jauh yang fleksibel dan terjangkau.",
                 Content = "<p>Sekolah Tinggi Teologi Bandung meluncurkan program pendidikan teologi berbasis online yang dirancang khusus untuk para pelayan gereja di seluruh Indonesia yang tidak dapat hadir secara fisik ke kampus.</p><p>Program ini mencakup modul video pembelajaran, sesi mentoring online dengan dosen, dan ujian komprehensif yang dapat diakses dari mana saja.</p>",
-                Category = "Akademik",
+                CategoryId = categories["Akademik"].Id,
                 ThumbnailUrl = "/uploads/news/news-9.jpg",
                 IsFeatured = false,
                 IsPublished = true,
@@ -165,7 +233,7 @@ public static class DataSeeder
                 Slug = "renovasi-gedung-kuliah-utama",
                 Excerpt = "Gedung kuliah utama STTB telah selesai direnovasi dengan fasilitas modern untuk mendukung proses belajar mengajar yang lebih efektif.",
                 Content = "<p>Setelah delapan bulan proses renovasi, gedung kuliah utama Sekolah Tinggi Teologi Bandung kini hadir dengan wajah baru yang lebih modern dan representatif.</p><p>Renovasi mencakup ruang kuliah berkapasitas besar, laboratorium bahasa, ruang seminar, dan fasilitas multimedia canggih yang akan mendukung pengalaman belajar mahasiswa secara optimal.</p>",
-                Category = "Fasilitas",
+                CategoryId = categories["Fasilitas"].Id,
                 ThumbnailUrl = "/uploads/news/news-10.jpg",
                 IsFeatured = false,
                 IsPublished = true,
@@ -181,7 +249,7 @@ public static class DataSeeder
 
     // ─── Events ──────────────────────────────────────────────────────────────
 
-    private static async Task SeedEventsAsync(ApplicationDbContext db, string adminUserId)
+    private static async Task SeedEventsAsync(ApplicationDbContext db, string adminUserId, Dictionary<string, EventCategory> categories)
     {
         if (await db.Events.AnyAsync()) return;
 
@@ -198,8 +266,8 @@ public static class DataSeeder
                 EndDate = now.AddDays(110),
                 Location = "STTB Bandung & Online",
                 ImageUrl = "/uploads/events/event-1.jpg",
-                Category = "Admisi",
-                RegistrationUrl = "/prosedur-admisi",
+                CategoryId = categories["Admisi"].Id,
+                RegistrationUrl = "https://apply.fuller.edu/",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-5),
@@ -213,7 +281,7 @@ public static class DataSeeder
                 EndDate = now.AddDays(37),
                 Location = "Lembang, Bandung Barat",
                 ImageUrl = "/uploads/events/event-2.jpg",
-                Category = "Kerohanian",
+                CategoryId = categories["Kerohanian"].Id,
                 RegistrationUrl = null,
                 IsPublished = true,
                 CreatedBy = adminUserId,
@@ -228,8 +296,8 @@ public static class DataSeeder
                 EndDate = now.AddDays(71),
                 Location = "Aula Utama STTB Bandung",
                 ImageUrl = "/uploads/events/event-3.jpg",
-                Category = "LEAD",
-                RegistrationUrl = "/daftar-konferensi-lead",
+                CategoryId = categories["LEAD"].Id,
+                RegistrationUrl = "https://www.eventbrite.com/e/fire-conference-a-christian-business-conference-tickets-1972725946410",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-3),
@@ -243,7 +311,7 @@ public static class DataSeeder
                 EndDate = null,
                 Location = "Auditorium STTB Bandung",
                 ImageUrl = "/uploads/events/event-4.jpg",
-                Category = "Seminar",
+                CategoryId = categories["Seminar"].Id,
                 RegistrationUrl = null,
                 IsPublished = true,
                 CreatedBy = adminUserId,
@@ -258,8 +326,8 @@ public static class DataSeeder
                 EndDate = now.AddDays(14),
                 Location = "Ruang Seminar Lt. 3, STTB Bandung",
                 ImageUrl = "/uploads/events/event-5.jpg",
-                Category = "Akademik",
-                RegistrationUrl = "/daftar-workshop-penulisan",
+                CategoryId = categories["Akademik"].Id,
+                RegistrationUrl = "https://www.eventbrite.com/e/academic-writing-workshop-tickets-1981778103656",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-2),
@@ -273,7 +341,7 @@ public static class DataSeeder
                 EndDate = null,
                 Location = "Kapel STTB Bandung",
                 ImageUrl = "/uploads/events/event-6.jpg",
-                Category = "Kerohanian",
+                CategoryId = categories["Kerohanian"].Id,
                 RegistrationUrl = null,
                 IsPublished = true,
                 CreatedBy = adminUserId,
@@ -288,8 +356,8 @@ public static class DataSeeder
                 EndDate = now.AddDays(56),
                 Location = "Aula STTB Bandung",
                 ImageUrl = "/uploads/events/event-7.jpg",
-                Category = "Misi",
-                RegistrationUrl = "/daftar-seminar-misi",
+                CategoryId = categories["Misi"].Id,
+                RegistrationUrl = "https://internationalministries.org/wmc-2026/",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-4),
@@ -303,8 +371,8 @@ public static class DataSeeder
                 EndDate = null,
                 Location = "Gedung Serbaguna STTB Bandung",
                 ImageUrl = "/uploads/events/event-8.jpg",
-                Category = "Akademik",
-                RegistrationUrl = "/daftar-undangan-wisuda",
+                CategoryId = categories["Akademik"].Id,
+                RegistrationUrl = "https://www.waikato.ac.nz/students/graduation/graduand-and-guest-tickets/",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-6),
@@ -318,8 +386,8 @@ public static class DataSeeder
                 EndDate = null,
                 Location = "Kampus STTB Bandung",
                 ImageUrl = "/uploads/events/event-9.jpg",
-                Category = "Admisi",
-                RegistrationUrl = "/daftar-open-house",
+                CategoryId = categories["Admisi"].Id,
+                RegistrationUrl = "https://www.eventbrite.sg/e/nus-college-open-house-2026-tickets-1979704932746",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-8),
@@ -333,8 +401,8 @@ public static class DataSeeder
                 EndDate = now.AddDays(62),
                 Location = "Pusat Konseling STTB Bandung",
                 ImageUrl = "/uploads/events/event-10.jpg",
-                Category = "Pelatihan",
-                RegistrationUrl = "/daftar-pelatihan-konseling",
+                CategoryId = categories["Pelatihan"].Id,
+                RegistrationUrl = "https://www.ccef.org/school/",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-9),
@@ -347,7 +415,7 @@ public static class DataSeeder
 
     // ─── Media ───────────────────────────────────────────────────────────────
 
-    private static async Task SeedMediaAsync(ApplicationDbContext db, string adminUserId)
+    private static async Task SeedMediaAsync(ApplicationDbContext db, string adminUserId, Dictionary<string, MediaCategory> categories)
     {
         if (await db.Media.AnyAsync()) return;
 
@@ -362,7 +430,7 @@ public static class DataSeeder
                 Url = "https://www.youtube.com/watch?v=Sop6nPCHyys",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-1.jpg",
-                Category = "Misi & Penginjilan",
+                CategoryId = categories["Misi & Penginjilan"].Id,
                 Tag = "LEAD",
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-30),
@@ -374,7 +442,7 @@ public static class DataSeeder
                 Url = "https://www.youtube.com/watch?v=Xjep62yfbG0",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-2.jpg",
-                Category = "Misi & Penginjilan",
+                CategoryId = categories["Misi & Penginjilan"].Id,
                 Tag = "UMC",
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-45),
@@ -386,7 +454,7 @@ public static class DataSeeder
                 Url = "https://www.youtube.com/watch?v=VMetVSDTX9o",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-3.jpg",
-                Category = "Pelayanan Anak",
+                CategoryId = categories["Pelayanan Anak"].Id,
                 Tag = "STT Bandung",
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-60),
@@ -398,7 +466,7 @@ public static class DataSeeder
                 Url = "https://www.youtube.com/watch?v=uhA8g0MhRU8",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-4.jpg",
-                Category = "Pemuridan & Pembinaan",
+                CategoryId = categories["Pemuridan & Pembinaan"].Id,
                 Tag = "Disciplesight",
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-70),
@@ -410,7 +478,7 @@ public static class DataSeeder
                 Url = "https://www.youtube.com/watch?v=xvnhsSWAkVY",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-5.jpg",
-                Category = "Pendidikan Teologi",
+                CategoryId = categories["Pendidikan Teologi"].Id,
                 Tag = "STT Bandung",
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-80),
@@ -422,7 +490,7 @@ public static class DataSeeder
                 Url = "https://jurnal.sttkn.ac.id/index.php/Veritas/article/view/281",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-6.jpg",
-                Category = "Belajar & Mengajar",
+                CategoryId = categories["Belajar & Mengajar"].Id,
                 Tag = null,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-85),
@@ -434,7 +502,7 @@ public static class DataSeeder
                 Url = "https://prin.or.id/index.php/JURRAFI/article/view/7676",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-7.jpg",
-                Category = "Pendidikan Teologi",
+                CategoryId = categories["Pendidikan Teologi"].Id,
                 Tag = null,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-90),
@@ -446,7 +514,7 @@ public static class DataSeeder
                 Url = "https://prin.or.id/index.php/JURRAFI/article/view/7730",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-8.jpg",
-                Category = "Pembelajaran Digital",
+                CategoryId = categories["Pembelajaran Digital"].Id,
                 Tag = null,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-95),
@@ -458,7 +526,7 @@ public static class DataSeeder
                 Url = "https://jurnal.sttkn.ac.id/index.php/Veritas/article/view/157",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-9.jpg",
-                Category = "Pelayanan Keluarga",
+                CategoryId = categories["Pelayanan Keluarga"].Id,
                 Tag = null,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-100),
@@ -470,7 +538,7 @@ public static class DataSeeder
                 Url = "https://www.youtube.com/watch?v=dOw1w6J3hZk",
                 Type = "video",
                 ThumbnailUrl = "/uploads/media/media-10.jpg",
-                Category = "Pelayanan Dunia Kerja",
+                CategoryId = categories["Pelayanan Dunia Kerja"].Id,
                 Tag = "STT Bandung",
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-110),

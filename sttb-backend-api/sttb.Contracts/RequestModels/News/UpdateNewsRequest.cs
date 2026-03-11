@@ -10,7 +10,7 @@ public class UpdateNewsRequest : IRequest
     public string Content { get; set; } = string.Empty;
     public string? Excerpt { get; set; }
     public string? ThumbnailUrl { get; set; }
-    public string? Category { get; set; }
+    public Guid? CategoryId { get; set; }
     public bool IsFeatured { get; set; }
     public bool IsPublished { get; set; }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using sttb.Commons.Constants;
 using sttb.Contracts.RequestModels.Events;
 using sttb.Contracts.ResponseModels.Events;
+using sttb.Contracts.ResponseModels.Shared;
 
 namespace sttb.WebAPI.Controllers;
 
@@ -27,6 +28,34 @@ public class EventsController : ControllerBase
     {
         var result = await _mediator.Send(request, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpGet(ApiRoutes.Events.Categories)]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<CategoryResponse>>> Categories(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetEventCategoriesRequest(), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost(ApiRoutes.Events.CategoriesCreate)]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<ActionResult<Guid>> CreateCategory(
+        [FromBody] CreateEventCategoryRequest request,
+        CancellationToken cancellationToken)
+    {
+        var id = await _mediator.Send(request, cancellationToken);
+        return Ok(id);
+    }
+
+    [HttpDelete(ApiRoutes.Events.CategoriesDelete)]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<IActionResult> DeleteCategory(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteEventCategoryRequest { Id = id }, cancellationToken);
+        return NoContent();
     }
 
     [HttpPost(ApiRoutes.Events.Create)]

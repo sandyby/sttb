@@ -1,10 +1,8 @@
-"use client";
-
-import { motion } from "motion/react";
-import { BookOpen, Users, Lightbulb, Globe, ArrowRight, ExternalLink } from "lucide-react";
+import { BookOpen, Users, Lightbulb, Globe, ArrowRight } from "lucide-react";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 import Link from "next/link";
 import Image from "next/image";
+import { RecentMediaSection } from "./_components/RecentMediaSection";
 
 const services = [
     {
@@ -75,28 +73,8 @@ const programs = [
     },
 ];
 
-const mediaItems = [
-    {
-        title: 'City TransForMission #2: "Fokus Strategis Misi Urban"',
-        date: "20 April 2023",
-        category: "Video",
-        img: "https://images.unsplash.com/photo-1675099124977-5aab6e554dbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
-    },
-    {
-        title: 'City TransForMission #01: "Urbanisasi & Misi"',
-        date: "2 Maret 2023",
-        category: "Video",
-        img: "https://images.unsplash.com/photo-1607332796965-436d1bf61731?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
-    },
-    {
-        title: "Disciplesight: Figital Discipleship",
-        date: "20 Agustus 2022",
-        category: "Video",
-        img: "https://images.unsplash.com/photo-1722962674485-d34e69a9a406?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
-    },
-];
-
 export default function LeadPage() {
+
     return (
         <>
             {/* Hero */}
@@ -106,11 +84,7 @@ export default function LeadPage() {
                     <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-white translate-y-1/2 -translate-x-1/4" />
                 </div>
                 <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
+                    <FadeIn>
                         <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-1">
                             Learning, Equipping, & Development
                         </p>
@@ -127,7 +101,7 @@ export default function LeadPage() {
                         <p className="text-blue-300 text-sm mt-3 italic">
                             &quot;…bagi pembangunan tubuh Kristus.&quot; — Efesus 4:12
                         </p>
-                    </motion.div>
+                    </FadeIn>
                 </div>
             </div>
 
@@ -171,7 +145,6 @@ export default function LeadPage() {
                                 height={320}
                                 width={0}
                                 sizes="w-full"
-                                preload
                                 alt="LEAD Center STTB"
                                 className="w-full h-80 object-cover rounded-2xl shadow-xl"
                             />
@@ -276,70 +249,7 @@ export default function LeadPage() {
                 </div>
             </section>
 
-            {/* Media / Recent Content */}
-            <section className="py-16 bg-gray-50 dark:bg-gray-950">
-                <div className="max-w-5xl mx-auto px-4">
-                    <FadeIn>
-                        <div className="flex items-center justify-between mb-8">
-                            <div>
-                                <p className="text-[#E62129] text-sm font-semibold uppercase tracking-wider mb-1">
-                                    Media Terbaru
-                                </p>
-                                <h2
-                                    className="text-gray-900 dark:text-white"
-                                    style={{ fontWeight: 700, fontSize: "1.5rem" }}
-                                >
-                                    Konten dari LEAD Center
-                                </h2>
-                            </div>
-                            <Link
-                                href="/media"
-                                className="hidden sm:flex items-center gap-2 text-[#E62129] text-sm font-medium hover:underline"
-                            >
-                                Lihat Semua <ArrowRight className="w-4 h-4" />
-                            </Link>
-                        </div>
-                    </FadeIn>
-
-                    <StaggerGroup staggerDelay={0.12} className="grid md:grid-cols-3 gap-5">
-                        {mediaItems.map((item) => (
-                            <StaggerItem key={item.title}>
-                                <div className="bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow group">
-                                    <div className="relative overflow-hidden">
-                                        <Image
-                                            src={item.img}
-                                            alt={item.title}
-                                            height={160}
-                                            width={0}
-                                            sizes="max-w-fit"
-                                            preload
-                                            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                        <span className="absolute top-3 left-3 px-2 py-0.5 rounded bg-[#E62129] text-white text-xs font-medium">
-                                            {item.category}
-                                        </span>
-                                    </div>
-                                    <div className="p-4">
-                                        <p className="text-gray-400 dark:text-gray-500 text-xs mb-2">{item.date}</p>
-                                        <h3 className="text-gray-900 dark:text-white font-semibold text-sm leading-snug line-clamp-2 group-hover:text-[#E62129] transition-colors">
-                                            {item.title}
-                                        </h3>
-                                    </div>
-                                </div>
-                            </StaggerItem>
-                        ))}
-                    </StaggerGroup>
-
-                    <div className="text-center mt-8 sm:hidden">
-                        <Link
-                            href="/media"
-                            className="inline-flex items-center gap-2 text-[#E62129] text-sm font-medium hover:underline"
-                        >
-                            Lihat Semua Media <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            <RecentMediaSection />
 
             {/* CTA */}
             <FadeIn>

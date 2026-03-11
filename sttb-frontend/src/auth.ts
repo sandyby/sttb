@@ -108,8 +108,8 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!response.ok) {
-            const errorData = (await response.json()) as { detail?: string };
-            throw new Error(errorData.detail ?? "Login failed");
+            const errorData = (await response.json());
+            throw new Error(errorData.title ?? "Login failed");
           }
 
           const data = (await response.json()) as LoginResponse;

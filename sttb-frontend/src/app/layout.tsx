@@ -16,6 +16,6 @@ export default function PublicRouteLayout({
                     <Toaster position="top-right" richColors />
                 </Providers>
             </body>
-        </html>
+        </html >
     )
 }

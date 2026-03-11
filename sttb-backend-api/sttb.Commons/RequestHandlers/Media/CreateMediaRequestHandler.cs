@@ -35,7 +35,7 @@ public class CreateMediaRequestHandler : IRequestHandler<CreateMediaRequest, Gui
             Url = request.Url,
             Type = request.Type,
             ThumbnailUrl = request.ThumbnailUrl,
-            Category = request.Category,
+            CategoryId = request.CategoryId,
             Tag = request.Tag,
             CreatedBy = userId,
             CreatedAt = DateTime.UtcNow

@@ -23,7 +23,7 @@ public class GetNewsListRequestHandler : IRequestHandler<GetNewsListRequest, Get
             query = query.Where(n => n.IsPublished == request.IsPublished.Value);
 
         if (!string.IsNullOrWhiteSpace(request.Category))
-            query = query.Where(n => n.Category == request.Category);
+            query = query.Where(n => n.Category != null && n.Category.Name == request.Category);
 
         if (!string.IsNullOrWhiteSpace(request.Search))
             query = query.Where(n => n.Title.Contains(request.Search));
@@ -41,7 +41,7 @@ public class GetNewsListRequestHandler : IRequestHandler<GetNewsListRequest, Get
                 Slug = n.Slug,
                 Excerpt = n.Excerpt,
                 ThumbnailUrl = n.ThumbnailUrl,
-                Category = n.Category,
+                Category = n.Category != null ? n.Category.Name : null,
                 IsFeatured = n.IsFeatured,
                 IsPublished = n.IsPublished,
                 PublishedAt = n.PublishedAt,

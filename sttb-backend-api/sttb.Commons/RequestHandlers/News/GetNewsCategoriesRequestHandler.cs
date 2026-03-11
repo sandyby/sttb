@@ -1,0 +1,31 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using sttb.Contracts.RequestModels.News;
+using sttb.Contracts.ResponseModels.Shared;
+using sttb.Entities;
+
+namespace sttb.Commons.RequestHandlers.News;
+
+public class GetNewsCategoriesRequestHandler : IRequestHandler<GetNewsCategoriesRequest, List<CategoryResponse>>
+{
+    private readonly ApplicationDbContext _dbContext;
+
+    public GetNewsCategoriesRequestHandler(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task<List<CategoryResponse>> Handle(GetNewsCategoriesRequest request, CancellationToken cancellationToken)
+    {
+        return await _dbContext.NewsCategories
+            .AsNoTracking()
+            .OrderBy(c => c.Name)
+            .Select(c => new CategoryResponse
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Slug = c.Slug
+            })
+            .ToListAsync(cancellationToken);
+    }
+}
