@@ -1,46 +1,29 @@
 import { ReactNode, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft, Calendar, MapPin, Users, X, Upload,
   AlertCircle, CheckCircle, Link2, Tag, Eye, Save,
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { eventFormSchema, type EventFormValues } from "@/libs/schemas/event-schema";
+import { useEventCategories } from "@/hooks/useEvents";
+import { getImageUrl } from "@/lib/api";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
-export interface EventFormData {
-  title: string;
-  category: string;
-  date: string;
-  endDate: string;
-  time: string;
-  endTime: string;
-  location: string;
-  locationDetail: string;
-  description: string;
-  coverImageUrl: string;
-  registrationUrl: string;
-  registrationOpen: boolean;
-  registrationDeadline: string;
-  maxParticipants: string;
-  status: "draft" | "published";
-  isOnline: boolean;
-  streamingUrl: string;
-  organizer: string;
-  contactEmail: string;
-  tags: string[];
-}
+export type EventFormData = EventFormValues;
 
 interface EventFormProps {
-  initialData?: Partial<EventFormData & { id?: string }>;
-  onSave: (data: EventFormData, status: "draft" | "published") => Promise<void>;
+  initialData?: Partial<EventFormValues & { id?: string }>;
+  onSave: (data: EventFormValues, status: "draft" | "published") => Promise<void>;
   backHref?: string;
 }
 
 /* ─── Constants ──────────────────────────────────────────── */
 
-export const EVENT_CATEGORIES = ["Admisi", "Seminar", "Akademik", "Misi", "Konferensi", "Pembinaan", "Ibadah", "Alumni", "LEAD", "Lainnya"];
 const TAG_SUGGESTIONS = ["STTB", "Reformed", "Pelayanan", "Akademik", "Misi", "Kepemimpinan", "Online"];
 
 /* ─── Tag Input ──────────────────────────────────────────── */
@@ -92,56 +75,70 @@ const inputCls = (error?: string) =>
 
 export function EventForm({ initialData, onSave, backHref = "/admin/events" }: EventFormProps) {
   const router = useRouter();
-
   const isEdit = !!initialData?.id;
+  const { data: categoriesData } = useEventCategories();
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
-  const [errors, setErrors] = useState<Partial<Record<keyof EventFormData, string>>>({});
   const [tab, setTab] = useState<"basic" | "registration" | "details">("basic");
 
-  const [form, setForm] = useState<EventFormData>({
-    title: initialData?.title ?? "",
-    category: initialData?.category ?? "Seminar",
-    date: initialData?.date ?? "",
-    endDate: initialData?.endDate ?? "",
-    time: initialData?.time ?? "08:00",
-    endTime: initialData?.endTime ?? "17:00",
-    location: initialData?.location ?? "",
-    locationDetail: initialData?.locationDetail ?? "",
-    description: initialData?.description ?? "",
-    coverImageUrl: initialData?.coverImageUrl ?? initialData?.coverImageUrl ?? "",
-    registrationUrl: initialData?.registrationUrl ?? "",
-    registrationOpen: initialData?.registrationOpen ?? false,
-    registrationDeadline: initialData?.registrationDeadline ?? "",
-    maxParticipants: initialData?.maxParticipants ?? "",
-    status: initialData?.status ?? "draft",
-    isOnline: initialData?.isOnline ?? false,
-    streamingUrl: initialData?.streamingUrl ?? "",
-    organizer: initialData?.organizer ?? "STTB Bandung",
-    contactEmail: initialData?.contactEmail ?? "info@sttb.ac.id",
-    tags: initialData?.tags ?? [],
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<EventFormValues>({
+    resolver: zodResolver(eventFormSchema),
+    defaultValues: {
+      title: initialData?.title ?? "",
+      category: initialData?.category ?? "Seminar",
+      date: initialData?.date ?? "",
+      endDate: initialData?.endDate ?? "",
+      time: initialData?.time ?? "08:00",
+      endTime: initialData?.endTime ?? "17:00",
+      location: initialData?.location ?? "",
+      locationDetail: initialData?.locationDetail ?? "",
+      description: initialData?.description ?? "",
+      coverImageUrl: initialData?.coverImageUrl ?? "",
+      registrationUrl: initialData?.registrationUrl ?? "",
+      registrationOpen: initialData?.registrationOpen ?? false,
+      registrationDeadline: initialData?.registrationDeadline ?? "",
+      maxParticipants: initialData?.maxParticipants ?? "",
+      status: initialData?.status ?? "draft",
+      isOnline: initialData?.isOnline ?? false,
+      streamingUrl: initialData?.streamingUrl ?? "",
+      organizer: initialData?.organizer ?? "STTB Bandung",
+      contactEmail: initialData?.contactEmail ?? "info@sttb.ac.id",
+      tags: initialData?.tags ?? [],
+    },
   });
 
-  const update = <K extends keyof EventFormData>(key: K, value: EventFormData[K]) => {
-    setForm(f => ({ ...f, [key]: value }));
-    setErrors(e => ({ ...e, [key]: undefined }));
-  };
+  const titleValue = watch("title");
+  const dateValue = watch("date");
+  const timeValue = watch("time");
+  const locationValue = watch("location");
+  const categoryValue = watch("category");
+  const coverImageUrl = watch("coverImageUrl");
+  const registrationOpen = watch("registrationOpen");
+  const statusValue = watch("status");
+  const isOnline = watch("isOnline");
+  const descriptionValue = watch("description");
 
-  const validate = () => {
-    const errs: typeof errors = {};
-    if (!form.title.trim()) errs.title = "Judul wajib diisi";
-    if (!form.date) errs.date = "Tanggal wajib diisi";
-    if (!form.location.trim()) errs.location = "Lokasi wajib diisi";
-    if (!form.description.trim()) errs.description = "Deskripsi wajib diisi";
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) setTab("basic");
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleSave = async (status: "draft" | "published") => {
-    if (!validate()) { toast.error("Lengkapi semua field yang diperlukan"); return; }
+  const handleSave = (status: "draft" | "published") => {
     setSaving(status === "draft" ? "draft" : "publish");
-    try { await onSave({ ...form, status }, status); }
-    finally { setSaving(null); }
+    handleSubmit(
+      async (data) => {
+        try { await onSave({ ...data, status }, status); }
+        finally { setSaving(null); }
+      },
+      (fieldErrors) => {
+        setSaving(null);
+        toast.error("Lengkapi semua field yang diperlukan");
+        if (fieldErrors.title || fieldErrors.date || fieldErrors.location || fieldErrors.description || fieldErrors.category) {
+          setTab("basic");
+        }
+      },
+    )();
   };
 
   const TABS = [
@@ -160,7 +157,7 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
           </button>
           <div>
             <h1 className="text-gray-900 dark:text-white font-bold text-xl">{isEdit ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{isEdit ? `Mengedit: ${form.title || "—"}` : "Buat event dan kegiatan kampus STTB"}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{isEdit ? `Mengedit: ${titleValue || "—"}` : "Buat event dan kegiatan kampus STTB"}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -182,21 +179,21 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
         <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
           <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
           <p className="text-blue-700 dark:text-blue-300 text-sm">Mode Edit — perubahan akan menggantikan data kegiatan ini.</p>
-          <span className={`ml-auto px-2 py-0.5 rounded-full text-xs font-semibold ${form.status === "published" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-            {form.status === "published" ? "Terbit" : "Draft"}
+          <span className={`ml-auto px-2 py-0.5 rounded-full text-xs font-semibold ${statusValue === "published" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+            {statusValue === "published" ? "Terbit" : "Draft"}
           </span>
         </div>
       )}
 
       {/* Live preview */}
-      {form.title && (
+      {titleValue && (
         <div className="bg-gradient-to-r from-[#0A2C74] to-[#0570CD] rounded-2xl p-4 text-white">
           <p className="text-blue-200 text-xs uppercase tracking-wider mb-1">Preview</p>
-          <h2 className="font-bold text-lg leading-snug">{form.title}</h2>
+          <h2 className="font-bold text-lg leading-snug">{titleValue}</h2>
           <div className="flex flex-wrap gap-4 mt-2 text-blue-200 text-sm">
-            {form.date && <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(form.date).toLocaleDateString("id-ID", { dateStyle: "long" })}{form.time && ` · ${form.time}`}</span>}
-            {form.location && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{form.location}</span>}
-            {form.category && <span className="flex items-center gap-1"><Tag className="w-3.5 h-3.5" />{form.category}</span>}
+            {dateValue && <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(dateValue).toLocaleDateString("id-ID", { dateStyle: "long" })}{timeValue && ` · ${timeValue}`}</span>}
+            {locationValue && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{locationValue}</span>}
+            {categoryValue && <span className="flex items-center gap-1"><Tag className="w-3.5 h-3.5" />{categoryValue}</span>}
           </div>
         </div>
       )}
@@ -205,7 +202,7 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl">
         {TABS.map(t => {
           const Icon = t.icon;
-          const hasError = t.id === "basic" && (errors.title || errors.date || errors.location || errors.description);
+          const hasError = t.id === "basic" && (errors.title || errors.date || errors.location || errors.description || errors.category);
           return (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative ${tab === t.id ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>
@@ -220,67 +217,74 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
       {/* Tab: Basic */}
       {tab === "basic" && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-5">
-          <Field label="Judul Kegiatan" required error={errors.title}>
-            <input type="text" value={form.title} onChange={e => update("title", e.target.value)} placeholder="Masukkan judul kegiatan..." className={inputCls(errors.title)} />
+          <Field label="Judul Kegiatan" required error={errors.title?.message}>
+            <input type="text" {...register("title")} placeholder="Masukkan judul kegiatan..." className={inputCls(errors.title?.message)} />
           </Field>
           <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Kategori">
-              <select value={form.category} onChange={e => update("category", e.target.value)} className={inputCls()}>
-                {EVENT_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+            <Field label="Kategori" required error={errors.category?.message}>
+              <select {...register("category")} className={inputCls(errors.category?.message)}>
+                <option value="">— Pilih Kategori —</option>
+                {(categoriesData ?? []).map(c => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))}
               </select>
             </Field>
             <Field label="Penyelenggara">
-              <input type="text" value={form.organizer} onChange={e => update("organizer", e.target.value)} className={inputCls()} />
+              <input type="text" {...register("organizer")} className={inputCls()} />
             </Field>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Tanggal Mulai" required error={errors.date}>
+            <Field label="Tanggal Mulai" required error={errors.date?.message}>
               <div className="flex gap-2">
-                <input type="date" value={form.date} onChange={e => update("date", e.target.value)} className={inputCls(errors.date) + " flex-1"} />
-                <input type="time" value={form.time} onChange={e => update("time", e.target.value)} className={inputCls() + " w-28"} />
+                <input type="date" {...register("date")} className={inputCls(errors.date?.message) + " flex-1"} />
+                <input type="time" {...register("time")} className={inputCls() + " w-28"} />
               </div>
             </Field>
             <Field label="Tanggal Selesai" hint="Opsional untuk acara multi-hari">
               <div className="flex gap-2">
-                <input type="date" value={form.endDate} onChange={e => update("endDate", e.target.value)} className={inputCls() + " flex-1"} />
-                <input type="time" value={form.endTime} onChange={e => update("endTime", e.target.value)} className={inputCls() + " w-28"} />
+                <input type="date" {...register("endDate")} className={inputCls() + " flex-1"} />
+                <input type="time" {...register("endTime")} className={inputCls() + " w-28"} />
               </div>
             </Field>
           </div>
           <div>
             <div className="flex items-center gap-3 mb-3">
               <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Mode Acara</p>
-              {["Offline", "Online", "Hybrid"].map((mode, mi) => (
-                <button key={mode} type="button" onClick={() => update("isOnline", mi === 1)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${(mi === 1 ? form.isOnline : !form.isOnline) ? "bg-[#0A2C74] text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500"}`}>
-                  {mode}
-                </button>
-              ))}
+              <Controller name="isOnline" control={control} render={({ field }) => (
+                <>
+                  {["Offline", "Online", "Hybrid"].map((mode, mi) => (
+                    <button key={mode} type="button" onClick={() => field.onChange(mi === 1)}
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${(mi === 1 ? field.value : !field.value) ? "bg-[#0A2C74] text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500"}`}>
+                      {mode}
+                    </button>
+                  ))}
+                </>
+              )} />
             </div>
             <div className="space-y-3">
-              <Field label={form.isOnline ? "Platform / Link" : "Nama Venue"} required error={errors.location}>
+              <Field label={isOnline ? "Platform / Link" : "Nama Venue"} required error={errors.location?.message}>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input type="text" value={form.location} onChange={e => update("location", e.target.value)}
-                    placeholder={form.isOnline ? "Zoom, Google Meet, YouTube Live..." : "Nama gedung / aula / tempat"}
-                    className={inputCls(errors.location) + " pl-9"} />
+                  <input type="text" {...register("location")}
+                    placeholder={isOnline ? "Zoom, Google Meet, YouTube Live..." : "Nama gedung / aula / tempat"}
+                    className={inputCls(errors.location?.message) + " pl-9"} />
                 </div>
               </Field>
               <Field label="Detail Lokasi" hint="Alamat lengkap, nomor ruangan, petunjuk jalan">
-                <textarea value={form.locationDetail} onChange={e => update("locationDetail", e.target.value)} rows={2} placeholder="Jl. Contoh No. 123, Bandung..." className={inputCls() + " resize-none"} />
+                <textarea {...register("locationDetail")} rows={2} placeholder="Jl. Contoh No. 123, Bandung..." className={inputCls() + " resize-none"} />
               </Field>
-              {form.isOnline && (
+              {isOnline && (
                 <Field label="Link Streaming">
                   <div className="relative"><Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input type="url" value={form.streamingUrl} onChange={e => update("streamingUrl", e.target.value)} placeholder="https://zoom.us/j/..." className={inputCls() + " pl-9"} />
+                    <input type="url" {...register("streamingUrl")} placeholder="https://zoom.us/j/..." className={inputCls() + " pl-9"} />
                   </div>
                 </Field>
               )}
             </div>
           </div>
-          <Field label="Deskripsi Kegiatan" required error={errors.description}>
-            <textarea value={form.description} onChange={e => update("description", e.target.value)} rows={5}
-              placeholder="Jelaskan kegiatan secara lengkap — tema, tujuan, pembicara, agenda..." className={inputCls(errors.description) + " resize-none"} />
+          <Field label="Deskripsi Kegiatan" required error={errors.description?.message}>
+            <textarea {...register("description")} rows={5}
+              placeholder="Jelaskan kegiatan secara lengkap — tema, tujuan, pembicara, agenda..." className={inputCls(errors.description?.message) + " resize-none"} />
           </Field>
         </div>
       )}
@@ -288,31 +292,33 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
       {/* Tab: Registration */}
       {tab === "registration" && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-5">
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div>
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Buka Pendaftaran</p>
-              <p className="text-xs text-gray-400 mt-0.5">Aktifkan jika kegiatan memerlukan registrasi peserta</p>
+          <Controller name="registrationOpen" control={control} render={({ field }) => (
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <div>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Buka Pendaftaran</p>
+                <p className="text-xs text-gray-400 mt-0.5">Aktifkan jika kegiatan memerlukan registrasi peserta</p>
+              </div>
+              <button type="button" onClick={() => field.onChange(!field.value)}
+                className="relative rounded-full transition-colors flex-shrink-0" style={{ width: 44, height: 24, backgroundColor: field.value ? "#22C55E" : "#D1D5DB" }}>
+                <span className="absolute top-0.5 rounded-full bg-white shadow transition-transform" style={{ width: 20, height: 20, left: 2, transform: field.value ? "translateX(20px)" : "translateX(0)" }} />
+              </button>
             </div>
-            <button type="button" onClick={() => update("registrationOpen", !form.registrationOpen)}
-              className="relative rounded-full transition-colors flex-shrink-0" style={{ width: 44, height: 24, backgroundColor: form.registrationOpen ? "#22C55E" : "#D1D5DB" }}>
-              <span className="absolute top-0.5 rounded-full bg-white shadow transition-transform" style={{ width: 20, height: 20, left: 2, transform: form.registrationOpen ? "translateX(20px)" : "translateX(0)" }} />
-            </button>
-          </div>
-          {form.registrationOpen && (
+          )} />
+          {registrationOpen && (
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Link Formulir Pendaftaran">
                   <div className="relative"><Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input type="url" value={form.registrationUrl} onChange={e => update("registrationUrl", e.target.value)} placeholder="https://forms.google.com/..." className={inputCls() + " pl-9"} />
+                    <input type="url" {...register("registrationUrl")} placeholder="https://forms.google.com/..." className={inputCls() + " pl-9"} />
                   </div>
                 </Field>
                 <Field label="Batas Pendaftaran">
-                  <input type="date" value={form.registrationDeadline} onChange={e => update("registrationDeadline", e.target.value)} className={inputCls()} />
+                  <input type="date" {...register("registrationDeadline")} className={inputCls()} />
                 </Field>
               </div>
               <Field label="Kapasitas Peserta" hint="Kosongkan jika tidak ada batas maksimum">
                 <div className="relative"><Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input type="number" min={1} value={form.maxParticipants} onChange={e => update("maxParticipants", e.target.value)} placeholder="Contoh: 100" className={inputCls() + " pl-9"} />
+                  <input type="number" min={1} {...register("maxParticipants")} placeholder="Contoh: 100" className={inputCls() + " pl-9"} />
                 </div>
               </Field>
             </div>
@@ -320,7 +326,7 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
           <div className="border-t border-gray-100 dark:border-gray-800 pt-5">
             <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-4">Kontak Panitia</p>
             <Field label="Email Kontak">
-              <input type="email" value={form.contactEmail} onChange={e => update("contactEmail", e.target.value)} placeholder="panitia@sttb.ac.id" className={inputCls()} />
+              <input type="email" {...register("contactEmail")} placeholder="panitia@sttb.ac.id" className={inputCls()} />
             </Field>
           </div>
         </div>
@@ -330,27 +336,22 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
       {tab === "details" && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 space-y-5">
           <Field label="Status Publikasi">
-            <div className="grid grid-cols-2 gap-3">
-              {(["draft", "published"] as const).map(s => (
-                <button key={s} type="button" onClick={() => update("status", s)}
-                  className={`py-3 rounded-xl text-sm font-medium border transition-all ${form.status === s ? (s === "published" ? "bg-green-500 text-white border-green-500 shadow-md" : "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-300") : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-100"}`}>
-                  {s === "draft" ? "📝 Draft" : "✅ Terbitkan"}
-                </button>
-              ))}
-            </div>
+            <Controller name="status" control={control} render={({ field }) => (
+              <div className="grid grid-cols-2 gap-3">
+                {(["draft", "published"] as const).map(s => (
+                  <button key={s} type="button" onClick={() => field.onChange(s)}
+                    className={`py-3 rounded-xl text-sm font-medium border transition-all ${field.value === s ? (s === "published" ? "bg-green-500 text-white border-green-500 shadow-md" : "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-300") : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-100"}`}>
+                    {s === "draft" ? "📝 Draft" : "✅ Terbitkan"}
+                  </button>
+                ))}
+              </div>
+            )} />
           </Field>
           <Field label="Gambar Sampul / Cover">
-            {form.coverImageUrl
+            {coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
-                <Image
-                  src={form.coverImageUrl}
-                  alt=""
-                  height={176}
-                  width={0}
-                  sizes="w-full"
-                  preload
-                  className="w-full h-44 object-cover" />
-                <button type="button" onClick={() => update("coverImageUrl", "")} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"><X className="w-4 h-4" /></button>
+                <Image src={getImageUrl(coverImageUrl) ?? coverImageUrl} alt="" height={176} width={400} className="w-full h-44 object-cover" />
+                <button type="button" onClick={() => setValue("coverImageUrl", "")} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"><X className="w-4 h-4" /></button>
               </div>
               : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-3">
                 <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
@@ -358,25 +359,26 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
                 <p className="text-xs text-gray-300 mt-1">Rekomendasi: 1200×630px</p>
               </div>
             }
-            {/* // ! TODO: fix error, type sekali langsung violate validation mungkin? atau terkait hydration? */}
-            <input type="url" value={form.coverImageUrl} onChange={e => update("coverImageUrl", e.target.value)} placeholder="https://images.unsplash.com/..." className={inputCls()} />
+            <input type="url" {...register("coverImageUrl")} placeholder="https://images.unsplash.com/..." className={inputCls()} />
           </Field>
           <Field label="Tags">
             <div className="p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <TagInput tags={form.tags} onChange={t => update("tags", t)} />
+              <Controller name="tags" control={control} render={({ field }) => (
+                <TagInput tags={field.value} onChange={field.onChange} />
+              )} />
             </div>
           </Field>
           {/* Checklist */}
           <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 text-xs space-y-2">
             <p className="font-semibold text-gray-700 dark:text-gray-300 text-sm mb-3">Status Kelengkapan</p>
             {[
-              { label: "Judul", ok: !!form.title },
-              { label: "Kategori", ok: !!form.category },
-              { label: "Tanggal Mulai", ok: !!form.date },
-              { label: "Lokasi", ok: !!form.location },
-              { label: "Deskripsi", ok: !!form.description, extra: form.description ? `${form.description.split(/\s+/).filter(Boolean).length} kata` : "" },
-              { label: "Pendaftaran", ok: form.registrationOpen, optional: true },
-              { label: "Gambar", ok: !!form.coverImageUrl, optional: true },
+              { label: "Judul", ok: !!titleValue },
+              { label: "Kategori", ok: !!categoryValue },
+              { label: "Tanggal Mulai", ok: !!dateValue },
+              { label: "Lokasi", ok: !!locationValue },
+              { label: "Deskripsi", ok: !!descriptionValue, extra: descriptionValue ? `${descriptionValue.split(/\s+/).filter(Boolean).length} kata` : "" },
+              { label: "Pendaftaran", ok: registrationOpen, optional: true },
+              { label: "Gambar", ok: !!coverImageUrl, optional: true },
             ].map(({ label, ok, extra, optional }) => (
               <div key={label} className="flex items-center justify-between">
                 <span className="text-gray-500 dark:text-gray-400">{label}</span>
@@ -405,10 +407,10 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
           {tab !== "details"
             ? <button type="button" onClick={() => setTab(tab === "basic" ? "registration" : "details")}
               className="px-4 py-2 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#081f52] transition-colors">Selanjutnya →</button>
-            : <button type="button" onClick={() => handleSave(form.status)} disabled={!!saving}
+            : <button type="button" onClick={() => handleSave(statusValue)} disabled={!!saving}
               className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
               {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-              {form.status === "draft" ? "Simpan Draft" : "Terbitkan"}
+              {statusValue === "draft" ? "Simpan Draft" : "Terbitkan"}
             </button>
           }
         </div>
