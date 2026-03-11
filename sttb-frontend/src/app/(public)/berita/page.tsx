@@ -1,6 +1,5 @@
 import { Suspense } from "react";
-import { NewsFilters } from "./_components/NewsFilters";
-import { NewsGrid } from "./_components/NewsGrid";
+import { BeritaClient } from "./_components/BeritaClient";
 
 export default function BeritaPage() {
   return (
@@ -24,19 +23,9 @@ export default function BeritaPage() {
         </div>
       </div>
 
-      {/* Filters */}
       <Suspense>
-        <NewsFilters />
+        <BeritaClient />
       </Suspense>
-
-      {/* News Grid */}
-      <div className="py-14 bg-gray-50 dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4">
-          <Suspense>
-            <NewsGrid />
-          </Suspense>
-        </div>
-      </div>
     </>
   );
 }
