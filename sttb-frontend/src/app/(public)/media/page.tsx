@@ -1,5 +1,4 @@
 import { ExternalLink } from "lucide-react";
-import { getMediaList, getMediaCategories } from "@/lib/api";
 import { MediaClient } from "./_components/MediaClient";
 
 const externalLinks = [
@@ -12,12 +11,7 @@ const externalLinks = [
   { label: "Jurnal ATLA", href: "#" },
 ];
 
-export default async function MediaPage() {
-  const [data, categories] = await Promise.all([
-    getMediaList({ pageSize: 100 }),
-    getMediaCategories(),
-  ]);
-
+export default function MediaPage() {
   return (
     <>
       {/* Hero */}
@@ -61,7 +55,7 @@ export default async function MediaPage() {
         </div>
       </div>
 
-      <MediaClient items={data.items} categories={categories} />
+      <MediaClient />
     </>
   );
 }

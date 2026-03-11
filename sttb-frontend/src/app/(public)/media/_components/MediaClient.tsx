@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Play, FileText, Search } from "lucide-react";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { getImageUrl } from "@/lib/api";
-import type { MediaListItem } from "@/types/media";
+import { useMediaList, useMediaCategories } from "@/hooks/useMedia";
 
 type Format = "Semua" | "Video" | "Artikel";
 
@@ -18,16 +18,16 @@ const formats: Format[] = ["Semua", "Video", "Artikel"];
 
 const PAGE_SIZE = 9;
 
-interface MediaClientProps {
-  items: MediaListItem[];
-  categories: string[];
-}
-
-export function MediaClient({ items, categories }: MediaClientProps) {
+export function MediaClient() {
   const [activeFormat, setActiveFormat] = useState<Format>("Semua");
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [searchQ, setSearchQ] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: mediaData, isLoading } = useMediaList({ pageSize: 100 });
+  const { data: categories = [] } = useMediaCategories();
+
+  const items = mediaData?.items ?? [];
 
   const filtered = items.filter((m) => {
     const formatMatch =
@@ -45,6 +45,19 @@ export function MediaClient({ items, categories }: MediaClientProps) {
   }
 
   const allCategories = ["Semua", ...categories];
+
+  if (isLoading) {
+    return (
+      <section className="py-12 bg-gray-50 dark:bg-gray-950">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-center py-20 text-gray-400">
+            <div className="w-6 h-6 border-2 border-[#E62129] border-t-transparent rounded-full animate-spin mr-3" />
+            Memuat media...
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 bg-gray-50 dark:bg-gray-950">
