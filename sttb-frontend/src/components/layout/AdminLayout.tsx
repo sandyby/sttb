@@ -23,7 +23,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "../ui/utils";
-import { useAuthStore } from "../../hooks/stores/auth-store";
+import { useSession, signOut } from "next-auth/react";
 import { Toaster } from "sonner";
 
 /* ─── Nav structure ──────────────────────────────────────── */
@@ -182,13 +182,12 @@ function getBreadcrumb(pathname: string): { parent?: string; current: string } {
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { data: session } = useSession();
+  const user = session?.user;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    router.push("/admin/login");
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/admin/login" });
   };
 
   const closeSidebar = () => setSidebarOpen(false);
@@ -242,8 +241,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         {
           user && (
             <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2.5">
-              <div className="w-12 h-12 rounded-full bg-[#E62129] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                {user.name.charAt(0)}
+              <div className="w-10 h-10 rounded-full bg-[#E62129] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {(user.name || "A").charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="mb-1">
@@ -338,7 +337,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             {user && (
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-400">
                 <div className="w-5 h-5 rounded-full bg-[#E62129] flex items-center justify-center text-white font-bold" style={{ fontSize: "0.6rem" }}>
-                  {user.name.charAt(0)}
+                  {(user.name || "A").charAt(0)}
                 </div>
                 <span className="font-medium">{user.name}</span>
                 <button onClick={handleLogout} className="ml-1 text-gray-400 hover:text-[#E62129] transition-colors" title="Keluar">

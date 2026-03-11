@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import "./globals.css"
 import { Toaster } from "sonner";
-import { QueryProvider } from "@/providers/QueryProvider";
+import { Providers } from "./providers";
 
 export default function PublicRouteLayout({
     children,
@@ -11,11 +11,11 @@ export default function PublicRouteLayout({
     return (
         <html lang="en">
             <body>
-                <QueryProvider>
+                <Providers>
                     {children}
                     <Toaster position="top-right" richColors />
-                </QueryProvider>
+                </Providers>
             </body>
-        </html>
+        </html >
     )
 }

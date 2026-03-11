@@ -3,63 +3,70 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff, LogIn, Shield } from "lucide-react";
 import { toast } from "sonner";
-import { useAuthStore } from "@/hooks/stores/auth-store";
+import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { loginSchema } from "@/libs/schemas/login-schema";
 import { cn } from "@/components/ui/utils";
+import type { z } from "zod";
 
-interface LoginFormData {
-    email: string;
-    password: string;
-    rememberMe: boolean;
-}
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { login, isAuthenticated } = useAuthStore();
+    const { data: session, status } = useSession();
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const from = searchParams.get("from") || '/admin/dashboard';
+    const from = searchParams.get("from") || searchParams.get("callbackUrl") || "/admin/dashboard";
 
+    // Redirect if already authenticated
     useEffect(() => {
-        if (isAuthenticated) {
+        if (status === "authenticated" && session) {
             router.replace(from);
         }
-    }, [isAuthenticated, router, from]);
+    }, [status, session, router, from]);
 
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
     } = useForm<LoginFormData>({
-        defaultValues: { rememberMe: false },
+        resolver: zodResolver(loginSchema),
     });
 
     const onSubmit = async (data: LoginFormData) => {
+        setIsLoading(true);
         try {
-            // simulate loading state to BE
-            await new Promise((r) => setTimeout(r, 1000));
+            const result = await signIn("credentials", {
+                email: data.email,
+                password: data.password,
+                redirect: false,
+            });
 
-            if (data.email === "admin@sttb.ac.id" && data.password === "admin123") {
-                login({
-                    id: "1",
-                    name: "Admin STTB",
-                    email: data.email,
-                    role: "admin",
-                });
+            if (result?.ok) {
                 toast.success("Berhasil masuk!");
                 router.push(from);
-                // router.replace("/admin/dashboard");
             } else {
-                toast.error("Email atau password salah!");
+                toast.error(result?.error || "Email atau password salah!");
             }
-        } catch {
+        } catch (error) {
             toast.error("Terjadi kesalahan! Silakan coba lagi nanti");
+            console.error("Login error:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    // Don't render if already authenticated
+    if (status === "authenticated") {
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex">
@@ -149,7 +156,7 @@ export default function AdminLoginPage() {
                         {/* Demo credentials notice */}
                         <div className="mb-5 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-900/30">
                             <p className="text-blue-700 dark:text-blue-300 text-xs">
-                                <strong>Demo:</strong> admin@sttb.ac.id / admin123
+                                <strong>Masukkan email dan password admin</strong> yang telah didaftarkan oleh backend.
                             </p>
                         </div>
 
@@ -202,26 +209,12 @@ export default function AdminLoginPage() {
                                 )}
                             </div>
 
-                            <div className="flex items-center justify-between">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        {...register("rememberMe")}
-                                        type="checkbox"
-                                        className="w-4 h-4 rounded border-gray-300 text-[#E62129] focus:ring-[#E62129]"
-                                    />
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">Ingat saya</span>
-                                </label>
-                                <button type="button" className="text-sm text-[#E62129] hover:underline">
-                                    Lupa password?
-                                </button>
-                            </div>
-
                             <button
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || isLoading}
                                 className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white font-medium transition-all disabled:opacity-60 disabled:cursor-not-allowed hover:shadow-md"
                             >
-                                {isSubmitting ? (
+                                {isSubmitting || isLoading ? (
                                     <>
                                         <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
