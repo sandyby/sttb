@@ -31,6 +31,7 @@ public static class ApiRoutes
     public static class Media
     {
         public const string List = "list";
+        public const string Categories = "categories";
         public const string Create = "create";
         public const string Delete = "delete/{id}";
     }

@@ -29,6 +29,14 @@ public class MediaController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet(ApiRoutes.Media.Categories)]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<string>>> Categories(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetMediaCategoriesRequest(), cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost(ApiRoutes.Media.Create)]
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<Guid>> Create(

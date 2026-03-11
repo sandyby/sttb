@@ -25,6 +25,9 @@ public class GetMediaListRequestHandler : IRequestHandler<GetMediaListRequest, G
         if (!string.IsNullOrWhiteSpace(request.Category))
             query = query.Where(m => m.Category == request.Category);
 
+        if (!string.IsNullOrWhiteSpace(request.Search))
+            query = query.Where(m => m.Title.Contains(request.Search));
+
         var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
