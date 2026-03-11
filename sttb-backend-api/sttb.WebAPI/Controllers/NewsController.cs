@@ -29,6 +29,14 @@ public class NewsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet(ApiRoutes.News.Categories)]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<string>>> Categories(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetNewsCategoriesRequest(), cancellationToken);
+        return Ok(result);
+    }
+
     [HttpGet(ApiRoutes.News.Detail)]
     [AllowAnonymous]
     public async Task<ActionResult<GetNewsDetailResponse>> Detail(
