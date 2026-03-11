@@ -30,11 +30,15 @@ export async function getNewsList(params: {
 }
 
 export async function getNewsCategories(): Promise<string[]> {
-  const res = await fetch(`${API_URL}/api/news/categories`, {
-    next: { revalidate: 300 },
-  });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/news/categories`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
 
 // ─── News (detail) ────────────────────────────────────────────────────────────
@@ -68,9 +72,13 @@ export async function getEventList(params: {
 }
 
 export async function getEventCategories(): Promise<string[]> {
-  const res = await fetch(`${API_URL}/api/events/categories`, {
-    next: { revalidate: 300 },
-  });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/events/categories`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
