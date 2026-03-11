@@ -1,5 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/libs/api";
+import { getEventList, getEventCategories } from "@/lib/api";
+import { adminCreateEventCategory } from "@/lib/admin-api";
+import { useSession } from "next-auth/react";
 import type {
   EventListItem,
   GetEventListResponse,
@@ -49,6 +52,28 @@ export function useGetEventById(id: string) {
       return res.data;
     },
     enabled: Boolean(id),
+  });
+}
+
+interface EventListParams {
+  page?: number;
+  pageSize?: number;
+  category?: string;
+  search?: string;
+}
+
+export function useEventList(params: EventListParams = {}) {
+  return useQuery({
+    queryKey: ["events", "list", params],
+    queryFn: () => getEventList(params),
+  });
+}
+
+export function useEventCategories() {
+  return useQuery({
+    queryKey: ["events", "categories"],
+    queryFn: getEventCategories,
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -104,27 +129,16 @@ export function useDeleteEvent() {
     },
   });
 }
-import { useQuery } from "@tanstack/react-query";
-import { getEventList, getEventCategories } from "@/lib/api";
 
-interface EventListParams {
-  page?: number;
-  pageSize?: number;
-  category?: string;
-  search?: string;
-}
+export function useCreateEventCategory() {
+  const { data: session } = useSession();
+  const qc = useQueryClient();
 
-export function useEventList(params: EventListParams = {}) {
-  return useQuery({
-    queryKey: ["events", "list", params],
-    queryFn: () => getEventList(params),
-  });
-}
-
-export function useEventCategories() {
-  return useQuery({
-    queryKey: ["events", "categories"],
-    queryFn: getEventCategories,
-    staleTime: 5 * 60 * 1000,
+  return useMutation({
+    mutationFn: (payload: { name: string; slug: string }) =>
+      adminCreateEventCategory(session?.accessToken ?? "", payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["events", "categories"] });
+    },
   });
 }
