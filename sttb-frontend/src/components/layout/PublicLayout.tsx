@@ -11,7 +11,6 @@ export function PublicLayout({ children }: { children: ReactNode }) {
         {children}
       </main>
       <Footer />
-      <Toaster position="top-right" richColors />
     </div>
   );
 }

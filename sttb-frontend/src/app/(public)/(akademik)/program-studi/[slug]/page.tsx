@@ -105,6 +105,8 @@ export default async function ProgramPage({ params }: { params: { slug: string }
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                         <Link href="/" className="text-blue-200 hover:text-white text-sm">Beranda</Link>
                         <span className="text-blue-300">/</span>
+                        <Link href="/program-studi" className="text-blue-200 hover:text-white text-sm">Program Studi</Link>
+                        <span className="text-blue-300">/</span>
                         <span className="text-[#7FB4E5] text-sm">Program {program.level}</span>
                     </div>
                     <div className="flex items-center gap-3 mb-3">

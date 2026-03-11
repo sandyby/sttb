@@ -22,6 +22,8 @@ build
 .DS_Store
 *.pem
 .vs/
+.vscode/
+sttb-frontend-old/
 
 # debug
 npm-debug.log*
