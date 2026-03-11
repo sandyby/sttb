@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Tag, ExternalLink } from "lucide-react";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
+import { useEventList, useEventCategories } from "@/hooks/useEvents";
 import type { EventListItem } from "@/types/events";
 
 const MONTHS = [
@@ -89,19 +90,19 @@ function CalendarMini({
   );
 }
 
-interface KegiatanClientProps {
-  events: EventListItem[];
-  categories: string[];
-}
-
 const PAGE_SIZE = 5;
 
-export function KegiatanClient({ events, categories }: KegiatanClientProps) {
+export function KegiatanClient() {
   const now = new Date();
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
+
+  const { data: eventData, isLoading: eventsLoading } = useEventList({ pageSize: 100 });
+  const { data: categories = [] } = useEventCategories();
+
+  const events = eventData?.items ?? [];
 
   const filtered =
     activeCategory === "Semua"
@@ -134,6 +135,19 @@ export function KegiatanClient({ events, categories }: KegiatanClientProps) {
   }
 
   const allCategories = ["Semua", ...categories];
+
+  if (eventsLoading) {
+    return (
+      <section className="py-12 bg-gray-50 dark:bg-gray-950">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-center py-20 text-gray-400">
+            <div className="w-6 h-6 border-2 border-[#E62129] border-t-transparent rounded-full animate-spin mr-3" />
+            Memuat kegiatan...
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>

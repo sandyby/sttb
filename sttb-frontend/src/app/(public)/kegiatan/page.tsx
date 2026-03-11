@@ -1,12 +1,6 @@
-import { getEventList, getEventCategories } from "@/lib/api";
 import { KegiatanClient } from "./_components/KegiatanClient";
 
-export default async function KegiatanPage() {
-  const [data, categories] = await Promise.all([
-    getEventList({ pageSize: 100 }),
-    getEventCategories(),
-  ]);
-
+export default function KegiatanPage() {
   return (
     <>
       {/* Hero */}
@@ -33,7 +27,7 @@ export default async function KegiatanPage() {
         </div>
       </div>
 
-      <KegiatanClient events={data.items} categories={categories} />
+      <KegiatanClient />
     </>
   );
 }
