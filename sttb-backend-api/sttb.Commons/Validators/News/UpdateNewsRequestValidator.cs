@@ -31,8 +31,5 @@ public class UpdateNewsRequestValidator : AbstractValidator<UpdateNewsRequest>
             .MaximumLength(1000)
             .When(x => x.ThumbnailUrl is not null);
 
-        RuleFor(x => x.Category)
-            .MaximumLength(100)
-            .When(x => x.Category is not null);
     }
 }

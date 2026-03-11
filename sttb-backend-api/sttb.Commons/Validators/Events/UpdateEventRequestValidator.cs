@@ -33,10 +33,6 @@ public class UpdateEventRequestValidator : AbstractValidator<UpdateEventRequest>
             .MaximumLength(1000)
             .When(x => x.ImageUrl is not null);
 
-        RuleFor(x => x.Category)
-            .MaximumLength(100)
-            .When(x => x.Category is not null);
-
         RuleFor(x => x.RegistrationUrl)
             .MaximumLength(1000)
             .When(x => x.RegistrationUrl is not null);

@@ -20,27 +20,29 @@ public class GetNewsDetailRequestHandler : IRequestHandler<GetNewsDetailRequest,
     {
         var news = await _dbContext.News
             .AsNoTracking()
-            .FirstOrDefaultAsync(n => n.Slug == request.Slug, cancellationToken);
+            .Where(n => n.Slug == request.Slug)
+            .Select(n => new GetNewsDetailResponse
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Slug = n.Slug,
+                Content = n.Content,
+                Excerpt = n.Excerpt,
+                ThumbnailUrl = n.ThumbnailUrl,
+                Category = n.Category != null ? n.Category.Name : null,
+                IsFeatured = n.IsFeatured,
+                IsPublished = n.IsPublished,
+                PublishedAt = n.PublishedAt,
+                CreatedAt = n.CreatedAt,
+                CreatedBy = n.CreatedBy,
+                UpdatedAt = n.UpdatedAt,
+                UpdatedBy = n.UpdatedBy
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (news is null)
             throw new NotFoundException("News", request.Slug);
 
-        return new GetNewsDetailResponse
-        {
-            Id = news.Id,
-            Title = news.Title,
-            Slug = news.Slug,
-            Content = news.Content,
-            Excerpt = news.Excerpt,
-            ThumbnailUrl = news.ThumbnailUrl,
-            Category = news.Category,
-            IsFeatured = news.IsFeatured,
-            IsPublished = news.IsPublished,
-            PublishedAt = news.PublishedAt,
-            CreatedAt = news.CreatedAt,
-            CreatedBy = news.CreatedBy,
-            UpdatedAt = news.UpdatedAt,
-            UpdatedBy = news.UpdatedBy
-        };
+        return news;
     }
 }
