@@ -8,6 +8,6 @@ public class CreateMediaRequest : IRequest<Guid>
     public string Url { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty; // "video" | "article" | "image"
     public string? ThumbnailUrl { get; set; }
-    public string? Category { get; set; }
+    public Guid? CategoryId { get; set; }
     public string? Tag { get; set; }
 }

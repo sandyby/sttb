@@ -16,12 +16,10 @@ public class GetMediaCategoriesRequestHandler : IRequestHandler<GetMediaCategori
 
     public async Task<List<string>> Handle(GetMediaCategoriesRequest request, CancellationToken cancellationToken)
     {
-        return await _dbContext.Media
+        return await _dbContext.MediaCategories
             .AsNoTracking()
-            .Where(m => m.Category != null)
-            .Select(m => m.Category!)
-            .Distinct()
-            .OrderBy(c => c)
+            .OrderBy(c => c.Name)
+            .Select(c => c.Name)
             .ToListAsync(cancellationToken);
     }
 }

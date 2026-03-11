@@ -23,7 +23,7 @@ public class GetMediaListRequestHandler : IRequestHandler<GetMediaListRequest, G
             query = query.Where(m => m.Type == request.Type);
 
         if (!string.IsNullOrWhiteSpace(request.Category))
-            query = query.Where(m => m.Category == request.Category);
+            query = query.Where(m => m.Category != null && m.Category.Name == request.Category);
 
         if (!string.IsNullOrWhiteSpace(request.Search))
             query = query.Where(m => m.Title.Contains(request.Search));
@@ -41,7 +41,7 @@ public class GetMediaListRequestHandler : IRequestHandler<GetMediaListRequest, G
                 Url = m.Url,
                 Type = m.Type,
                 ThumbnailUrl = m.ThumbnailUrl,
-                Category = m.Category,
+                Category = m.Category != null ? m.Category.Name : null,
                 Tag = m.Tag,
                 CreatedAt = m.CreatedAt
             })
