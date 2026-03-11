@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import "./globals.css"
 import { Toaster } from "sonner";
+import { Providers } from "./providers";
 
 export default function PublicRouteLayout({
     children,
@@ -10,8 +11,10 @@ export default function PublicRouteLayout({
     return (
         <html lang="en">
             <body>
-                {children}
-                <Toaster position="top-right" richColors />
+                <Providers>
+                    {children}
+                    <Toaster position="top-right" richColors />
+                </Providers>
             </body>
         </html>
     )

@@ -2,11 +2,26 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Calendar, Tag, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Calendar, Tag, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
-import { newsArticles } from "../../data/mock-data";
+import { useGetNews, NewsListItem } from "@/hooks/useNews";
+import { Skeleton } from "@/components/ui/skeleton";
 
-function NewsCard({ article, index }: { article: typeof newsArticles[0]; index: number }) {
+function NewsCardSkeleton() {
+  return (
+    <div className="group flex flex-col bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800">
+      <Skeleton className="w-full h-48" />
+      <div className="flex flex-col flex-1 p-5 space-y-3">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-4 w-24" />
+      </div>
+    </div>
+  );
+}
+
+function NewsCard({ article, index }: { article: NewsListItem; index: number }) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -18,7 +33,7 @@ function NewsCard({ article, index }: { article: typeof newsArticles[0]; index: 
       {/* Image */}
       <div className="relative overflow-hidden h-48">
         <Image
-          src={article.imageUrl}
+          src={article.thumbnailUrl ?? "https://placehold.co/192/png"}
           alt={article.title}
           fill
           priority
@@ -35,16 +50,20 @@ function NewsCard({ article, index }: { article: typeof newsArticles[0]; index: 
       {/* Content */}
       <div className="flex flex-col flex-1 p-5">
         <div className="flex items-center gap-2 text-xs text-gray-400 mb-2.5">
-          <Calendar className="w-3.5 h-3.5" />
-          <time dateTime={article.publishedAt}>
-            {new Date(article.publishedAt).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </time>
-          <span>·</span>
-          <span>{article.author}</span>
+          {article.publishedAt && (
+            <>
+              <Calendar className="w-3.5 h-3.5" />
+              <time dateTime={article.publishedAt}>
+                {new Date(article.publishedAt).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </time>
+              <span>·</span>
+              {/* <span>{article.author}</span> */}
+            </>
+          )}
         </div>
         <h3 className="text-gray-900 dark:text-white font-semibold group-hover:text-[#E62129] transition-colors mb-2 line-clamp-2 flex-1">
           {article.title}
@@ -64,8 +83,23 @@ function NewsCard({ article, index }: { article: typeof newsArticles[0]; index: 
 }
 
 export function NewsSection() {
-  const featuredNews = newsArticles.filter((n) => n.featured).slice(0, 1)[0];
-  const regularNews = newsArticles.filter((n) => !n.featured).slice(0, 3);
+  const { data, isLoading, error } = useGetNews(1, 4);
+
+  if (error) {
+    return (
+      <section className="py-20 bg-gray-50 dark:bg-gray-950">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center text-red-500">
+            Failed to load news. Please try again later.
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const allNews = data?.items || [];
+  const featuredNews = allNews.find((n) => n.isFeatured) || allNews[0];
+  const regularNews = allNews.slice(1, 4);
 
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-950">
@@ -93,94 +127,105 @@ export function NewsSection() {
 
         <div className="grid lg:grid-cols-12 gap-6">
           {/* Featured article - large */}
-          {featuredNews && (
-            <motion.article
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-5 group"
-            >
-              <Link href={`/berita/${featuredNews.slug}`} className="block">
-                <div className="relative overflow-hidden rounded-xl h-72 lg:h-80 mb-4">
-                  <Image
-                    src={featuredNews.imageUrl}
-                    alt={featuredNews.title}
-                    fill
-                    priority
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#E62129] text-white text-xs font-medium mb-2">
-                      <Tag className="w-3 h-3" />
-                      {featuredNews.category}
-                    </span>
-                    <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-red-200 transition-colors">
-                      {featuredNews.title}
-                    </h3>
-                    <div className="flex items-center gap-2 text-white/70 text-xs mt-1.5">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <time>
-                        {new Date(featuredNews.publishedAt).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </time>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
-                  {featuredNews.excerpt}
-                </p>
-              </Link>
-            </motion.article>
-          )}
-
-          {/* Regular news list */}
-          <div className="lg:col-span-7 space-y-5">
-            {newsArticles.slice(1, 4).map((article, i) => (
+          {isLoading ? (
+            <>
+              <Skeleton className="lg:col-span-5 h-96 rounded-xl" />
+              <div className="lg:col-span-7 space-y-5">
+                <NewsCardSkeleton />
+                <NewsCardSkeleton />
+                <NewsCardSkeleton />
+              </div>
+            </>
+          ) : featuredNews ? (
+            <>
               <motion.article
-                key={article.id}
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="group flex gap-4 bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-all hover:-translate-y-0.5"
+                transition={{ duration: 0.6 }}
+                className="lg:col-span-5 group"
               >
-                <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
-                  <Image
-                    src={article.imageUrl}
-                    alt={article.title}
-                    fill
-                    priority
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-red-50 dark:bg-red-900/20 text-[#E62129]">
-                      {article.category}
-                    </span>
-                    <time className="text-xs text-gray-400">
-                      {new Date(article.publishedAt).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </time>
+                <Link href={`/berita/${featuredNews.slug}`} className="block">
+                  <div className="relative overflow-hidden rounded-xl h-72 lg:h-80 mb-4">
+                    <Image
+                      src={featuredNews.thumbnailUrl || "/images/placeholder.jpg"}
+                      alt={featuredNews.title}
+                      fill
+                      priority
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#E62129] text-white text-xs font-medium mb-2">
+                        <Tag className="w-3 h-3" />
+                        {featuredNews.category || "Berita"}
+                      </span>
+                      <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-red-200 transition-colors">
+                        {featuredNews.title}
+                      </h3>
+                      <div className="flex items-center gap-2 text-white/70 text-xs mt-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <time>
+                          {new Date(featuredNews.publishedAt || featuredNews.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </time>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-gray-900 dark:text-white font-semibold text-sm group-hover:text-[#E62129] transition-colors line-clamp-2 mb-1.5">
-                    {article.title}
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs line-clamp-2">
-                    {article.excerpt}
+                  <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
+                    {featuredNews.excerpt}
                   </p>
-                </div>
+                </Link>
               </motion.article>
-            ))}
-          </div>
+
+              {/* Regular news list */}
+              <div className="lg:col-span-7 space-y-5">
+                {regularNews.map((article, i) => (
+                  <motion.article
+                    key={article.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="group flex gap-4 bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-all hover:-translate-y-0.5"
+                  >
+                    <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                      <Image
+                        src={article.thumbnailUrl || "/images/placeholder.jpg"}
+                        alt={article.title}
+                        fill
+                        priority
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-red-50 dark:bg-red-900/20 text-[#E62129]">
+                          {article.category || "Berita"}
+                        </span>
+                        <time className="text-xs text-gray-400">
+                          {new Date(article.publishedAt || article.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </time>
+                      </div>
+                      <h3 className="text-gray-900 dark:text-white font-semibold text-sm group-hover:text-[#E62129] transition-colors line-clamp-2 mb-1.5">
+                        {article.title}
+                      </h3>
+                      <p className="text-gray-500 dark:text-gray-400 text-xs line-clamp-2">
+                        {article.excerpt}
+                      </p>
+                    </div>
+                  </motion.article>
+                ))}
+              </div>
+            </>
+          ) : null}
         </div>
 
         {/* Mobile CTA */}
