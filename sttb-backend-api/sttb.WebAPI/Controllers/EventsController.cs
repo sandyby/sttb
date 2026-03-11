@@ -29,6 +29,14 @@ public class EventsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet(ApiRoutes.Events.Categories)]
+    [AllowAnonymous]
+    public async Task<ActionResult<List<string>>> Categories(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetEventCategoriesRequest(), cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost(ApiRoutes.Events.Create)]
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<Guid>> Create(

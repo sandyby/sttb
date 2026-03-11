@@ -23,6 +23,9 @@ public class GetEventListRequestHandler : IRequestHandler<GetEventListRequest, G
         if (!string.IsNullOrWhiteSpace(request.Search))
             query = query.Where(e => e.Title.Contains(request.Search));
 
+        if (!string.IsNullOrWhiteSpace(request.Category))
+            query = query.Where(e => e.Category == request.Category);
+
         var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
