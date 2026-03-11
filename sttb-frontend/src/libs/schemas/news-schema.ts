@@ -40,7 +40,7 @@ export const newsFormSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug: huruf kecil, angka, dan tanda hubung saja"),
   excerpt: z.string().min(1, "Ringkasan wajib diisi").max(280, "Maks. 280 karakter"),
   content: z.string().min(1, "Konten wajib diisi"),
-  categoryId: z.string(),
+  categoryId: z.string().min(1, "Kategori wajib dipilih"),
   author: z.string(),
   status: z.enum(["draft", "published"]),
   featured: z.boolean(),

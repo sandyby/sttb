@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { newsFormSchema, type NewsFormValues } from "@/libs/schemas/news-schema";
 import type { CategoryResponse } from "@/types/shared";
+import { getImageUrl } from "@/lib/api";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
@@ -311,12 +312,13 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Klasifikasi</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5">Kategori</label>
+                <label className="block text-xs text-gray-400 mb-1.5">Kategori <span className="text-[#E62129]">*</span></label>
                 <select {...register("categoryId")}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-[#0A2C74]">
-                  <option value="">— Tanpa Kategori —</option>
+                  className={`w-full px-3 py-2.5 rounded-xl border bg-gray-50 dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-[#0A2C74] ${errors.categoryId ? "border-[#E62129]" : "border-gray-200 dark:border-gray-700"}`}>
+                  <option value="">— Pilih Kategori —</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
+                {errors.categoryId && <p className="flex items-center gap-1 text-[#E62129] text-xs mt-1"><AlertCircle className="w-3 h-3" />{errors.categoryId.message}</p>}
               </div>
               <div>
                 <label className="block text-xs text-gray-400 mb-1.5">Penulis</label>
@@ -339,7 +341,7 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Gambar Sampul</h3>
             {coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
-                <Image src={coverImageUrl} alt="Cover" height={128} width={400} className="w-full h-32 object-cover" />
+                <Image src={getImageUrl(coverImageUrl) ?? coverImageUrl} alt="Cover" height={128} width={400} className="w-full h-32 object-cover" />
                 <button type="button" onClick={() => setValue("coverImageUrl", "")} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors">
                   <X className="w-3.5 h-3.5" />
                 </button>
