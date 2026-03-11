@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calendar, Tag, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
-import { useGetNews, NewsListItem } from "@/hooks/useNews";
+import { useGetNews } from "@/hooks/useNews";
+import { NewsListItem } from "@/types/news";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/lib/api";
 
