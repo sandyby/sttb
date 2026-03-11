@@ -351,12 +351,12 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
 
           <CreateCategoryDialog
             isOpen={isCategoryDialogOpen}
-            onClose={() => setIsCategoryDialogOpen(false)}
-            onSuccess={(category) => {
+            onCloseAction={() => setIsCategoryDialogOpen(false)}
+            onSuccessAction={(category) => {
               setValue("categoryId", category.id);
             }}
             title="Tambah Kategori Berita"
-            mutationHook={useCreateNewsCategory}
+            mutationHookAction={useCreateNewsCategory}
           />
 
 

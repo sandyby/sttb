@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "motion/react";
-import { Flame, BookOpen, Award, Users, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 
 /* ─── DATA ───────────────────────────────────────────────── */
@@ -56,10 +56,10 @@ const timeline = [
 ];
 
 const logoMeanings = [
-    { title: "API", desc: "Penyertaan dan pemenuhan Allah Roh Kudus — sumber hikmat, kuasa, dan kasih.", icon: Flame, color: "#E62129", bg: "#FFF1F1" },
-    { title: "ALKITAB", desc: "Satu-satunya sumber pengetahuan yang benar tentang Allah (Sola Scriptura).", icon: BookOpen, color: "#0A2C74", bg: "#EFF4FF" },
-    { title: "SALIB & MAHKOTA", desc: "Panggilan untuk berpegang pada kebenaran dan merajakan Kristus.", icon: Award, color: "#0570CD", bg: "#EFF7FF" },
-    { title: "TONGKAT GEMBALA", desc: "Panggilan Tuhan untuk menggembalakan umat-Nya dengan setia.", icon: Users, color: "#059669", bg: "#ECFDF5" },
+    { title: "API", desc: "Penyertaan dan pemenuhan Allah Roh Kudus — sumber hikmat, kuasa, dan kasih.", img: "/logo/api.png" },
+    { title: "ALKITAB", desc: "Satu-satunya sumber pengetahuan yang benar tentang Allah (Sola Scriptura).", img: "/logo/alkitab.png" },
+    { title: "SALIB & MAHKOTA", desc: "Panggilan untuk berpegang pada kebenaran dan merajakan Kristus.", img: "/logo/salib.png" },
+    { title: "TONGKAT GEMBALA", desc: "Panggilan Tuhan untuk menggembalakan umat-Nya dengan setia.", img: "/logo/tongkat.png" },
 ];
 
 const founders = [
@@ -370,19 +370,24 @@ export default function SejarahPage() {
                     </motion.div>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
                         {logoMeanings.map((item, i) => {
-                            const Icon = item.icon;
                             return (
                                 <motion.div key={item.title} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                                     transition={{ delay: i * 0.1 + 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                                     whileHover={{ y: -6 }}
                                     className="group p-6 rounded-2xl border border-gray-100 dark:border-gray-800 text-center hover:shadow-xl transition-all cursor-default">
-                                    <motion.div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: item.bg }}
+                                    <motion.div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 p-2"
                                         whileHover={{ rotate: 10 }} transition={{ type: "spring", stiffness: 300 }}>
-                                        <Icon className="w-7 h-7" style={{ color: item.color }} />
+                                        <Image
+                                            src={item.img}
+                                            alt={item.title}
+                                            width={56}
+                                            height={56}
+                                            className="w-full h-full object-contain"
+                                        />
                                     </motion.div>
                                     <h3 className="text-gray-900 dark:text-white font-bold text-sm mb-2">{item.title}</h3>
                                     <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">{item.desc}</p>
-                                    <div className="mt-4 h-0.5 w-0 group-hover:w-full transition-all duration-500 rounded-full mx-auto" style={{ backgroundColor: item.color }} />
+                                    <div className="mt-4 h-0.5 w-0 group-hover:w-full transition-all duration-500 rounded-full mx-auto" />
                                 </motion.div>
                             );
                         })}

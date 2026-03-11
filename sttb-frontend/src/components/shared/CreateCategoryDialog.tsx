@@ -31,22 +31,22 @@ type CategoryFormValues = z.infer<typeof categorySchema>;
 
 interface CreateCategoryDialogProps {
   isOpen: boolean;
-  onClose: () => void;
-  onSuccess: (category: { id: string; name: string }) => void;
+  onCloseAction: () => void;
+  onSuccessAction: (category: { id: string; name: string }) => void;
   title: string;
-  mutationHook: () => any; // Use the useMutation hook returned type
+  mutationHookAction: () => any; // Use the useMutation hook returned type
 }
 
 /* ─── Component ──────────────────────────────────────────── */
 
 export function CreateCategoryDialog({
   isOpen,
-  onClose,
-  onSuccess,
+  onCloseAction,
+  onSuccessAction,
   title,
-  mutationHook,
+  mutationHookAction,
 }: CreateCategoryDialogProps) {
-  const mutation = mutationHook();
+  const mutation = mutationHookAction();
   
   const {
     register,
@@ -77,9 +77,9 @@ export function CreateCategoryDialog({
     mutation.mutate(data, {
       onSuccess: (id: string) => {
         toast.success("Kategori berhasil dibuat");
-        onSuccess({ id, name: data.name });
+        onSuccessAction({ id, name: data.name });
         reset();
-        onClose();
+        onCloseAction();
       },
       onError: (error: any) => {
         toast.error("Gagal membuat kategori: " + (error.response?.data?.message || error.message));
@@ -88,7 +88,7 @@ export function CreateCategoryDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onCloseAction}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -124,7 +124,7 @@ export function CreateCategoryDialog({
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onClose} disabled={mutation.isPending}>
+            <Button type="button" variant="outline" onClick={onCloseAction} disabled={mutation.isPending}>
               Batal
             </Button>
             <Button type="submit" disabled={mutation.isPending}>

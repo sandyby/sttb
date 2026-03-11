@@ -312,12 +312,12 @@ export function UploadMediaDialog({ isOpen, onClose }: UploadMediaDialogProps) {
             
             <CreateCategoryDialog
                 isOpen={isCategoryDialogOpen}
-                onClose={() => setIsCategoryDialogOpen(false)}
-                onSuccess={(category) => {
+                onCloseAction={() => setIsCategoryDialogOpen(false)}
+                onSuccessAction={(category) => {
                     form.setValue("categoryId", category.id);
                 }}
                 title="Tambah Kategori Media"
-                mutationHook={useCreateMediaCategory}
+                mutationHookAction={useCreateMediaCategory}
             />
         </AnimatePresence>
     );

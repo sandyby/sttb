@@ -304,12 +304,12 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
       
       <CreateCategoryDialog
         isOpen={isCategoryDialogOpen}
-        onClose={() => setIsCategoryDialogOpen(false)}
-        onSuccess={(category) => {
+        onCloseAction={() => setIsCategoryDialogOpen(false)}
+        onSuccessAction={(category) => {
           setValue("category", category.name);
         }}
         title="Tambah Kategori Kegiatan"
-        mutationHook={useCreateEventCategory}
+        mutationHookAction={useCreateEventCategory}
       />
 
       {/* Tab: Registration */}
