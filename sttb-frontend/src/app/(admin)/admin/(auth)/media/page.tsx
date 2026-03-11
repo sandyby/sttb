@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Upload, Search, Trash2, Copy, Grid, List, Newspaper, Film, Filter, CheckCircle, Loader2 } from "lucide-react";
+import { Upload, Search, Trash2, Copy, Grid, List, Newspaper, Film, Filter, CheckCircle, Loader2, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { useMediaList, useDeleteMedia } from "@/hooks/useMedia";
@@ -30,11 +30,10 @@ export default function AdminMediaPage() {
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
     // Fetch live API data!
-    const { data: mediaResponse, isLoading } = useMediaList({
+    const { data: mediaResponse, isLoading, refetch, isError, isRefetching } = useMediaList({
         pageSize: 100, // Show a lot for now until pagination is built
         type: filterType.toLowerCase() !== "semua" ? filterType : undefined,
-    });
-    const media = mediaResponse?.items ?? [];
+    }); const media = mediaResponse?.items ?? [];
 
     const { mutateAsync: deleteMedia, isPending: isDeleting } = useDeleteMedia();
 
@@ -140,6 +139,7 @@ export default function AdminMediaPage() {
                         <div className="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1 border-none visible"></div>
                         <div className="flex items-center gap-1">
                             <button onClick={() => setViewMode("grid")} className={`p-2 rounded-lg transition-colors ${viewMode === "grid" ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}><Grid className="w-4 h-4" /></button>
+                            <button onClick={() => setViewMode("grid")} className={`p-2 rounded-lg transition-colors ${viewMode === "grid" ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}><Grid className="w-4 h-4" /></button>
                             <button onClick={() => setViewMode("list")} className={`p-2 rounded-lg transition-colors ${viewMode === "list" ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}><List className="w-4 h-4" /></button>
                         </div>
                     </div>
@@ -153,15 +153,32 @@ export default function AdminMediaPage() {
             </div>
 
             {/* Grid / Loader */}
-            {isLoading ? (
+            {(isLoading || isRefetching) ? (
                 <div className="min-h-64 flex flex-col items-center justify-center gap-3">
                     <Loader2 className="w-8 h-8 text-[#0A2C74] animate-spin" />
                     <span className="text-gray-500 font-medium text-sm">Memuat aset media...</span>
+                </div>
+            ) : isError ? (
+                <div className="min-h-64 flex flex-col items-center justify-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-800">
+                    <Newspaper className="w-12 h-12 text-gray-300 dark:text-gray-600" />
+                    <span className="text-gray-500 font-medium text-sm">Gagal memuat media</span>
+                    <button
+                        onClick={() => refetch()}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors shadow-sm"
+                    >
+                        <RefreshCcw className="w-4 h-4" /> Refresh
+                    </button>
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="min-h-64 flex flex-col items-center justify-center gap-3 bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-800">
                     <Newspaper className="w-12 h-12 text-gray-300 dark:text-gray-600" />
                     <span className="text-gray-500 font-medium text-sm">Belum ada media ditemukan</span>
+                    <button
+                        onClick={() => setIsUploadOpen(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors shadow-sm"
+                    >
+                        <Upload className="w-4 h-4" /> Upload Media
+                    </button>
                 </div>
             ) : viewMode === "grid" ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -205,7 +222,9 @@ export default function AdminMediaPage() {
                                     <p className="text-gray-900 dark:text-white text-xs font-semibold truncate" title={item.title}>{item.title}</p>
                                     <div className="flex items-center justify-between mt-0.5">
                                         <p className="text-gray-400 text-[10px]">{new Date(item.createdAt).toLocaleDateString("id-ID")}</p>
-                                        {item.tag && <span className="text-[10px] text-[#0A2C74] bg-[#0A2C74]/10 dark:text-blue-300 dark:bg-blue-900/30 px-1.5 py-0.5 rounded-sm line-clamp-1 max-w-25 truncate">
+                                        {item.tag && <span className="text-[10px] text-[#0A2C74] bg-[#0A2C74]/10 dark:text-blue-300 dark:bg-blue-900/30 px-1.5 py-0.5 rounded-sm line-clamp-1 max-w-25 truncate"
+                                            title={item.tag}
+                                        >
                                             #{item.tag}
                                         </span>}
                                     </div>
