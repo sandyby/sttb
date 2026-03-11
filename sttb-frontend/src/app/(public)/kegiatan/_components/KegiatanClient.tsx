@@ -134,7 +134,7 @@ export function KegiatanClient() {
     }
   }
 
-  const allCategories = ["Semua", ...categories];
+  const allCategories = ["Semua", ...categories.map((c) => c.name)];
 
   if (eventsLoading) {
     return (

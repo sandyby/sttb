@@ -52,7 +52,7 @@ export function BeritaClient() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const allCategories = ["Semua", ...categories];
+  const allCategories = ["Semua", ...categories.map((c) => c.name)];
   const useDropdown = allCategories.length > 6;
 
   return (

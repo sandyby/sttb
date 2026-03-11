@@ -2,6 +2,7 @@ import apiClient from "./axios";
 import type { GetNewsListResponse, NewsDetail } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
 import type { GetMediaListResponse } from "@/types/media";
+import type { CategoryResponse } from "@/types/shared";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001";
 
@@ -31,9 +32,9 @@ export async function getNewsList(params: {
   return data;
 }
 
-export async function getNewsCategories(): Promise<string[]> {
+export async function getNewsCategories(): Promise<CategoryResponse[]> {
   try {
-    const { data } = await apiClient.get<string[]>("/api/news/categories");
+    const { data } = await apiClient.get<CategoryResponse[]>("/api/news/categories");
     return data;
   } catch {
     return [];
@@ -72,9 +73,9 @@ export async function getEventList(params: {
   return data;
 }
 
-export async function getEventCategories(): Promise<string[]> {
+export async function getEventCategories(): Promise<CategoryResponse[]> {
   try {
-    const { data } = await apiClient.get<string[]>("/api/events/categories");
+    const { data } = await apiClient.get<CategoryResponse[]>("/api/events/categories");
     return data;
   } catch {
     return [];
@@ -102,9 +103,9 @@ export async function getMediaList(params: {
   return data;
 }
 
-export async function getMediaCategories(): Promise<string[]> {
+export async function getMediaCategories(): Promise<CategoryResponse[]> {
   try {
-    const { data } = await apiClient.get<string[]>("/api/media/categories");
+    const { data } = await apiClient.get<CategoryResponse[]>("/api/media/categories");
     return data;
   } catch {
     return [];

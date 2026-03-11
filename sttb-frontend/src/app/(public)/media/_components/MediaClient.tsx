@@ -44,7 +44,7 @@ export function MediaClient() {
     setCurrentPage(1);
   }
 
-  const allCategories = ["Semua", ...categories];
+  const allCategories = ["Semua", ...categories.map((c) => c.name)];
 
   if (isLoading) {
     return (
