@@ -12,6 +12,8 @@ import {
     Tag,
     CheckCircle,
     XCircle,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -24,15 +26,20 @@ export default function AdminNewsPage() {
     const [search, setSearch] = useState("");
     const [activeCategory, setActiveCategory] = useState("Semua");
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+    const [page, setPage] = useState(1);
+    const PAGE_SIZE = 10;
 
     const { data: categoriesData = [] } = useNewsCategories();
     const categories = ["Semua", ...categoriesData.map((c) => c.name)];
 
     const { data, isLoading } = useAdminNewsList({
-        pageSize: 100,
+        page,
+        pageSize: PAGE_SIZE,
         category: activeCategory !== "Semua" ? activeCategory : undefined,
         search: search || undefined,
     });
+
+    const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 1;
 
     const deleteNews = useDeleteNews();
     const articles = data?.items ?? [];
@@ -79,7 +86,7 @@ export default function AdminNewsPage() {
                             type="text"
                             placeholder="Cari judul berita..."
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                             className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:outline-none focus:border-[#E62129] transition-all"
                         />
                     </div>
@@ -88,7 +95,7 @@ export default function AdminNewsPage() {
                         {categories.map((cat) => (
                             <button
                                 key={cat}
-                                onClick={() => setActiveCategory(cat)}
+                                onClick={() => { setActiveCategory(cat); setPage(1); }}
                                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${activeCategory === cat
                                     ? "bg-[#E62129] text-white"
                                     : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200"
@@ -252,8 +259,50 @@ export default function AdminNewsPage() {
                         </tbody>
                     </table>
                 </div>
-                <div className="p-4 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-500 dark:text-gray-400">
-                    {isLoading ? "Memuat data..." : `Menampilkan ${articles.length} dari ${data?.totalCount ?? 0} berita`}
+                <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-4 flex-wrap">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {isLoading
+                            ? "Memuat data..."
+                            : `Halaman ${page} dari ${totalPages} · ${data?.totalCount ?? 0} berita`}
+                    </p>
+                    {totalPages > 1 && (
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                disabled={page <= 1 || isLoading}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            >
+                                <ChevronLeft className="w-3.5 h-3.5" /> Prev
+                            </button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                                .reduce<(number | "…")[]>((acc, p, idx, arr) => {
+                                    if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("…");
+                                    acc.push(p);
+                                    return acc;
+                                }, [])
+                                .map((p, i) =>
+                                    p === "…" ? (
+                                        <span key={`ellipsis-${i}`} className="px-2 text-xs text-gray-400">…</span>
+                                    ) : (
+                                        <button
+                                            key={p}
+                                            onClick={() => setPage(p)}
+                                            className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${page === p ? "bg-[#E62129] text-white" : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+                                        >
+                                            {p}
+                                        </button>
+                                    )
+                                )}
+                            <button
+                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                disabled={page >= totalPages || isLoading}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Next <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
