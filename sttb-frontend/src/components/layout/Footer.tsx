@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import {
   MapPin,
@@ -10,6 +9,7 @@ import {
   Heart,
   ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
 
 const quickLinks = [
   { label: "Beranda", href: "/" },
@@ -24,7 +24,10 @@ const quickLinks = [
 const academicLinks = [
   { label: "Sarjana Teologi", href: "/sarjana-teologi" },
   { label: "Sarjana Pendidikan Kristen", href: "/sarjana-pendidikan-kristen" },
-  { label: "Magister Teologi", href: "/magister-teologi-pelayanan-pastoral-gereja-urban" },
+  {
+    label: "Magister Teologi",
+    href: "/magister-teologi-pelayanan-pastoral-gereja-urban",
+  },
   { label: "Magister Ministri", href: "/magister-ministri-marketplace" },
   { label: "Prosedur Admisi", href: "/prosedur-admisi" },
   { label: "Biaya Studi", href: "/biaya-studi" },
@@ -51,42 +54,51 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand & Contact */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-full bg-[#E62129] flex items-center justify-center text-white font-bold text-xl">
-                S
-              </div>
-              <div>
-                <div className="font-bold text-lg leading-tight">STTB</div>
-                <div className="text-xs text-blue-200 leading-tight">
-                  Sekolah Tinggi Teologi Bandung
+            <div className="flex justify-center items-center gap-3 mb-5">
+              <Image
+                src="/sttb-logo-white.png"
+                alt="STTB Logo"
+                width={150}
+                height={75}
+                priority
+                className="shrink-0"
+              />
+              <div className="flex flex-col gap-y-0.5">
+                <div className="">
+                  <p className="w-fit font-bold text-lg leading-tight text-white">
+                    STTB
+                  </p>
+                </div>
+                <div className="">
+                  <p className="w-fit text-xs leading-tight text-blue-200">
+                    Sekolah Tinggi Teologi Bandung
+                  </p>
                 </div>
               </div>
             </div>
             <p className="text-blue-100 text-sm leading-relaxed mb-5">
               Lembaga pendidikan teologi Kristen yang berdedikasi mencetak
               hamba-hamba Tuhan yang kompeten, berkarakter, dan berhati pelayan
-              sejak 1971.
+              sejak 1992.
             </p>
             <div className="space-y-2.5">
               <div className="flex items-start gap-2.5 text-sm text-blue-100">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#7FB4E5]" />
-                <span>
-                  Jl. Sriwijaya No. 20-22, Bandung 40113, Jawa Barat, Indonesia
-                </span>
+                <span>Jl. Dr. Djunjunan No.105 40173 Cicendo Jawa Barat</span>
               </div>
               <a
-                href="tel:+62222012010"
+                href="tel:+6281573360009"
                 className="flex items-center gap-2.5 text-sm text-blue-100 hover:text-white transition-colors"
               >
                 <Phone className="w-4 h-4 flex-shrink-0 text-[#7FB4E5]" />
-                (022) 201-2010
+                (+62)-815-7336-0009
               </a>
               <a
                 href="mailto:info@sttb.ac.id"
                 className="flex items-center gap-2.5 text-sm text-blue-100 hover:text-white transition-colors"
               >
                 <Mail className="w-4 h-4 flex-shrink-0 text-[#7FB4E5]" />
-                info@sttb.ac.id
+                official@sttb.ac.id
               </a>
             </div>
             <div className="flex items-center gap-3 mt-5">

@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  ArrowLeft, Bold, Italic, Underline, List, ListOrdered, Link2, Eye, EyeOff, Upload, X, AlertCircle,
-  CheckCircle, Heading1, Heading2, Quote, Save,
+  ArrowLeft, Bold, Italic, Underline, List, ListOrdered, Link2, Eye, EyeOff, Upload, X, AlertCircle, Image as ImageIcon,
+  CheckCircle, Heading1, Heading2, Quote, Save, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -16,6 +16,7 @@ import { getImageUrl } from "@/lib/api";
 import { CreateCategoryDialog } from "@/components/shared/CreateCategoryDialog";
 import { useCreateNewsCategory } from "@/hooks/useNews";
 import { Plus } from "lucide-react";
+import { useUploadImage } from "@/hooks/useUpload";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
@@ -46,7 +47,7 @@ const TOOLBAR = [
   { icon: List, label: "List", action: "\n- ", wrap: false },
   { icon: ListOrdered, label: "Numbered", action: "\n1. ", wrap: false },
   { icon: Link2, label: "Link", action: "[Link](url)", wrap: false },
-  { icon: Image, label: "Image", action: "![Alt](url)", wrap: false },
+  { icon: ImageIcon, label: "Image", action: "![Alt](url)", wrap: false },
 ];
 
 function RichTextEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
@@ -82,7 +83,7 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (v: stri
           return (
             <button key={btn.label} type="button" title={btn.label} onClick={() => apply(btn.action, btn.wrap)}
               className="px-2 py-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors">
-              <Icon className="w-3.5 h-3.5" src={""} alt={""} />
+              <Icon className="w-3.5 h-3.5" />
             </button>
           );
         })}
@@ -143,6 +144,8 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const isFirstRender = useRef(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage();
 
   const {
     register,
@@ -191,6 +194,21 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
         toast.error("Lengkapi semua field yang diperlukan");
       },
     )();
+  };
+
+  const handleImageUpload = async (file: File) => {
+    try {
+      if (!file.type.startsWith("image/")) {
+        toast.error("File harus berupa gambar");
+        return;
+      }
+      const res = await uploadImage({ file, uploadType: "news" });
+      setValue("coverImageUrl", res.url, { shouldValidate: true });
+      toast.success("Gambar berhasil diupload");
+    } catch (error) {
+      toast.error("Gagal mengupload gambar");
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -366,17 +384,26 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
             {coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
                 <Image src={getImageUrl(coverImageUrl) ?? coverImageUrl} alt="Cover" height={128} width={400} className="w-full h-32 object-cover" />
-                <button type="button" onClick={() => setValue("coverImageUrl", "")} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors">
+                <button type="button" onClick={() => setValue("coverImageUrl", "")} disabled={!!saving || isUploading} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors">
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
-              : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-5 text-center mb-3">
-                <Upload className="w-6 h-6 text-gray-300 mx-auto mb-1" />
-                <p className="text-xs text-gray-400">Masukkan URL gambar</p>
+              : <div onClick={() => !isUploading && fileInputRef.current?.click()} className={`rounded-xl border-2 border-dashed p-5 text-center cursor-pointer transition-colors ${isUploading ? "border-blue-300 bg-blue-50/50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-700 hover:border-[#E62129]"}`}>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-6 h-6 text-blue-500 mx-auto mb-1 animate-spin" />
+                    <p className="text-xs text-blue-500 font-medium">Mengupload...</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-6 h-6 text-gray-300 hover:text-[#E62129] mx-auto mb-1 transition-colors" />
+                    <p className="text-xs text-gray-500 font-medium">Klik untuk upload gambar sampul</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Mendukung JPG, PNG (Max 10MB)</p>
+                  </>
+                )}
               </div>
             }
-            <input type="url" {...register("coverImageUrl")} placeholder="https://images.unsplash.com/..."
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:border-[#0A2C74]" />
+            <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
           </div>
 
           {/* Checklist */}

@@ -21,7 +21,8 @@ public class LoginRequestHandler : IRequestHandler<LoginRequest, LoginResponse>
         UserManager<User> userManager,
         ITokenService tokenService,
         ApplicationDbContext dbContext,
-        ILogger<LoginRequestHandler> logger)
+        ILogger<LoginRequestHandler> logger
+    )
     {
         _userManager = userManager;
         _tokenService = tokenService;
@@ -29,15 +30,17 @@ public class LoginRequestHandler : IRequestHandler<LoginRequest, LoginResponse>
         _logger = logger;
     }
 
-    public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
+    public async Task<LoginResponse> Handle(
+        LoginRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
 
-        // Generic message — prevent user enumeration per security-standard §2.2
         if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
         {
             _logger.LogWarning("Failed login attempt for email {Email}", request.Email);
-            throw new UnauthorizedAccessException("Invalid username or password.");
+            throw new UnauthorizedAccessException("Incorrect username or password!");
         }
 
         var roles = await _userManager.GetRolesAsync(user);
@@ -54,7 +57,7 @@ public class LoginRequestHandler : IRequestHandler<LoginRequest, LoginResponse>
             AccessToken = accessToken,
             RefreshToken = refreshToken.Token,
             ExpiresIn = 15 * 60, // 15 minutes in seconds
-            Role = roles.FirstOrDefault() ?? string.Empty
+            Role = roles.FirstOrDefault() ?? string.Empty,
         };
     }
 }

@@ -24,7 +24,8 @@ public class AuthController : ControllerBase
     [EnableRateLimiting("auth")]
     public async Task<ActionResult<LoginResponse>> Login(
         [FromBody] LoginRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         var result = await _mediator.Send(request, cancellationToken);
         return Ok(result);
@@ -35,7 +36,8 @@ public class AuthController : ControllerBase
     [EnableRateLimiting("auth")]
     public async Task<ActionResult<RefreshTokenResponse>> Refresh(
         [FromBody] RefreshTokenRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         var result = await _mediator.Send(request, cancellationToken);
         return Ok(result);
@@ -45,7 +47,8 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Logout(
         [FromBody] LogoutRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         await _mediator.Send(request, cancellationToken);
         return NoContent();

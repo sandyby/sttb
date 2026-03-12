@@ -1,10 +1,10 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft, Calendar, MapPin, Users, X, Upload,
-  AlertCircle, CheckCircle, Link2, Tag, Eye, Save,
+  AlertCircle, CheckCircle, Link2, Tag, Eye, Save, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -13,6 +13,7 @@ import { useEventCategories, useCreateEventCategory } from "@/hooks/useEvents";
 import { getImageUrl } from "@/lib/api";
 import { CreateCategoryDialog } from "@/components/shared/CreateCategoryDialog";
 import { Plus } from "lucide-react";
+import { useUploadImage } from "@/hooks/useUpload";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
@@ -82,6 +83,8 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [tab, setTab] = useState<"basic" | "registration" | "details">("basic");
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage();
 
   const {
     register,
@@ -142,6 +145,21 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
         }
       },
     )();
+  };
+
+  const handleImageUpload = async (file: File) => {
+    try {
+      if (!file.type.startsWith("image/")) {
+        toast.error("File harus berupa gambar");
+        return;
+      }
+      const res = await uploadImage({ file, uploadType: "events" });
+      setValue("coverImageUrl", res.url, { shouldValidate: true });
+      toast.success("Gambar berhasil diupload");
+    } catch (error) {
+      toast.error("Gagal mengupload gambar");
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const TABS = [
@@ -374,15 +392,24 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events" }: E
             {coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
                 <Image src={getImageUrl(coverImageUrl) ?? coverImageUrl} alt="" height={176} width={400} className="w-full h-44 object-cover" />
-                <button type="button" onClick={() => setValue("coverImageUrl", "")} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"><X className="w-4 h-4" /></button>
+                <button type="button" onClick={() => setValue("coverImageUrl", "")} disabled={!!saving || isUploading} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"><X className="w-4 h-4" /></button>
               </div>
-              : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-3">
-                <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-400">Masukkan URL gambar di bawah ini</p>
-                <p className="text-xs text-gray-300 mt-1">Rekomendasi: 1200×630px</p>
+              : <div onClick={() => !isUploading && fileInputRef.current?.click()} className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${isUploading ? "border-blue-300 bg-blue-50/50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-700 hover:border-[#E62129]"}`}>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-8 h-8 text-blue-500 mx-auto mb-2 animate-spin" />
+                    <p className="text-sm text-blue-500 font-medium">Mengupload...</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-8 h-8 text-gray-300 hover:text-[#E62129] mx-auto mb-2 transition-colors" />
+                    <p className="text-sm text-gray-500 font-medium">Klik untuk upload gambar sampul</p>
+                    <p className="text-xs text-gray-400 mt-1">Rekomendasi: 1200×630px, Mendukung JPG/PNG</p>
+                  </>
+                )}
               </div>
             }
-            <input type="url" {...register("coverImageUrl")} placeholder="https://images.unsplash.com/..." className={inputCls()} />
+            <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
           </Field>
           <Field label="Tags">
             <div className="p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">

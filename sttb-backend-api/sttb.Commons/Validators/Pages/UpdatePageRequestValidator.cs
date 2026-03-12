@@ -15,7 +15,17 @@ public class UpdatePageRequestValidator : AbstractValidator<UpdatePageRequest>
             .NotEmpty()
             .MaximumLength(500);
 
-        RuleFor(x => x.Body)
-            .NotEmpty();
+        RuleFor(x => x.Section)
+            .NotEmpty()
+            .MaximumLength(200);
+
+        RuleFor(x => x.Content)
+            .MaximumLength(50000); // 50k chars is plenty
+
+        RuleFor(x => x.MetaDescription)
+            .MaximumLength(500);
+
+        RuleFor(x => x.MetaKeywords)
+            .MaximumLength(500);
     }
 }

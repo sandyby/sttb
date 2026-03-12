@@ -108,8 +108,8 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!response.ok) {
-            const errorData = (await response.json());
-            throw new Error(errorData.title ?? "Login failed");
+            const errorData = await response.json();
+            throw new Error(errorData.detail ?? errorData.message ?? errorData.title ?? "Login failed");
           }
 
           const data = (await response.json()) as LoginResponse;
@@ -189,13 +189,13 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
-    maxAge: 7 * 24 * 60 * 60,     // 7 days
-    updateAge: 24 * 60 * 60,       // Rotate every 24 hours
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+    updateAge: 24 * 60 * 60, // Rotate every 24 hours
   },
 
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
-    maxAge: 7 * 24 * 60 * 60,     // 7 days
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
 
   events: {
@@ -246,4 +246,3 @@ async function refreshAccessToken(token: import("next-auth/jwt").JWT) {
     };
   }
 }
-

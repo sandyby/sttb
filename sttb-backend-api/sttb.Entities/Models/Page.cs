@@ -9,12 +9,24 @@ public class Page : IHaveCreateAndUpdateAudit
     public Guid Id { get; set; }
 
     [StringLength(200)]
-    public string Slug { get; set; } = string.Empty; // maps to frontend route
+    public string Slug { get; set; } = string.Empty; // e.g. "sejarah", "visi-misi"
 
     [StringLength(500)]
     public string Title { get; set; } = string.Empty;
 
-    public string Body { get; set; } = string.Empty; // Rich text HTML
+    [StringLength(200)]
+    public string Section { get; set; } = string.Empty; // e.g. "Tentang", "Admisi"
+
+    public string? Content { get; set; } = string.Empty; // Optional Markdown/HTML
+
+    public bool IsPublished { get; set; } = true;
+
+    // SEO Metadata
+    [StringLength(500)]
+    public string? MetaDescription { get; set; }
+
+    [StringLength(500)]
+    public string? MetaKeywords { get; set; }
 
     [StringLength(450)]
     public string CreatedBy { get; set; } = string.Empty;
