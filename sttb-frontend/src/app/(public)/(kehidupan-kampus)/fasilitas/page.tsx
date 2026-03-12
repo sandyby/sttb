@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "motion/react";
 import { BookOpen, Heart, Home, Monitor, Dumbbell, Users, ChevronRight, X, Camera, Grid3X3 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -138,13 +138,8 @@ function MasonryGallery() {
     const inView = useInView(ref, { once: true, margin: "-80px" });
     const [activeTag, setActiveTag] = useState("Semua");
     const [lightbox, setLightbox] = useState<typeof galleryImages[0] | null>(null);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => { setMounted(true); }, []);
 
     const filtered = activeTag === "Semua" ? galleryImages : galleryImages.filter((img) => img.tag === activeTag);
-
-    if (!mounted) return null;
 
     return (
         <section ref={ref} className="py-20 bg-gray-950">
