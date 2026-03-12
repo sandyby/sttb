@@ -73,37 +73,18 @@ const programs = [
     },
 ];
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function LeadPage() {
 
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] via-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none opacity-10">
-                    <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white -translate-y-1/2 translate-x-1/4" />
-                    <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-white translate-y-1/2 -translate-x-1/4" />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <FadeIn>
-                        <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-1">
-                            Learning, Equipping, & Development
-                        </p>
-                        <h1
-                            className="text-white mb-4"
-                            style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700 }}
-                        >
-                            LEAD Center
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Pusat pendidikan dan pelatihan nonformal dari Sekolah Tinggi Teologi Bandung
-                            — memperlengkapi orang-orang kudus bagi pekerjaan pelayanan.
-                        </p>
-                        <p className="text-blue-300 text-sm mt-3 italic">
-                            &quot;…bagi pembangunan tubuh Kristus.&quot; — Efesus 4:12
-                        </p>
-                    </FadeIn>
-                </div>
-            </div>
+            <PageHeader
+                title="LEAD Center"
+                category="Learning, Equipping, & Development"
+                description="Pusat pendidikan dan pelatihan nonformal dari Sekolah Tinggi Teologi Bandung — memperlengkapi orang-orang kudus bagi pekerjaan pelayanan."
+                breadcrumb={[{ label: "LEAD Center", href: "/lead" }]}
+            />
 
             {/* Vision Statement */}
             <section className="py-16 bg-white dark:bg-gray-900">

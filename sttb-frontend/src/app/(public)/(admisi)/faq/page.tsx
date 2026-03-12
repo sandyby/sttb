@@ -114,29 +114,23 @@ function FAQAccordionItem({ item, color }: { item: FAQItem; color: string }) {
     );
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function FAQPage() {
     const [activeSection, setActiveSection] = useState("memilih-s1");
     const active = sections.find((s) => s.id === activeSection)!;
 
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-6 h-px bg-[#E62129]" />
-                            <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Admisi</span>
-                        </div>
-                        <h1 className="text-white mb-4" style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800 }}>
-                            Frequently Asked Questions
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Temukan jawaban atas pertanyaan yang sering diajukan seputar admisi, program studi, biaya, dan kehidupan kampus STTB.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Frequently Asked Questions"
+                category="Admisi"
+                description="Temukan jawaban atas pertanyaan yang sering diajukan seputar admisi, program studi, biaya, dan kehidupan kampus STTB."
+                breadcrumb={[
+                    { label: "Admisi", href: "/jadwal-admisi" },
+                    { label: "FAQ", href: "/faq" }
+                ]}
+            />
 
             <section className="py-12 bg-gray-50 dark:bg-gray-950">
                 <div className="max-w-5xl mx-auto px-4">

@@ -63,33 +63,19 @@ const articles = [
     },
 ];
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function PengakuanImanPage() {
     const [active, setActive] = useState<number | null>(null);
 
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] via-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none opacity-10">
-                    {/* Cross silhouette */}
-                    <div className="absolute right-20 top-10 w-2 h-40 bg-white rounded-full" />
-                    <div className="absolute right-6 top-24 w-28 h-2 bg-white rounded-full" />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-6 h-px bg-[#E62129]" />
-                            <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Tentang STTB</span>
-                        </div>
-                        <h1 className="text-white mb-4" style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800 }}>
-                            Pengakuan Iman
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Pernyataan kepercayaan yang menjadi fondasi teologis Sekolah Tinggi Teologi Bandung — merangkum apa yang kami percayai dan ajarkan.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Pengakuan Iman"
+                category="Tentang STTB"
+                description="Pernyataan kepercayaan yang menjadi fondasi teologis Sekolah Tinggi Teologi Bandung — merangkum apa yang kami percayai dan ajarkan."
+                breadcrumb={[{ label: "Pengakuan Iman", href: "/pengakuan-iman" }]}
+            />
 
             {/* Articles */}
             <section className="py-16 bg-gray-50 dark:bg-gray-950">

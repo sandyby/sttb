@@ -143,6 +143,8 @@ function PengurusCard({ p, index }: { p: any; index: number }) {
 
 /* ─── PAGE ────────────────────────────────────────────────── */
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function PengurusYayasanPage() {
     const { data, isLoading } = useFoundationMembers();
     const [expandAnggota, setExpandAnggota] = useState(false);
@@ -168,39 +170,12 @@ export default function PengurusYayasanPage() {
 
     return (
         <>
-            {/* Hero */}
-            <div className="relative pt-28 pb-24 min-h-[420px] flex items-center overflow-hidden" style={{ background: "linear-gradient(135deg, #060C1A 0%, #0A2C74 70%, #0570CD 100%)" }}>
-                <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-
-                {[180, 300, 420].map((size, i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute rounded-full border border-white/5 pointer-events-none"
-                        style={{ width: size, height: size, right: "-5%", top: "50%", transform: "translateY(-50%)" }}
-                        animate={{ rotate: [0, 360] }}
-                        transition={{ duration: 20 + i * 8, repeat: Infinity, ease: "linear" }}
-                    />
-                ))}
-
-                <div className="max-w-7xl mx-auto px-4 relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        <div className="flex items-center gap-2 mb-5">
-                            <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="w-8 h-px bg-[#E62129] origin-left" />
-                            <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Tentang STTB</span>
-                        </div>
-                        <h1 className="text-white mb-4" style={{ fontWeight: 800, lineHeight: 1.05, fontSize: "clamp(2.2rem, 5vw, 3.5rem)" }}>
-                            Pengurus Yayasan
-                        </h1>
-                        <p className="text-blue-200/70 max-w-xl leading-relaxed">
-                            Yayasan Sekolah Tinggi Teologi Bandung dipimpin oleh para hamba Tuhan dan pemimpin Kristen yang berkomitmen pada visi pendidikan teologi yang berkualitas.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Pengurus Yayasan"
+                category="Tentang STTB"
+                description="Yayasan Sekolah Tinggi Teologi Bandung dipimpin oleh para hamba Tuhan dan pemimpin Kristen yang berkomitmen pada visi pendidikan teologi yang berkualitas."
+                breadcrumb={[{ label: "Pengurus Yayasan", href: "/pengurus-yayasan" }]}
+            />
 
             <section className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden" aria-hidden>

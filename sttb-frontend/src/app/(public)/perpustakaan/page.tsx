@@ -67,6 +67,8 @@ const membershipFields = [
     "No. Kontak *",
 ];
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function PerpustakaanPage() {
     const [activeTab, setActiveTab] = useState<"keanggotaan" | "bebasputaka">("keanggotaan");
     const [memberForm, setMemberForm] = useState<Record<string, string>>({});
@@ -76,49 +78,12 @@ export default function PerpustakaanPage() {
 
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none opacity-5">
-                    {[...Array(20)].map((_, i) => (
-                        <div
-                            key={i}
-                            className="absolute border border-white rounded-lg"
-                            style={{
-                                width: 40 + i * 15,
-                                height: 60 + i * 10,
-                                top: `${Math.random() * 100}%`,
-                                left: `${Math.random() * 100}%`,
-                                transform: `rotate(${Math.random() * 30 - 15}deg)`,
-                            }}
-                        />
-                    ))}
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-2">
-                            Kampus STTB
-                        </p>
-                        <h1
-                            className="text-white mb-4"
-                            style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700 }}
-                        >
-                            Perpustakaan STTB
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Menjadi wadah transformasi pemikiran dan kehidupan. Koleksi lebih dari 47.000
-                            judul buku dan akses digital melalui EBSCO dan ATLA.
-                        </p>
-                        <p className="text-blue-300 italic text-sm mt-3 max-w-xl leading-relaxed">
-                            "Semua yang benar, semua yang mulia, semua yang adil…pikirkanlah semuanya itu."
-                            <span className="not-italic font-semibold"> — Filipi 4:8</span>
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Perpustakaan STTB"
+                category="Kampus STTB"
+                description="Menjadi wadah transformasi pemikiran dan kehidupan. Koleksi lebih dari 47.000 judul buku dan akses digital melalui EBSCO dan ATLA."
+                breadcrumb={[{ label: "Perpustakaan", href: "/perpustakaan" }]}
+            />
 
             {/* Stats */}
             <section className="py-10 bg-white dark:bg-gray-900">

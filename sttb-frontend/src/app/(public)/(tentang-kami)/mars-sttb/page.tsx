@@ -22,6 +22,8 @@ function formatTime(seconds: number): string {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function MarsSttbPage() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -122,27 +124,12 @@ export default function MarsSttbPage() {
 
     return (
         <>
-            {/* Hero Section – kept mostly as before */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-2">
-                            Tentang STTB
-                        </p>
-                        <h1 className="text-white mb-4" style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700 }}>
-                            Mars STTB
-                        </h1>
-                        <p className="text-blue-200 max-w-xl leading-relaxed">
-                            Lagu Mars Sekolah Tinggi Teologi Bandung, karya Dorothy I. Marx.
-                            Sebuah ungkapan iman dan komitmen komunitas akademik STTB.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Mars STTB"
+                category="Tentang STTB"
+                description="Lagu Mars Sekolah Tinggi Teologi Bandung, karya Dorothy I. Marx. Sebuah ungkapan iman dan komitmen komunitas akademik STTB."
+                breadcrumb={[{ label: "Mars STTB", href: "/mars-sttb" }]}
+            />
 
             {/* Audio Player */}
             <section className="py-12 bg-white dark:bg-gray-900">

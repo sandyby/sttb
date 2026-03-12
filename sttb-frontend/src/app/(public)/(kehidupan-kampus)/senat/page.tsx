@@ -5,6 +5,7 @@ import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 import Link from "next/link";
 import { ArrowRight, Music, Mic2, BookOpen, Heart, Church, Globe, GraduationCap, Trophy } from "lucide-react";
 import Image from "next/image";
+import PageHeader from "@/components/shared/PageHeader";
 
 const activities = [
     {
@@ -51,39 +52,22 @@ const roles = [
 export default function SenatPage() {
     return (
         <>
-            {/* Hero */}
-            <div className="relative pt-28 pb-0 min-h-[500px] flex flex-col overflow-hidden bg-[#060C1A]">
-                <div className="absolute inset-0">
-                    <Image
-                        src="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
-                        alt=""
-                        fill
-                        priority
-                        className="w-full h-full object-cover opacity-30"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#060C1A]/80 via-[#060C1A]/60 to-[#060C1A]" />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative flex-1 flex items-center pb-16">
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-6 h-px bg-[#E62129]" />
-                            <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Kehidupan Kampus</span>
-                        </div>
-                        <h1 className="text-white mb-2" style={{ fontSize: "clamp(1.4rem, 2vw, 1.2rem)", fontWeight: 500 }}>
-                            Senat Mahasiswa
-                        </h1>
-                        <h2 className="text-white mb-4" style={{ fontSize: "clamp(2.5rem, 6vw, 4rem)", fontWeight: 800, lineHeight: 1.05 }}>
-                            Students Today,
-                            <br />
-                            <span className="text-[#E62129]">Leaders Tomorrow!</span>
-                        </h2>
-                        <p className="text-white/60 max-w-xl leading-relaxed">
-                            Ladang sangat luas dan siap dituai, namun penuai sangat sedikit dan tidak siap. Senat hadir untuk
-                            mengasah dan membentuk kepemimpinan dalam diri setiap mahasiswa STTB.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Senat Mahasiswa"
+                category="Kehidupan Kampus"
+                description="Ladang sangat luas dan siap dituai, namun penuai sangat sedikit dan tidak siap. Senat hadir untuk mengasah dan membentuk kepemimpinan dalam diri setiap mahasiswa STTB."
+                image="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
+                breadcrumb={[
+                    { label: "Kampus", href: "#" },
+                    { label: "Senat", href: "/senat" }
+                ]}
+            >
+                <h2 className="text-white mt-4" style={{ fontSize: "clamp(2.5rem, 6vw, 4rem)", fontWeight: 800, lineHeight: 1.05 }}>
+                    Students Today,
+                    <br />
+                    <span className="text-[#E62129]">Leaders Tomorrow!</span>
+                </h2>
+            </PageHeader>
 
             {/* About Senat */}
             <section className="py-16 bg-white dark:bg-gray-900">

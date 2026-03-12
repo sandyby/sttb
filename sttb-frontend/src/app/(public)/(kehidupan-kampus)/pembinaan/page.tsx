@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 import { Home, BookOpen, Users, Heart, Globe, Briefcase, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import PageHeader from "@/components/shared/PageHeader";
 
 const sections = [
     {
@@ -141,33 +142,16 @@ export default function PembinaanPage() {
 
     return (
         <>
-            {/* Hero */}
-            <div className="relative pt-28 pb-20 overflow-hidden bg-[#060C1A]">
-                <div className="absolute inset-0">
-                    <Image
-                        src="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
-                        fill
-                        preload
-                        alt=""
-                        className="w-full h-full object-cover opacity-30"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#060C1A]/90 via-[#060C1A]/70 to-[#060C1A]/30" />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-6 h-px bg-[#E62129]" />
-                            <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Kehidupan Kampus</span>
-                        </div>
-                        <h1 className="text-white mb-4" style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800 }}>
-                            Pembinaan Mahasiswa
-                        </h1>
-                        <p className="text-white/60 max-w-2xl leading-relaxed">
-                            Pembentukan holistik yang melingkupi seluruh kehidupan mahasiswa — akademik, spiritual, karakter, dan pelayanan.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Pembinaan Mahasiswa"
+                category="Kehidupan Kampus"
+                description="Pembentukan holistik yang melingkupi seluruh kehidupan mahasiswa — akademik, spiritual, karakter, dan pelayanan."
+                image="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
+                breadcrumb={[
+                    { label: "Kampus", href: "#" },
+                    { label: "Pembinaan", href: "/pembinaan" }
+                ]}
+            />
 
             {/* Tabs + Content */}
             <section className="py-12 bg-gray-50 dark:bg-gray-950">

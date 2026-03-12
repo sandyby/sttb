@@ -84,6 +84,8 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   );
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function BeasiswaPage() {
   const { data, isLoading } = useScholarships(true);
   const scholarships = data?.items ?? [];
@@ -104,33 +106,12 @@ export default function BeasiswaPage() {
 
   return (
     <>
-      {/* Hero */}
-      <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-px bg-[#E62129]" />
-              <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">
-                Keuangan
-              </span>
-            </div>
-            <h1
-              className="text-white mb-4"
-              style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800 }}
-            >
-              Beasiswa STTB
-            </h1>
-            <p className="text-blue-200 max-w-2xl leading-relaxed">
-              STTB menyediakan berbagai kategori beasiswa bagi mereka yang
-              membutuhkan sesuai kriteria dan persyaratan yang berlaku.
-            </p>
-          </motion.div>
-        </div>
-      </div>
+      <PageHeader
+        title="Beasiswa STTB"
+        category="Keuangan"
+        description="STTB menyediakan berbagai kategori beasiswa bagi mereka yang membutuhkan sesuai kriteria dan persyaratan yang berlaku."
+        breadcrumb={[{ label: "Beasiswa", href: "/beasiswa" }]}
+      />
 
       {/* Scholarships */}
       <section className="py-16 bg-white dark:bg-gray-900">

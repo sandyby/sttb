@@ -322,17 +322,11 @@ function ProgramCard({ program, index }: { program: any; index: number }) {
 }
 
 // ── Main Component ────────────────────────────────────────────────────────
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function ProgramStudiPage() {
   const [activeFilter, setActiveFilter] = useState<"all" | "S1" | "S2">("all");
   const { data: programs = [], isLoading } = useStudyProgramsList();
-
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   // Only show published
   const publishedPrograms = programs.filter((p) => p.isPublished);
@@ -345,193 +339,63 @@ export default function ProgramStudiPage() {
   const s2Programs = publishedPrograms.filter((p) => p.level === "S2");
 
   const uniqueS1Degrees = [...new Set(s1Programs.map((p) => p.degree))];
-
   const uniqueS2Degrees = [...new Set(s2Programs.map((p) => p.degree))];
 
   return (
     <>
-      {/* ── HERO ─────────────────────────────────────────────────────── */}
-      <div
-        ref={heroRef}
-        className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#071a4a]"
+      <PageHeader
+        title="Temukan Program Panggilan Anda"
+        category="Program Akademik"
+        description="Delapan program studi teologi dan pendidikan Kristen yang dirancang untuk membentuk pemimpin gereja yang Informed, Transformed, dan Transformative — siap melayani Indonesia dan dunia."
+        breadcrumb={[{ label: "Program Studi", href: "/program-studi" }]}
       >
-        {/* Animated SVG background */}
-        <div className="absolute inset-0">
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 1440 900"
-            preserveAspectRatio="xMidYMid slice"
+        <div className="flex flex-wrap gap-4 mb-8">
+          <Link
+            href="#programs"
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .getElementById("programs")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#E62129] text-white font-semibold hover:bg-[#c4131a] transition-all hover:shadow-lg hover:shadow-red-900/30"
           >
-            <defs>
-              <radialGradient id="rg1" cx="30%" cy="40%" r="60%">
-                <stop offset="0%" stopColor="#0570CD" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#071a4a" stopOpacity="0" />
-              </radialGradient>
-              <radialGradient id="rg2" cx="80%" cy="60%" r="55%">
-                <stop offset="0%" stopColor="#E62129" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#071a4a" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <rect width="1440" height="900" fill="#071a4a" />
-            <rect width="1440" height="900" fill="url(#rg1)" />
-            <rect width="1440" height="900" fill="url(#rg2)" />
-            <FloatingOrb cx={200} cy={200} r={180} delay={0} color="#0570CD" />
-            <FloatingOrb
-              cx={1100}
-              cy={600}
-              r={220}
-              delay={1.5}
-              color="#E62129"
-            />
-            <FloatingOrb cx={750} cy={150} r={120} delay={3} color="#0A2C74" />
-            <FloatingOrb cx={400} cy={700} r={160} delay={2} color="#0570CD" />
-            <FloatingOrb cx={1300} cy={200} r={100} delay={4} color="#E62129" />
-          </svg>
+            Jelajahi Program
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link
+            href="/prosedur-admisi"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 border border-white/25 text-white font-semibold hover:bg-white/20 backdrop-blur-sm transition-all"
+          >
+            Daftar Sekarang
+          </Link>
         </div>
 
-        {/* Grid pattern overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
-
-        {/* Parallax content */}
-        <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 w-full"
-        >
-          {/* Breadcrumb */}
-          <FadeIn delay={0.1}>
-            <nav className="flex items-center gap-2 mb-8 text-sm">
-              <Link
-                href="/"
-                className="text-blue-200 hover:text-white transition-colors"
-              >
-                Beranda
-              </Link>
-              <span className="text-blue-300">/</span>
-              <span className="text-chart-4 text-sm">Program Studi</span>
-            </nav>
-          </FadeIn>
-
-          {/* Label chip */}
-          <FadeIn delay={0.15}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm mb-6">
-              <Sparkles className="w-4 h-4 text-[#E62129]" />
-              <span className="text-white/90 text-sm">
-                Program Akademik STTB
-              </span>
-            </div>
-          </FadeIn>
-
-          {/* Headline */}
-          <div className="max-w-4xl mb-2">
-            <FadeIn delay={0.2}>
-              <h1
-                className="text-white mb-0 leading-tight"
-                style={{
-                  fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Temukan
-                <span className="inline">
-                  <span style={{ color: "#E62129" }}> Program Panggilan</span>
-                </span>
-                <span className="text-white"> Anda</span>
-              </h1>
-            </FadeIn>
-          </div>
-
-          {/* Subtitle */}
-          <FadeIn delay={0.3}>
-            <p
-              className="text-blue-100 max-w-2xl leading-relaxed mb-4"
-              style={{ fontSize: "1.1rem" }}
-            >
-              Delapan program studi teologi dan pendidikan Kristen yang
-              dirancang untuk membentuk pemimpin gereja yang Informed,
-              Transformed, dan Transformative — siap melayani Indonesia dan
-              dunia.
-            </p>
-          </FadeIn>
-
-          {/* CTA Buttons */}
-          <FadeIn delay={0.4}>
-            <div className="flex flex-wrap gap-4 mb-6">
-              <Link
-                href="#programs"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById("programs")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#E62129] text-white font-semibold hover:bg-[#c4131a] transition-all hover:shadow-lg hover:shadow-red-900/30"
-              >
-                Jelajahi Program
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/prosedur-admisi"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 border border-white/25 text-white font-semibold hover:bg-white/20 backdrop-blur-sm transition-all"
-              >
-                Daftar Sekarang
-              </Link>
-            </div>
-          </FadeIn>
-
-          {/* Stats bar */}
-          <FadeIn delay={0.5}>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/15 max-w-3xl">
-              <StatCard
-                value={publishedPrograms.length}
-                label="Program Studi"
-                icon={BookOpen}
-              />
-              <StatCard
-                value={[...new Set(publishedPrograms.map((p) => p.level))].length}
-                label="Jenjang (S1 & S2)"
-                icon={GraduationCap}
-              />
-              <StatCard
-                value={Math.abs(
-                  differenceInYears(new Date(1992, 7, 1), new Date()),
-                )}
-                suffix={"+"}
-                label="Tahun Berdiri"
-                icon={Star}
-              />
-              <StatCard
-                value={3500}
-                suffix="+"
-                label="Alumni Aktif"
-                icon={Users}
-              />
-            </div>
-          </FadeIn>
-        </motion.div>
-
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0 z-99">
-          <svg
-            viewBox="0 0 1440 80"
-            fill="none"
-            preserveAspectRatio="none"
-            className="w-full h-16 sm:h-20"
-          >
-            <path
-              d="M0,60 C360,0 1080,80 1440,20 L1440,80 L0,80 Z"
-              fill="#f8fafc"
-            />
-          </svg>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/15 max-w-3xl">
+          <StatCard
+            value={publishedPrograms.length}
+            label="Program Studi"
+            icon={BookOpen}
+          />
+          <StatCard
+            value={[...new Set(publishedPrograms.map((p) => p.level))].length}
+            label="Jenjang (S1 & S2)"
+            icon={GraduationCap}
+          />
+          <StatCard
+            value={Math.abs(differenceInYears(new Date(1992, 7, 1), new Date()))}
+            suffix={"+"}
+            label="Tahun Berdiri"
+            icon={Star}
+          />
+          <StatCard
+            value={3500}
+            suffix="+"
+            label="Alumni Aktif"
+            icon={Users}
+          />
         </div>
-      </div>
+      </PageHeader>
 
       {/* ── PROGRAMS SECTION ─────────────────────────────────────────── */}
       <section id="programs" className="pb-16 pt-8 bg-gray-50">

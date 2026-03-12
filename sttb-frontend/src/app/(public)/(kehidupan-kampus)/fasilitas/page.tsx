@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from "mot
 import { BookOpen, Heart, Home, Monitor, Dumbbell, Users, ChevronRight, X, Camera, Grid3X3 } from "lucide-react";
 import Masonry from "react-masonry-css";
 import Image from "next/image";
+import PageHeader from "@/components/shared/PageHeader";
 
 /* ─── DATA ──────────────────────────────────────────────── */
 
@@ -544,70 +545,6 @@ function StatsBar() {
     );
 }
 
-/* ─── HERO ───────────────────────────────────────────────── */
-
-function Hero() {
-    const ref = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-    const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-
-    return (
-        <div ref={ref} className="relative pt-28 pb-24 min-h-[520px] flex items-center overflow-hidden bg-[#060C1A]">
-            <motion.div style={{ y }} className="absolute inset-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1732115234692-3ee71d5363af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
-                    alt=""
-                    fill
-                    preload
-                    className="w-full h-full object-cover opacity-30"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#060C1A]/20 via-[#060C1A]/60 to-[#060C1A]" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#060C1A] via-transparent to-[#060C1A]/60" />
-            </motion.div>
-
-            <motion.div style={{ opacity }} className="max-w-7xl mx-auto px-4 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <div className="flex items-center gap-2 mb-5">
-                        <div className="w-8 h-px bg-[#E62129]" />
-                        <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Kehidupan Kampus</span>
-                    </div>
-                    <h1
-                        className="text-white mb-5"
-                        style={{ fontSize: "clamp(2.5rem, 6vw, 4rem)", fontWeight: 800, lineHeight: 1.05 }}
-                    >
-                        Fasilitas Kampus<br />
-                        <span style={{ color: "#E62129" }}>STTB</span>
-                    </h1>
-                    <p className="text-white/70 max-w-2xl leading-relaxed" style={{ fontSize: "clamp(1rem, 1.5vw, 1.1rem)" }}>
-                        Seluruh aspek kehidupan di kampus dan asrama — studi, pembinaan, interaksi komunitas,
-                        praktik pelayanan, dan istirahat — senantiasa diarahkan untuk membentuk hati yang mengasihi
-                        Tuhan dan sesama bagi kemuliaan-Nya.
-                    </p>
-
-                    {/* Category quick-nav */}
-                    <div className="flex flex-wrap gap-3 mt-8">
-                        {categories.map((cat) => (
-                            <a
-                                key={cat.id}
-                                href={`#${cat.id}`}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-all backdrop-blur-sm border border-white/10 hover:border-white/30"
-                            >
-                                <span>{cat.emoji}</span>
-                                {cat.label}
-                                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                            </a>
-                        ))}
-                    </div>
-                </motion.div>
-            </motion.div>
-        </div>
-    );
-}
 
 /* ─── DIVIDER ────────────────────────────────────────────── */
 
@@ -676,7 +613,30 @@ function FacilitiesCTA() {
 export default function FasilitasPage() {
     return (
         <>
-            <Hero />
+            <PageHeader
+                title="Fasilitas Kampus"
+                category="STTB"
+                description="Seluruh aspek kehidupan di kampus dan asrama — studi, pembinaan, interaksi komunitas, praktik pelayanan, dan istirahat — senantiasa diarahkan untuk membentuk hati yang mengasihi Tuhan dan sesama bagi kemuliaan-Nya."
+                image="https://images.unsplash.com/photo-1732115234692-3ee71d5363af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
+                breadcrumb={[
+                    { label: "Kampus", href: "#" },
+                    { label: "Fasilitas", href: "/fasilitas" }
+                ]}
+            >
+                <div className="flex flex-wrap gap-3 mt-8">
+                    {categories.map((cat) => (
+                        <a
+                            key={cat.id}
+                            href={`#${cat.id}`}
+                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-all backdrop-blur-sm border border-white/10 hover:border-white/30"
+                        >
+                            <span>{cat.emoji}</span>
+                            {cat.label}
+                            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                        </a>
+                    ))}
+                </div>
+            </PageHeader>
 
             {/* Intro quote */}
             <section className="py-14 bg-white dark:bg-gray-900">

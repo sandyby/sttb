@@ -11,31 +11,17 @@ const externalLinks = [
   { label: "Jurnal ATLA", href: "#" },
 ];
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function MediaPage() {
   return (
     <>
-      {/* Hero */}
-      <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-5">
-          <div className="absolute top-1/4 right-1/4 w-72 h-72 rounded-full border-4 border-white" />
-          <div className="absolute top-1/2 right-1/3 w-40 h-40 rounded-full border-4 border-white" />
-        </div>
-        <div className="max-w-7xl mx-auto px-4 relative">
-          <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-2">
-            Format · Media
-          </p>
-          <h1
-            className="text-white mb-4"
-            style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700 }}
-          >
-            Media STTB
-          </h1>
-          <p className="text-blue-200 max-w-2xl leading-relaxed">
-            Artikel, video, dan konten multimedia dari Sekolah Tinggi Teologi Bandung —
-            memperlengkapi umat Allah dengan sumber daya pembelajaran berkualitas.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Media STTB"
+        category="Format · Media"
+        description="Artikel, video, dan konten multimedia dari Sekolah Tinggi Teologi Bandung — memperlengkapi umat Allah dengan sumber daya pembelajaran berkualitas."
+        breadcrumb={[{ label: "Media", href: "/media" }]}
+      />
 
       {/* External links bar */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">

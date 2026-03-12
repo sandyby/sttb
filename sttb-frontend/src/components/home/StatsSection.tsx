@@ -23,7 +23,7 @@ const statItems = [
   },
   {
     icon: GraduationCap,
-    value: `${stats.graduates.toLocaleString()}+`,
+    value: `${stats.graduates.toLocaleString("id-ID")}+`,
     label: "Alumni",
     sublabel: "Melayani di seluruh Indonesia",
     color: "text-[#0570CD]",

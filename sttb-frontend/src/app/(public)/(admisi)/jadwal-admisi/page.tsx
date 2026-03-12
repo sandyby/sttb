@@ -30,6 +30,8 @@ function formatSchedule(str: string | null) {
 }
 import type { AdmissionWaveStep } from "@/types/admission";
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function JadwalAdmisiPage() {
     const { data, isLoading } = useAdmissionWaves(true);
     const waves = [...(data?.items ?? [])].sort((a, b) => a.displayOrder - b.displayOrder);
@@ -43,13 +45,12 @@ export default function JadwalAdmisiPage() {
     if (isLoading) {
         return (
             <>
-                <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                    <div className="max-w-7xl mx-auto px-4">
-                        <h1 className="text-white mb-4" style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800 }}>
-                            Jadwal Pendaftaran Mahasiswa Baru
-                        </h1>
-                    </div>
-                </div>
+                <PageHeader
+                    title="Jadwal Pendaftaran Mahasiswa Baru"
+                    category="Admisi"
+                    description="Memuat jadwal..."
+                    breadcrumb={[{ label: "Admisi", href: "/jadwal-admisi" }]}
+                />
                 <div className="flex items-center justify-center py-20">
                     <Loader2 className="w-8 h-8 animate-spin text-[#E62129]" />
                 </div>
@@ -59,27 +60,15 @@ export default function JadwalAdmisiPage() {
 
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none opacity-5">
-                    <div className="absolute top-1/2 right-10 w-72 h-72 rounded-full border-8 border-white" style={{ transform: "translateY(-50%)" }} />
-                    <div className="absolute top-1/2 right-10 w-40 h-40 rounded-full border-4 border-white" style={{ transform: "translateY(-50%) translateX(16px)" }} />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-6 h-px bg-[#E62129]" />
-                            <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Admisi</span>
-                        </div>
-                        <h1 className="text-white mb-4" style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800 }}>
-                            Jadwal Pendaftaran Mahasiswa Baru
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Pendaftaran Tahun Akademik 2026–2027. Tersedia {waves.length || 3} gelombang pendaftaran dengan jadwal tes yang telah ditentukan.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Jadwal Pendaftaran Mahasiswa Baru"
+                category="Admisi"
+                description={`Pendaftaran Tahun Akademik 2026–2027. Tersedia ${waves.length || 3} gelombang pendaftaran dengan jadwal tes yang telah ditentukan.`}
+                breadcrumb={[
+                    { label: "Admisi", href: "/jadwal-admisi" },
+                    { label: "Jadwal", href: "/jadwal-admisi" }
+                ]}
+            />
 
             {/* Wave overview cards */}
             {waves.length > 0 && (

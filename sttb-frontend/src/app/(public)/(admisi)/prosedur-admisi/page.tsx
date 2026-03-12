@@ -5,7 +5,7 @@ import { admisiSteps, admisiWaves, admisiContact, admisiRequirements, methodIcon
 import { CheckCircle, Calendar, FileText, Users, Phone, Mail, ArrowRight, BookOpen, AlertCircle, CheckCircle2, ChevronDown, Clock, ExternalLink, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 function Orb({ cx, cy, r, delay, color }: { cx: string; cy: string; r: string; delay: number; color: string }) {
     return (
@@ -250,6 +250,8 @@ function ReqItem({ text, index, color }: { text: string; index: number; color: s
     );
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function ProsedurAdmisiPage() {
     const [activeStep, setActiveStep] = useState<number | null>(0);
     const [activeTab, setActiveTab] = useState<"s1" | "s2">("s1");
@@ -257,10 +259,6 @@ export default function ProsedurAdmisiPage() {
     const [expandedWaveStep, setExpandedWaveStep] = useState<number | null>(null);
     const [pathProgress, setPathProgress] = useState(0);
 
-    const heroRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-    const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-    const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
     useEffect(() => {
         const timer = setTimeout(() => setPathProgress(1), 600);
@@ -271,150 +269,48 @@ export default function ProsedurAdmisiPage() {
 
     return (
         <>
-            {/* ── HERO ─────────────────────────────────────────────────────── */}
-            <div ref={heroRef} className="relative min-h-[88vh] flex items-center overflow-hidden bg-[#050d1f]">
-                {/* Animated orbs */}
-                <Orb cx="15%" cy="35%" r="400px" delay={0} color="rgba(230,33,41,0.4)" />
-                <Orb cx="75%" cy="60%" r="500px" delay={2} color="rgba(5,112,205,0.3)" />
-                <Orb cx="50%" cy="20%" r="300px" delay={4} color="rgba(10,44,116,0.5)" />
-
-                {/* Grid */}
-                <div
-                    className="absolute inset-0 opacity-[0.035]"
-                    style={{
-                        backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.8) 1px,transparent 1px)",
-                        backgroundSize: "50px 50px",
-                    }}
-                />
-
-                {/* Floating decorative SVG rings */}
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 pointer-events-none hidden lg:block">
-                    <motion.div
-                        className="w-[600px] h-[600px] rounded-full border border-white/5"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                    />
-                    <motion.div
-                        className="absolute inset-12 rounded-full border border-white/8"
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                    />
-                    <motion.div
-                        className="absolute inset-24 rounded-full border-2 border-[#e62129]/20"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    />
+            <PageHeader
+                title="Prosedur Pendaftaran"
+                category="Admisi"
+                description="Panduan lengkap langkah demi langkah untuk mendaftar sebagai mahasiswa di Sekolah Tinggi Teologi Bandung. Mulailah perjalanan panggilan Anda hari ini."
+                breadcrumb={[
+                    { label: "Admisi", href: "/jadwal-admisi" },
+                    { label: "Prosedur", href: "/prosedur-admisi" }
+                ]}
+                image="https://images.unsplash.com/photo-1643050078046-55df21dfad42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1600"
+            >
+                <div className="flex flex-wrap gap-4 mb-6">
+                    <a
+                        href={admisiContact.portalUrl}
+                        target="_blank" rel="noreferrer"
+                        className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-[#E62129] text-white font-semibold hover:bg-[#c4131a] transition-all hover:shadow-xl hover:shadow-red-900/30 hover:-translate-y-0.5"
+                    >
+                        Daftar Sekarang
+                        <ExternalLink className="w-4 h-4" />
+                    </a>
+                    <button
+                        onClick={() => document.getElementById("jadwal")?.scrollIntoView({ behavior: "smooth" })}
+                        className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl border border-white/20 bg-white/8 backdrop-blur-sm text-white font-semibold hover:bg-white/15 transition-all"
+                    >
+                        <Calendar className="w-4 h-4" />
+                        Lihat Jadwal
+                    </button>
                 </div>
 
-                {/* Background image */}
-                <div className="absolute inset-0">
-                    <Image
-                        src="https://images.unsplash.com/photo-1643050078046-55df21dfad42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1600"
-                        alt=""
-                        fill
-                        priority
-                        className="w-full h-full object-cover opacity-[0.07]"
-                    />
-                </div>
-
-                {/* Content */}
-                <motion.div
-                    style={{ y: heroY, opacity: heroOpacity }}
-                    className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-28 pb-20"
-                >
-                    <div className="max-w-3xl">
-                        <FadeIn delay={0.1}>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/8 backdrop-blur-sm mb-6">
-                                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                                <span className="text-white/80 text-sm">Pendaftaran 2026–2027 Terbuka</span>
-                            </div>
-                        </FadeIn>
-
-                        <FadeIn delay={0.2}>
-                            <span className="inline-flex gap-x-6">
-                                <h1
-                                    className="text-white mb-2 leading-none"
-                                    style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.03em" }}
-                                >
-                                    Mulai
-                                </h1>
-                                <h1
-                                    className="mb-2 leading-none text-white border-b-8 border-[#0570CD]"
-                                    style={{
-                                        fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
-                                        fontWeight: 900,
-                                        letterSpacing: "-0.03em",
-                                    }}
-                                >
-                                    Perjalanan
-                                </h1>
-                            </span>
-                            <h1
-                                className="leading-none mb-6"
-                                style={{
-                                    fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
-                                    fontWeight: 900,
-                                    letterSpacing: "-0.03em",
-                                    color: "#E62129",
-                                }}
-                            >
-                                Panggilan
-                            </h1>
-                        </FadeIn>
-
-                        <FadeIn delay={0.3}>
-                            <p className="text-blue-100/80 leading-relaxed mb-6 max-w-xl" style={{ fontSize: "1.1rem" }}>
-                                Panduan lengkap prosedur penerimaan mahasiswa baru STTB. Ikuti 4 langkah mudah
-                                menuju pendidikan teologi yang mengubah hidup Anda.
-                            </p>
-                        </FadeIn>
-
-                        <FadeIn delay={0.4}>
-                            <div className="flex flex-wrap gap-4">
-                                <a
-                                    href={admisiContact.portalUrl}
-                                    target="_blank" rel="noreferrer"
-                                    className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-[#E62129] text-white font-semibold hover:bg-[#c4131a] transition-all hover:shadow-xl hover:shadow-red-900/30 hover:-translate-y-0.5"
-                                >
-                                    Daftar Sekarang
-                                    <ExternalLink className="w-4 h-4" />
-                                </a>
-                                <button
-                                    onClick={() => document.getElementById("jadwal")?.scrollIntoView({ behavior: "smooth" })}
-                                    className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl border border-white/20 bg-white/8 backdrop-blur-sm text-white font-semibold hover:bg-white/15 transition-all"
-                                >
-                                    <Calendar className="w-4 h-4" />
-                                    Lihat Jadwal
-                                </button>
-                            </div>
-                        </FadeIn>
-                    </div>
-
-                    {/* Quick stats bar */}
-                    <FadeIn delay={0.55}>
-                        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
-                            {[
-                                { label: "Gelombang", value: "3" },
-                                { label: "Jenjang Program", value: "S1 & S2" },
-                                { label: "Proses Tes", value: "Online" },
-                                { label: "Bahasa", value: "Indonesia" },
-                            ].map((stat) => (
-                                <div key={stat.label} className="bg-white/8 backdrop-blur-sm border border-white/12 rounded-xl p-3.5 text-center">
-                                    <div className="text-white text-sm mb-0.5" style={{ fontWeight: 800 }}>{stat.value}</div>
-                                    <div className="text-blue-200/60 text-xs">{stat.label}</div>
-                                </div>
-                            ))}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
+                    {[
+                        { label: "Gelombang", value: "3" },
+                        { label: "Jenjang Program", value: "S1 & S2" },
+                        { label: "Proses Tes", value: "Online" },
+                        { label: "Bahasa", value: "Indonesia" },
+                    ].map((stat) => (
+                        <div key={stat.label} className="bg-white/8 backdrop-blur-sm border border-white/12 rounded-xl p-3.5 text-center">
+                            <div className="text-white text-sm mb-0.5" style={{ fontWeight: 800 }}>{stat.value}</div>
+                            <div className="text-blue-200/60 text-xs">{stat.label}</div>
                         </div>
-                    </FadeIn>
-                </motion.div >
-
-                {/* Bottom wave */}
-                <div className="absolute bottom-0 left-0 right-0" >
-                    <svg viewBox="0 0 1440 90" fill="none" preserveAspectRatio="none" className="w-full h-16 sm:h-20">
-                        <path d="M0,70 C480,0 960,90 1440,30 L1440,90 L0,90 Z" fill="white" />
-                    </svg>
+                    ))}
                 </div>
-            </div >
+            </PageHeader>
 
             {/* ── STEPS JOURNEY ────────────────────────────────────────────── */}
             < section className="pt-8 pb-16 bg-white relative overflow-hidden" >

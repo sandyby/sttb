@@ -253,88 +253,6 @@ function CoreValueCard({ val, index }: { val: typeof coreValues[0]; index: numbe
     );
 }
 
-/* ─── HERO ───────────────────────────────────────────────── */
-
-function Hero() {
-    const ref = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-    const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-    const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-
-    const words = "Visi & Misi STTB".split(" ");
-
-    return (
-        <div ref={ref} className="relative pt-28 pb-24 min-h-[480px] flex items-center overflow-hidden bg-[#060C1A]">
-            <motion.div style={{ y: yBg }} className="absolute inset-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
-                    alt=""
-                    fill
-                    priority
-                    className="w-full h-full object-cover opacity-20"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#060C1A] via-[#060C1A]/70 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#060C1A] via-transparent to-transparent" />
-            </motion.div>
-
-            {/* Animated grid lines */}
-            <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-
-            <motion.div style={{ opacity }} className="max-w-7xl mx-auto px-4 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.4 }}
-                >
-                    <div className="flex items-center gap-2 mb-6">
-                        <motion.div
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-8 h-px bg-[#E62129] origin-left"
-                        />
-                        <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                            className="text-[#E62129] text-xs font-semibold uppercase tracking-widest"
-                        >
-                            Tentang STTB
-                        </motion.span>
-                    </div>
-
-                    <h1 className="text-white mb-5" style={{ fontWeight: 800, lineHeight: 1.05 }}>
-                        {words.map((word, i) => (
-                            <motion.span
-                                key={i}
-                                initial={{ opacity: 0, y: 40 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                                className="inline-block mr-3"
-                                style={{ fontSize: "clamp(2.2rem, 5vw, 3.5rem)" }}
-                            >
-                                {word}
-                            </motion.span>
-                        ))}
-                    </h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7, duration: 0.6 }}
-                        className="text-white/60 max-w-2xl leading-relaxed"
-                    >
-                        Fondasi filosofis yang mengarahkan setiap aspek kehidupan dan pelayanan STTB —
-                        dari Lausanne Movement:{" "}
-                        <em className="text-white/80">
-                            &quot;Seluruh Umat membawa Seluruh Injil ke Seluruh Dunia.&quot;
-                        </em>
-                    </motion.p>
-                </motion.div>
-            </motion.div>
-        </div>
-    );
-}
 
 /* ─── VISI SECTION ───────────────────────────────────────── */
 
@@ -587,12 +505,20 @@ function MottoBanner() {
     );
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 /* ─── PAGE ────────────────────────────────────────────────── */
 
 export default function VisiMisiPage() {
     return (
         <>
-            <Hero />
+            <PageHeader
+                title="Visi & Misi STTB"
+                category="Tentang STTB"
+                description='Fondasi filosofis yang mengarahkan setiap aspek kehidupan dan pelayanan STTB — dari Lausanne Movement: "Seluruh Umat membawa Seluruh Injil ke Seluruh Dunia."'
+                breadcrumb={[{ label: "Visi & Misi", href: "/visi-misi" }]}
+                image="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
+            />
             <VisiSection />
             <MisiSection />
             <CoreValuesSection />

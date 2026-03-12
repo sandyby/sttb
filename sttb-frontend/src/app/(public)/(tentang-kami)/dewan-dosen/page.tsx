@@ -349,6 +349,8 @@ function FacultyModal({ person, onClose }: { person: LecturerListItem | null; on
 
 /* ─── PAGE ────────────────────────────────────────────────── */
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function DewanDosenPage() {
     const [selectedFaculty, setSelectedFaculty] = useState<LecturerListItem | null>(null);
     const [filter, setFilter] = useState("Semua");
@@ -384,68 +386,26 @@ export default function DewanDosenPage() {
 
     return (
         <>
-            {/* ── HERO ──────────────────────────────────────────────── */}
-            <div
-                className="relative pt-28 pb-24 overflow-hidden min-h-[420px] flex items-center"
-                style={{ background: "linear-gradient(135deg, #060C1A 0%, #0A2C74 60%, #0570CD 100%)" }}
+            <PageHeader
+                title="Dewan Dosen"
+                category="Tentang STTB"
+                description="Para pengajar bergelar doktor dari universitas teologi terkemuka dunia yang berdedikasi membentuk generasi pemimpin rohani Indonesia."
+                breadcrumb={[{ label: "Dewan Dosen", href: "/dewan-dosen" }]}
             >
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {[...Array(5)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute rounded-full"
-                            style={{
-                                width: `${100 + i * 80}px`, height: `${100 + i * 80}px`,
-                                right: `${-20 + i * 8}%`, top: `${10 + (i % 3) * 20}%`,
-                                background: "rgba(255,255,255,0.03)",
-                                border: "1px solid rgba(255,255,255,0.06)",
-                            }}
-                            animate={{ rotate: [0, 360] }}
-                            transition={{ duration: 20 + i * 5, repeat: Infinity, ease: "linear" }}
-                        />
+                <div className="flex flex-wrap gap-6 mt-8">
+                    {[
+                        { num: `${regularFaculty.filter((f) => f.rank === "tetap").length}`, label: "Dosen Tetap" },
+                        { num: "100%", label: "Bergelar S3/Doktor" },
+                        { num: "5+", label: "Negara Studi" },
+                        { num: `${leaders.length}`, label: "Pimpinan Akademik" },
+                    ].map((s) => (
+                        <div key={s.label}>
+                            <div className="text-white" style={{ fontSize: "1.8rem", fontWeight: 900, lineHeight: 1 }}>{s.num}</div>
+                            <div className="text-blue-300 text-xs mt-0.5">{s.label}</div>
+                        </div>
                     ))}
                 </div>
-                <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                        backgroundImage: "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
-                        backgroundSize: "60px 60px"
-                    }}
-                />
-
-                <div className="max-w-7xl mx-auto px-4 relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        <div className="flex items-center gap-2 mb-5">
-                            <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.6, delay: 0.2 }}
-                                className="w-8 h-px bg-[#E62129] origin-left" />
-                            <span className="text-[#E62129] text-xs uppercase tracking-widest" style={{ fontWeight: 600 }}>Tentang STTB</span>
-                        </div>
-                        <h1 className="text-white mb-4" style={{ fontWeight: 800, lineHeight: 1.05, fontSize: "clamp(2.2rem, 5vw, 3.5rem)" }}>
-                            Dewan Dosen
-                        </h1>
-                        <p className="text-blue-200/80 max-w-xl leading-relaxed">
-                            Para pengajar bergelar doktor dari universitas teologi terkemuka dunia yang berdedikasi membentuk generasi pemimpin rohani Indonesia.
-                        </p>
-                        <div className="flex flex-wrap gap-6 mt-8">
-                            {[
-                                { num: `${regularFaculty.filter((f) => f.rank === "tetap").length}`, label: "Dosen Tetap" },
-                                { num: "100%", label: "Bergelar S3/Doktor" },
-                                { num: "5+", label: "Negara Studi" },
-                                { num: `${leaders.length}`, label: "Pimpinan Akademik" },
-                            ].map((s) => (
-                                <div key={s.label}>
-                                    <div className="text-white" style={{ fontSize: "1.8rem", fontWeight: 900, lineHeight: 1 }}>{s.num}</div>
-                                    <div className="text-blue-300 text-xs mt-0.5">{s.label}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
+            </PageHeader>
 
             {/* Loading state */}
             {isLoading && (

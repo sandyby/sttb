@@ -12,6 +12,8 @@ interface ContactFormData {
   message: string;
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function KontakKamiPage() {
   const {
     register,
@@ -32,24 +34,12 @@ export default function KontakKamiPage() {
 
   return (
     <>
-      {/* Hero */}
-      <div className="pt-28 pb-16 bg-gradient-to-r from-[#0A2C74] to-[#0570CD]">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-2">
-            Hubungi Kami
-          </p>
-          <h1
-            className="text-white mb-3"
-            style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700 }}
-          >
-            Kontak Kami
-          </h1>
-          <p className="text-blue-200 max-w-xl">
-            Kami siap membantu Anda. Hubungi tim STTB untuk informasi akademik,
-            pendaftaran, atau pertanyaan lainnya.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Kontak Kami"
+        category="Hubungi Kami"
+        description="Kami siap membantu Anda. Hubungi tim STTB untuk informasi akademik, pendaftaran, atau pertanyaan lainnya."
+        breadcrumb={[{ label: "Kontak Kami", href: "/kontak-kami" }]}
+      />
 
       <section className="py-16 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto px-4">
