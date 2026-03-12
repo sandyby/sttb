@@ -84,7 +84,7 @@ export default function AdminMediaPage() {
 
     return (
         <>
-            <UploadMediaDialog isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
+            <UploadMediaDialog isOpen={isUploadOpen} onCloseAction={() => setIsUploadOpen(false)} />
             <div className="space-y-5">
 
                 {/* Header */}

@@ -22,6 +22,7 @@ import {
   Edit,
   ExternalLink,
   GraduationCap,
+  Building2,
 } from "lucide-react";
 import { cn } from "../ui/utils";
 import { useSession, signOut } from "next-auth/react";
@@ -82,12 +83,30 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Dewan Dosen",
+    href: "/admin/lecturers",
+    icon: GraduationCap,
+    children: [
+      { label: "Semua Dosen", href: "/admin/lecturers", icon: GraduationCap },
+      { label: "Tambah Baru", href: "/admin/lecturers/create", icon: Plus },
+    ],
+  },
+  {
     label: "Halaman",
     href: "/admin/pages",
     icon: FileText,
     children: [
       { label: "Semua Halaman", href: "/admin/pages", icon: FileText },
       { label: "Tambah Baru", href: "#", icon: Plus, disabled: true },
+    ],
+  },
+  {
+    label: "Yayasan",
+    href: "/admin/foundation",
+    icon: Building2,
+    children: [
+      { label: "Semua Anggota", href: "/admin/foundation", icon: Building2 },
+      { label: "Tambah Baru", href: "/admin/foundation/create", icon: Plus },
     ],
   },
   {
@@ -203,6 +222,14 @@ function getBreadcrumb(pathname: string): { parent?: string; current: string } {
     return { parent: "Program Studi", current: "Tambah Baru" };
   if (pathname.match(/\/study-programs\/[\w-]+\/edit/))
     return { parent: "Program Studi", current: "Edit Program" };
+  if (pathname.includes("/lecturers/create"))
+    return { parent: "Dewan Dosen", current: "Tambah Dosen" };
+  if (pathname.match(/\/lecturers\/\w+\/edit/))
+    return { parent: "Dewan Dosen", current: "Edit Dosen" };
+  if (pathname.includes("/foundation/create"))
+    return { parent: "Yayasan", current: "Tambah Baru" };
+  if (pathname.match(/\/foundation\/\w+\/edit/))
+    return { parent: "Yayasan", current: "Edit Anggota" };
   if (pathname.includes("/study-programs/new"))
     return { parent: "Program Studi", current: "Tambah Baru" };
   if (pathname.match(/\/study-programs\/[\w-]+\/edit/))

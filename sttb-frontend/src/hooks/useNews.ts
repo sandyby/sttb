@@ -1,5 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api-client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/libs/api";
+import { getNewsList, getNewsCategories } from "@/lib/api";
+import { adminCreateNewsCategory } from "@/lib/admin-api";
+import { useSession } from "next-auth/react";
 import type {
   NewsListItem,
   NewsDetail,
@@ -52,6 +55,28 @@ export function useGetNewsBySlug(slug: string) {
   });
 }
 
+interface NewsListParams {
+  page?: number;
+  pageSize?: number;
+  category?: string;
+  search?: string;
+}
+
+export function useNewsList(params: NewsListParams = {}) {
+  return useQuery({
+    queryKey: ["news", "list", params],
+    queryFn: () => getNewsList(params),
+  });
+}
+
+export function useNewsCategories() {
+  return useQuery({
+    queryKey: ["news", "categories"],
+    queryFn: getNewsCategories,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
 /**
@@ -101,27 +126,16 @@ export function useDeleteNews() {
     },
   });
 }
-import { useQuery } from "@tanstack/react-query";
-import { getNewsList, getNewsCategories } from "@/libs/api";
 
-interface NewsListParams {
-  page?: number;
-  pageSize?: number;
-  category?: string;
-  search?: string;
-}
+export function useCreateNewsCategory() {
+  const { data: session } = useSession();
+  const qc = useQueryClient();
 
-export function useNewsList(params: NewsListParams = {}) {
-  return useQuery({
-    queryKey: ["news", "list", params],
-    queryFn: () => getNewsList(params),
-  });
-}
-
-export function useNewsCategories() {
-  return useQuery({
-    queryKey: ["news", "categories"],
-    queryFn: getNewsCategories,
-    staleTime: 5 * 60 * 1000,
+  return useMutation({
+    mutationFn: (payload: { name: string; slug: string }) =>
+      adminCreateNewsCategory(session?.accessToken ?? "", payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["news", "categories"] });
+    },
   });
 }

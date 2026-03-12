@@ -3,9 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, X, ImageIcon, Film, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
+import { Upload, X, ImageIcon, Film, Loader2, Plus } from "lucide-react";
+import { CreateCategoryDialog } from "@/components/shared/CreateCategoryDialog";
+import { useCreateMediaCategory } from "@/hooks/useMedia";
 import {
   createMediaSchema,
   type CreateMediaFormValues,
@@ -15,13 +17,17 @@ import { useUploadImage } from "@/hooks/useUpload";
 
 interface UploadMediaDialogProps {
   isOpen: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
 }
 
-export function UploadMediaDialog({ isOpen, onClose }: UploadMediaDialogProps) {
+export function UploadMediaDialog({
+  isOpen,
+  onCloseAction: onClose,
+}: UploadMediaDialogProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mutateAsync: uploadImage, isPending: isUploadingImage } =
@@ -294,17 +300,26 @@ export function UploadMediaDialog({ isOpen, onClose }: UploadMediaDialogProps) {
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                         Kategori (Opsional)
                       </label>
-                      <select
-                        {...form.register("categoryId")}
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E62129]/30 focus:border-[#E62129] transition-all"
-                      >
-                        <option value="">-- Tidak dikategorikan --</option>
-                        {categories?.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="flex gap-2">
+                        <select
+                          {...form.register("categoryId")}
+                          className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E62129]/30 focus:border-[#E62129] transition-all"
+                        >
+                          <option value="">-- Tidak dikategorikan --</option>
+                          {categories?.map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => setIsCategoryDialogOpen(true)}
+                          className="p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          <Plus className="w-5 h-5 text-gray-500" />
+                        </button>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -355,6 +370,16 @@ export function UploadMediaDialog({ isOpen, onClose }: UploadMediaDialogProps) {
           </motion.div>
         </div>
       )}
+
+      <CreateCategoryDialog
+        isOpen={isCategoryDialogOpen}
+        onCloseAction={() => setIsCategoryDialogOpen(false)}
+        onSuccessAction={(category) => {
+          form.setValue("categoryId", category.id);
+        }}
+        title="Tambah Kategori Media"
+        mutationHookAction={useCreateMediaCategory}
+      />
     </AnimatePresence>
   );
 }

@@ -1,6 +1,8 @@
 import apiClient from "./axios";
 import type { GetNewsListResponse } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
+import type { GetLecturerListResponse } from "@/types/lecturers";
+import type { GetMediaListResponse, GetMediaListRequest } from "@/types/media";
 import type {
   PageListItem,
   PageDetail,
@@ -13,6 +15,13 @@ import type {
   CreateStudyProgramRequest,
   UpdateStudyProgramRequest,
 } from "@/types/study-programs";
+import type {
+  FoundationMember,
+  GetFoundationMemberListResponse,
+  CreateFoundationMemberPayload,
+  UpdateFoundationMemberPayload,
+  FoundationMemberListParams,
+} from "@/types/foundation";
 
 function authHeader(token: string) {
   return { Authorization: `Bearer ${token}` };
@@ -69,6 +78,16 @@ export async function adminDeleteNews(
   await apiClient.delete(`/api/news/delete/${id}`, {
     headers: authHeader(token),
   });
+}
+
+export async function adminCreateNewsCategory(
+  token: string,
+  payload: { name: string; slug: string },
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/news/categories/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
 }
 
 export interface UpdateNewsPayload {
@@ -259,6 +278,149 @@ export async function adminDeleteStudyProgram(
   id: string,
 ): Promise<void> {
   await apiClient.delete(`/api/study-programs/delete/${id}`, {
+    headers: authHeader(token),
+  });
+}
+
+export async function adminCreateEventCategory(
+  token: string,
+  payload: { name: string; slug: string },
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/events/categories/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+// ─── Media ────────────────────────────────────────────────────────────────────
+
+export async function adminGetMediaList(
+  token: string,
+  params: GetMediaListRequest = {},
+): Promise<GetMediaListResponse> {
+  const { data } = await apiClient.get<GetMediaListResponse>("/api/media/list", {
+    headers: authHeader(token),
+    params,
+  });
+  return data;
+}
+
+export async function adminCreateMediaCategory(
+  token: string,
+  payload: { name: string; slug: string },
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/media/categories/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+// ─── Lecturers ────────────────────────────────────────────────────────────────
+
+export interface LecturerPayload {
+  name: string;
+  title: string;
+  rank: string;
+  degree: string;
+  specialization: string;
+  imageUrl?: string | null;
+  email?: string | null;
+  bio: string;
+  courses: string[];
+  almaMater: string;
+  origin: string;
+  displayOrder: number;
+  isActive: boolean;
+}
+
+export async function adminGetLecturerList(
+  token: string,
+  params: { page?: number; pageSize?: number; rank?: string; search?: string; isActive?: boolean } = {},
+): Promise<GetLecturerListResponse> {
+  const { data } = await apiClient.get<GetLecturerListResponse>("/api/lecturers/list", {
+    headers: authHeader(token),
+    params: {
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
+      ...(params.rank && { rank: params.rank }),
+      ...(params.search && { search: params.search }),
+      ...(params.isActive !== undefined && { isActive: params.isActive }),
+    },
+  });
+  return data;
+}
+
+export async function adminCreateLecturer(
+  token: string,
+  payload: LecturerPayload,
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/lecturers/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+export async function adminUpdateLecturer(
+  token: string,
+  id: string,
+  payload: LecturerPayload,
+): Promise<void> {
+  await apiClient.put(`/api/lecturers/update/${id}`, payload, {
+    headers: authHeader(token),
+  });
+}
+
+export async function adminDeleteLecturer(
+  token: string,
+  id: string,
+): Promise<void> {
+  await apiClient.delete(`/api/lecturers/delete/${id}`, {
+    headers: authHeader(token),
+  });
+}
+
+// ─── Foundation ──────────────────────────────────────────────────────────────
+
+export async function adminGetFoundationMemberList(
+  token: string,
+  params: FoundationMemberListParams = {},
+): Promise<GetFoundationMemberListResponse> {
+  const { data } = await apiClient.get<GetFoundationMemberListResponse>("/api/foundation/list", {
+    headers: authHeader(token),
+    params: {
+      ...params,
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
+    },
+  });
+  return data;
+}
+
+export async function adminCreateFoundationMember(
+  token: string,
+  payload: CreateFoundationMemberPayload,
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/foundation/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+export async function adminUpdateFoundationMember(
+  token: string,
+  id: string,
+  payload: CreateFoundationMemberPayload,
+): Promise<void> {
+  await apiClient.put(`/api/foundation/update/${id}`, payload, {
+    headers: authHeader(token),
+  });
+}
+
+export async function adminDeleteFoundationMember(
+  token: string,
+  id: string,
+): Promise<void> {
+  await apiClient.delete(`/api/foundation/delete/${id}`, {
     headers: authHeader(token),
   });
 }

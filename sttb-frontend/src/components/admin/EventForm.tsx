@@ -23,8 +23,10 @@ import {
   eventFormSchema,
   type EventFormValues,
 } from "@/libs/schemas/event-schema";
-import { useEventCategories } from "@/hooks/useEvents";
+import { useEventCategories, useCreateEventCategory } from "@/hooks/useEvents";
 import { getImageUrl } from "@/libs/api";
+import { CreateCategoryDialog } from "@/components/shared/CreateCategoryDialog";
+import { Plus } from "lucide-react";
 import { useUploadImage } from "@/hooks/useUpload";
 
 /* ─── Types ──────────────────────────────────────────────── */
@@ -165,6 +167,7 @@ export function EventForm({
   const { data: categoriesData } = useEventCategories();
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [tab, setTab] = useState<"basic" | "registration" | "details">("basic");
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage();
 
@@ -406,17 +409,27 @@ export function EventForm({
           </Field>
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Kategori" required error={errors.category?.message}>
-              <select
-                {...register("category")}
-                className={inputCls(errors.category?.message)}
-              >
-                <option value="">— Pilih Kategori —</option>
-                {(categoriesData ?? []).map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+              <div className="flex gap-2">
+                <select
+                  {...register("category")}
+                  className={inputCls(errors.category?.message) + " flex-1"}
+                >
+                  <option value="">— Pilih Kategori —</option>
+                  {(categoriesData ?? []).map((c) => (
+                    <option key={c.id} value={c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setIsCategoryDialogOpen(true)}
+                  className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  title="Tambah Kategori Baru"
+                >
+                  <Plus className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
             </Field>
             <Field label="Penyelenggara">
               <input
@@ -548,6 +561,16 @@ export function EventForm({
           </Field>
         </div>
       )}
+
+      <CreateCategoryDialog
+        isOpen={isCategoryDialogOpen}
+        onCloseAction={() => setIsCategoryDialogOpen(false)}
+        onSuccessAction={(category) => {
+          setValue("category", category.name);
+        }}
+        title="Tambah Kategori Kegiatan"
+        mutationHookAction={useCreateEventCategory}
+      />
 
       {/* Tab: Registration */}
       {tab === "registration" && (

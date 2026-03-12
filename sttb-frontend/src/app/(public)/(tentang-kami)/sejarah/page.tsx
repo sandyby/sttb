@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "motion/react";
-import { Flame, BookOpen, Award, Users, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 
 /* ─── DATA ───────────────────────────────────────────────── */
@@ -56,16 +56,16 @@ const timeline = [
 ];
 
 const logoMeanings = [
-    { title: "API", desc: "Penyertaan dan pemenuhan Allah Roh Kudus — sumber hikmat, kuasa, dan kasih.", icon: Flame, color: "#E62129", bg: "#FFF1F1" },
-    { title: "ALKITAB", desc: "Satu-satunya sumber pengetahuan yang benar tentang Allah (Sola Scriptura).", icon: BookOpen, color: "#0A2C74", bg: "#EFF4FF" },
-    { title: "SALIB & MAHKOTA", desc: "Panggilan untuk berpegang pada kebenaran dan merajakan Kristus.", icon: Award, color: "#0570CD", bg: "#EFF7FF" },
-    { title: "TONGKAT GEMBALA", desc: "Panggilan Tuhan untuk menggembalakan umat-Nya dengan setia.", icon: Users, color: "#059669", bg: "#ECFDF5" },
+    { title: "API", desc: "Penyertaan dan pemenuhan Allah Roh Kudus — sumber hikmat, kuasa, dan kasih.", img: "/logo/api.png" },
+    { title: "ALKITAB", desc: "Satu-satunya sumber pengetahuan yang benar tentang Allah (Sola Scriptura).", img: "/logo/alkitab.png" },
+    { title: "SALIB & MAHKOTA", desc: "Panggilan untuk berpegang pada kebenaran dan merajakan Kristus.", img: "/logo/salib.png" },
+    { title: "TONGKAT GEMBALA", desc: "Panggilan Tuhan untuk menggembalakan umat-Nya dengan setia.", img: "/logo/tongkat.png" },
 ];
 
 const founders = [
-    { name: "Rev. DR. Caleb Tong (Alm.)", role: "Pendiri", period: "1992–1999", img: "https://images.unsplash.com/photo-1623880840102-7df0a9f3545b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=300&q=80" },
-    { name: "Rev. DR. Joseph Tong, Ph.D.", role: "Pendiri & Rektor", period: "1999–2017", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=300&q=80" },
-    { name: "Rev. Dorothy I. Marx (Alm.)", role: "Pendiri & Rektor", period: "1999–2005", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=300&q=80" },
+    { name: "Rev. DR. Caleb Tong (Alm.)", role: "Pendiri", period: "1992–1999", img: "/assets/caleb-tong-rev-1.png" },
+    { name: "Rev. DR. Joseph Tong, Ph.D.", role: "Pendiri & Rektor", period: "1999–2017", img: "/assets/joseph-tong-rev-1.png" },
+    { name: "Rev. Dorothy I. Marx (Alm.)", role: "Pendiri & Rektor", period: "1999–2005", img: "/assets/dorothy-marx-rev-1.png" },
 ];
 
 /* ─── HERO ───────────────────────────────────────────────── */
@@ -366,23 +366,37 @@ export default function SejarahPage() {
                     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="text-center mb-12">
                         <p className="text-[#E62129] text-xs font-semibold uppercase tracking-widest mb-2">Arti Logo</p>
                         <h2 className="text-gray-900 dark:text-white font-bold" style={{ fontSize: "clamp(1.4rem, 2.5vw, 1.8rem)" }}>Makna di Balik Logo STTB</h2>
+                        <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="my-6 flex justify-center">
+                            <Image 
+                                src="/logo/Logo-STT-Bdg.jpg" 
+                                alt="Logo STTB" 
+                                width={250} 
+                                height={250} 
+                                className="rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 p-6"
+                            />
+                        </motion.div>
                         <p className="text-gray-400 text-sm max-w-xl mx-auto mt-2 leading-relaxed">Logo STTB menggambarkan pola pendidikan teologi yang memperlengkapi para mahasiswa menjadi hamba Allah yang baik, setia, dan penuh hikmat.</p>
                     </motion.div>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
                         {logoMeanings.map((item, i) => {
-                            const Icon = item.icon;
                             return (
                                 <motion.div key={item.title} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                                     transition={{ delay: i * 0.1 + 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                                     whileHover={{ y: -6 }}
                                     className="group p-6 rounded-2xl border border-gray-100 dark:border-gray-800 text-center hover:shadow-xl transition-all cursor-default">
-                                    <motion.div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: item.bg }}
+                                    <motion.div className="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-4 p-3"
                                         whileHover={{ rotate: 10 }} transition={{ type: "spring", stiffness: 300 }}>
-                                        <Icon className="w-7 h-7" style={{ color: item.color }} />
+                                        <Image
+                                            src={item.img}
+                                            alt={item.title}
+                                            width={56}
+                                            height={56}
+                                            className="w-full h-full object-contain"
+                                        />
                                     </motion.div>
                                     <h3 className="text-gray-900 dark:text-white font-bold text-sm mb-2">{item.title}</h3>
                                     <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">{item.desc}</p>
-                                    <div className="mt-4 h-0.5 w-0 group-hover:w-full transition-all duration-500 rounded-full mx-auto" style={{ backgroundColor: item.color }} />
+                                    <div className="mt-4 h-0.5 w-0 group-hover:w-full transition-all duration-500 rounded-full mx-auto" />
                                 </motion.div>
                             );
                         })}

@@ -1,5 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/libs/api-client";
+import { getMediaList, getMediaCategories } from "@/libs/api";
+import { adminCreateMediaCategory } from "@/libs/admin-api";
+import { useSession } from "next-auth/react";
 import type {
   MediaListItem,
   GetMediaListResponse,
@@ -37,6 +40,29 @@ export function useGetMedia(params: GetMediaListRequest = {}) {
   });
 }
 
+interface MediaListParams {
+  page?: number;
+  pageSize?: number;
+  type?: string;
+  category?: string;
+  search?: string;
+}
+
+export function useMediaList(params: MediaListParams = {}) {
+  return useQuery({
+    queryKey: ["media", "list", params],
+    queryFn: () => getMediaList(params),
+  });
+}
+
+export function useMediaCategories() {
+  return useQuery({
+    queryKey: ["media", "categories"],
+    queryFn: getMediaCategories,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
 /**
@@ -70,28 +96,16 @@ export function useDeleteMedia() {
     },
   });
 }
-import { useQuery } from "@tanstack/react-query";
-import { getMediaList, getMediaCategories } from "@/libs/api";
 
-interface MediaListParams {
-  page?: number;
-  pageSize?: number;
-  type?: string;
-  category?: string;
-  search?: string;
-}
+export function useCreateMediaCategory() {
+  const { data: session } = useSession();
+  const qc = useQueryClient();
 
-export function useMediaList(params: MediaListParams = {}) {
-  return useQuery({
-    queryKey: ["media", "list", params],
-    queryFn: () => getMediaList(params),
-  });
-}
-
-export function useMediaCategories() {
-  return useQuery({
-    queryKey: ["media", "categories"],
-    queryFn: getMediaCategories,
-    staleTime: 5 * 60 * 1000,
+  return useMutation({
+    mutationFn: (payload: { name: string; slug: string }) =>
+      adminCreateMediaCategory(session?.accessToken ?? "", payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["media", "categories"] });
+    },
   });
 }
