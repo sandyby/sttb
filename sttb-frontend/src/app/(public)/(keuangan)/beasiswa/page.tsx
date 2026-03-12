@@ -10,7 +10,6 @@ import {
   ChevronUp,
   Download,
   Mail,
-  Loader2,
 } from "lucide-react";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 import Image from "next/image";
@@ -133,9 +132,27 @@ export default function BeasiswaPage() {
           </FadeIn>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="w-10 h-10 text-[#0A2C74] animate-spin mb-4" />
-              <p className="text-gray-500">Memuat informasi beasiswa...</p>
+            <div className="space-y-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse"
+                >
+                  <div className="grid md:grid-cols-5">
+                    <div className="md:col-span-2 h-48 bg-gray-100 dark:bg-gray-800" />
+                    <div className="md:col-span-3 p-6 space-y-3">
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded w-1/2" />
+                      <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full" />
+                      <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-5/6" />
+                      <div className="space-y-2 pt-2">
+                        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded w-3/4" />
+                        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded w-2/3" />
+                        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded w-4/5" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <StaggerGroup staggerDelay={0.15} className="space-y-6">

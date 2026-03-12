@@ -3,7 +3,7 @@
 import { useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "motion/react";
-import { Mail, GraduationCap, BookOpen, X, ChevronRight, ChevronLeft, Globe, Star, Users, Loader2 } from "lucide-react";
+import { Mail, GraduationCap, BookOpen, X, ChevronRight, ChevronLeft, Globe, Star, Users } from "lucide-react";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { useGetLecturers } from "@/hooks/useLecturers";
 import { getImageUrl } from "@/libs/api";
@@ -409,8 +409,39 @@ export default function DewanDosenPage() {
 
             {/* Loading state */}
             {isLoading && (
-                <div className="flex items-center justify-center py-32">
-                    <Loader2 className="w-8 h-8 animate-spin text-[#E62129]" />
+                <div className="py-16 bg-white dark:bg-gray-950">
+                    <div className="max-w-7xl mx-auto px-4 space-y-5">
+                        {/* Leader skeletons */}
+                        {Array.from({ length: 2 }).map((_, i) => (
+                            <div key={i} className="rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse">
+                                <div className="h-1 bg-gray-100 dark:bg-gray-800" />
+                                <div className="flex flex-col sm:flex-row" style={{ minHeight: "280px" }}>
+                                    <div className="sm:w-56 lg:w-64 bg-gray-100 dark:bg-gray-800 flex-shrink-0" />
+                                    <div className="flex-1 p-6 lg:p-8 space-y-3">
+                                        <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded w-1/3" />
+                                        <div className="h-6 bg-gray-100 dark:bg-gray-800 rounded w-1/2" />
+                                        <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded w-2/5" />
+                                        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full" />
+                                        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-4/5" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="max-w-7xl mx-auto px-4 mt-10">
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <div key={i} className="rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse">
+                                    <div className="h-52 bg-gray-100 dark:bg-gray-800" />
+                                    <div className="p-4 space-y-2">
+                                        <div className="h-3.5 bg-gray-100 dark:bg-gray-800 rounded w-1/2" />
+                                        <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded w-3/4" />
+                                        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-2/3" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             )}
 
