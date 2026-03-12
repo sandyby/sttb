@@ -17,6 +17,7 @@ public static class DataSeeder
         await SeedMediaAsync(db, adminUserId, mediaCategories);
         await SeedPagesAsync(db, adminUserId);
         await SeedStudyProgramsAsync(db, adminUserId);
+        await SeedLecturersAsync(db, adminUserId);
     }
 
     // ─── Categories ──────────────────────────────────────────────────────────
@@ -1400,6 +1401,282 @@ public static class DataSeeder
         };
 
         db.StudyPrograms.AddRange(programs);
+        await db.SaveChangesAsync();
+    }
+
+    // ─── Lecturers ────────────────────────────────────────────────────────────
+
+    private static async Task SeedLecturersAsync(ApplicationDbContext db, string adminUserId)
+    {
+        if (await db.Lecturers.AnyAsync())
+            return;
+
+        var lecturers = new List<Lecturer>
+        {
+            // --- PIMPINAN (TOP LEADERSHIP) ---
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Sutrisna Harjanto",
+                Title = "Ketua STTB",
+                Rank = "pimpinan",
+                Degree = "Ph.D. Trinity International University, USA; M.Div. Trinity Theological College, Singapore; S.Farm. Universitas Padjajaran",
+                Specialization = "Pendidikan, Biblika, Marketplace",
+                ImageUrl = "/uploads/lecturers/sutrisna-1.png",
+                Email = "ketua@sttb.ac.id",
+                Bio = "Sutrisna Harjanto adalah seorang akademisi dengan latar belakang multidisiplin yang unik, menggabungkan ilmu farmasi dengan teologi mendalam. Beliau fokus pada integrasi iman di dunia kerja (marketplace) dan pengembangan institusi pendidikan teologi.",
+                AlmaMater = "Trinity International University, USA",
+                Origin = "Deerfield, Illinois — USA",
+                Courses = new List<string> { "Etika Marketplace", "Teologi Pendidikan", "Kepemimpinan Strategis" },
+                DisplayOrder = 1,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Tan Giok Lie",
+                Title = "Wakil Ketua I Akademik",
+                Rank = "pimpinan",
+                Degree = "Ed.D. Biola University Talbot School Theology USA; M.A. Institut Alkitab Tiranus; S.S. Universitas Kristen Maranatha",
+                Specialization = "Pendidikan",
+                ImageUrl = "/uploads/lecturers/tan-giok-lie.png",
+                Email = "akademik@sttb.ac.id",
+                Bio = "Dr. Tan Giok Lie memiliki kepakaran dalam administrasi akademik dan pengembangan kurikulum teologi. Beliau berdedikasi untuk memastikan standar pendidikan di STTB memenuhi kualitas internasional dan relevansi gerejawi.",
+                AlmaMater = "Biola University, California",
+                Origin = "La Mirada, California — USA",
+                Courses = new List<string> { "Administrasi Pendidikan", "Pengembangan Kurikulum", "Teologi Pendidikan Kristen" },
+                DisplayOrder = 2,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Wemmy Prayogo",
+                Title = "Wakil Ketua II Adm. & Keuangan",
+                Rank = "pimpinan",
+                Degree = "M.Ed. Monash University Australia; S.Pd. Universitas Kristen Satya Wacana Salatiga",
+                Specialization = "Pendidikan",
+                ImageUrl = "/uploads/lecturers/wemmy-prayogo.png",
+                Email = "admin-keuangan@sttb.ac.id",
+                Bio = "Wemmy Prayogo mengkhususkan diri dalam manajemen pendidikan dan efisiensi operasional institusi. Keahliannya memastikan stabilitas keuangan dan infrastruktur pendukung bagi seluruh civitas akademika STTB.",
+                AlmaMater = "Monash University, Australia",
+                Origin = "Melbourne — Australia",
+                Courses = new List<string> { "Manajemen Sekolah", "Kepemimpinan Organisasi", "Kebijakan Pendidikan" },
+                DisplayOrder = 3,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Johan Setiawan",
+                Title = "Wakil Ketua III Kemahasiswaan",
+                Rank = "pimpinan",
+                Degree = "M.Th. STT Bandung; M.C.M Discipleship Training Centre Singapore; S.Psi. UGM Yogyakarta",
+                Specialization = "Biblika & Praktika",
+                ImageUrl = "/uploads/lecturers/johan-setiawan.png",
+                Email = "kemahasiswaan@sttb.ac.id",
+                Bio = "Johan Setiawan mengintegrasikan ilmu psikologi dengan pelayanan praktika. Sebagai wakil bidang kemahasiswaan, beliau berfokus pada pembentukan karakter, pemuridan, dan kesehatan mental mahasiswa teologi.",
+                AlmaMater = "Universitas Gadjah Mada (UGM)",
+                Origin = "Yogyakarta — Indonesia",
+                Courses = new List<string> { "Psikologi Konseling", "Teologi Pemuridan", "Pelayanan Praktika" },
+                DisplayOrder = 4,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+
+            // --- KETUA PROGRAM STUDI (KAPRODI) ---
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Ferry Herlianto",
+                Title = "Ketua Program Studi S.Pd.",
+                Rank = "tetap",
+                Degree = "M.Th. STT Tiranus; S.Th. STT Tawangmangu",
+                Specialization = "Pendidikan & Praktika",
+                ImageUrl = "/uploads/lecturers/ferry.png",
+                Bio = "Ferry Herlianto memiliki panggilan dalam mendidik calon guru agama Kristen. Beliau menekankan pada pedagogi yang kreatif dan penguasaan teologi dasar bagi pendidik di lingkungan sekolah.",
+                AlmaMater = "STT Tiranus",
+                Origin = "Bandung — Indonesia",
+                Courses = new List<string> { "Metode Mengajar", "PAK Anak & Remaja", "Evangelisme" },
+                DisplayOrder = 5,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Dwi Maria Handayani",
+                Title = "Ketua Program Studi M.Th.",
+                Rank = "tetap",
+                Degree = "Ph.D. AGST Manila; M.Th. International Theological Seminary USA; M.A. STT Bandung; S.E. Unika Widyakarya",
+                Specialization = "Biblika & Praktika",
+                ImageUrl = "/uploads/lecturers/dwi-maria.png",
+                Bio = "Dr. Dwi Maria adalah seorang peneliti biblika yang tekun. Sebagai Kaprodi Pascasarjana, beliau mendorong mahasiswa untuk melakukan riset teologi yang mendalam dan berkontribusi bagi literatur akademik global.",
+                AlmaMater = "AGST Manila, Philippines",
+                Origin = "Manila — Philippines",
+                Courses = new List<string> { "Metodologi Penelitian Teologi", "Hermeneutika Lanjutan", "Eksegesis PB" },
+                DisplayOrder = 6,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Sarinah Lo",
+                Title = "Ketua Program Studi M.Pd.K.",
+                Rank = "tetap",
+                Degree = "Ph.D. TEDS; M.Ed. Calvin College USA; M.A. Singapore Bible College; S.Si. Universitas Indonesia",
+                Specialization = "Pendidikan",
+                ImageUrl = "/uploads/lecturers/sarinah-lo.png",
+                Bio = "Dr. Sarinah Lo menggabungkan latar belakang sains dengan pendidikan Kristen. Fokus risetnya adalah pada pembentukan iman melalui institusi pendidikan formal dan kurikulum Kristen kontemporer.",
+                AlmaMater = "Trinity Evangelical Divinity School (TEDS)",
+                Origin = "Deerfield, Illinois — USA",
+                Courses = new List<string> { "Filsafat Pendidikan Kristen", "Teori Belajar Lanjutan", "Desain Kurikulum" },
+                DisplayOrder = 7,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Heriyanto",
+                Title = "Ketua Program Studi M.Min.",
+                Rank = "tetap",
+                Degree = "DR. UPI Bandung; M.Th. International Theological Seminary USA; S.Th. STT Bandung",
+                Specialization = "Biblika, Pendidikan & Praktika",
+                ImageUrl = "/uploads/lecturers/heriyanto2.png",
+                Bio = "Dr. Heriyanto aktif dalam pengembangan pelayanan pelayanan gerejawi melalui program Magister Pelayanan. Beliau berfokus pada efektivitas kepemimpinan rohani di tengah tantangan budaya modern.",
+                AlmaMater = "Universitas Pendidikan Indonesia (UPI)",
+                Origin = "Bandung — Indonesia",
+                Courses = new List<string> { "Kepemimpinan Pastoral", "Teologi Pelayanan", "Pertumbuhan Gereja" },
+                DisplayOrder = 8,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Kristian Kusumawardana",
+                Title = "Ketua Program Studi S.Th.",
+                Rank = "tetap",
+                Degree = "M.Th. STT Bandung; M.Div. STT SAAT Malang; S.Si. MIPA UNS Surakarta",
+                Specialization = "Teologi",
+                ImageUrl = "/uploads/lecturers/kristian-Kusumawardana-1.png",
+                Bio = "Kristian Kusumawardana adalah pengajar teologi sistematika yang berfokus pada relevansi doktrin klasik bagi jemaat modern. Beliau aktif dalam membimbing mahasiswa sarjana dalam dasar-dasar iman Kristen.",
+                AlmaMater = "STT SAAT Malang",
+                Origin = "Surakarta — Indonesia",
+                Courses = new List<string> { "Teologi Sistematika I", "Doktrin Allah", "Sejarah Teologi" },
+                DisplayOrder = 9,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+
+            // --- DOSEN TETAP ---
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Joseph Tong",
+                Title = "Dosen Filsafat, Sistematika & Praktika",
+                Rank = "tetap",
+                Degree = "Ph.D. University of Southern California USA; M.B.A. Graduate Theological Foundation Indiana; M.Th. Calvin Theological Seminary USA; B.A. Calvin College USA; B.Th. Seminari Alkitab Asia Tenggara Malang",
+                Specialization = "Filsafat, Sistematika & Praktika",
+                ImageUrl = "/uploads/lecturers/joseph-tong-rev-1.png",
+                Bio = "Dr. Joseph Tong adalah figur senior dengan pengalaman akademik internasional yang sangat luas. Beliau dikenal karena kemampuannya menghubungkan filsafat barat dengan teologi sistematika yang ketat.",
+                AlmaMater = "University of Southern California (USC)",
+                Origin = "Los Angeles, California — USA",
+                Courses = new List<string> { "Filsafat Agama", "Apologetika", "Teologi Sistematika Lanjutan" },
+                DisplayOrder = 10,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Herlise Y. Sagala",
+                Title = "Dosen Biblika & Praktika",
+                Rank = "tetap",
+                Degree = "D.Th. & D.Min. & M.Div. & S.Th. Institut Injil Indonesia Batu Malang; M.Th. International Theological Seminary USA; B.A. Universitas 17 Agustus 1945 Medan",
+                Specialization = "Biblika & Praktika",
+                ImageUrl = "/uploads/lecturers/herlise-y.png",
+                Bio = "Dr. Herlise Sagala memiliki dedikasi panjang dalam pengajaran Alkitab, khususnya dalam studi Perjanjian Baru. Beliau aktif dalam pelayanan praktika dan pembinaan rohani kaum wanita.",
+                AlmaMater = "Institut Injil Indonesia (I3) Batu",
+                Origin = "Batu, Malang — Indonesia",
+                Courses = new List<string> { "Studi PB: Surat-Surat Paulus", "Bahasa Yunani Alkitab", "Hermeneutika Biblika" },
+                DisplayOrder = 11,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Agus Gunawan",
+                Title = "Dosen Teologi, Praktika & Pendidikan",
+                Rank = "tetap",
+                Degree = "Ph.D. Biola University USA; M.Th. International Theological Seminary USA; M.Th. Trinity Theological College Singapore; S.Th. SAAT Malang",
+                Specialization = "Teologi, Praktika & Pendidikan",
+                ImageUrl = "/uploads/lecturers/agus-gunawan.png",
+                Bio = "Dr. Agus Gunawan adalah pakar dalam studi teologi praktika dengan wawasan global. Riset-risetnya berfokus pada transformasi komunitas melalui pendidikan dan misi gereja di era digital.",
+                AlmaMater = "Biola University, USA",
+                Origin = "La Mirada, California — USA",
+                Courses = new List<string> { "Misiologi Kontemporer", "Teologi Praktika", "Etika Kristen" },
+                DisplayOrder = 12,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Chandra Koewoso",
+                Title = "Dosen Biblika & Praktika",
+                Rank = "tetap",
+                Degree = "D.Min. & M.Div. Singapore Bible College; M.M. & S.T. Universitas Tarumanagara Jakarta",
+                Specialization = "Biblika & Praktika",
+                ImageUrl = "/uploads/lecturers/chandra-koewoso.png",
+                Bio = "Dr. Chandra Koewoso membawa perspektif manajemen dan teknik ke dalam pelayanan biblika. Fokus pengajarannya adalah pada kepemimpinan Kristen yang transformatif dan manajemen pelayanan.",
+                AlmaMater = "Singapore Bible College",
+                Origin = "Singapore",
+                Courses = new List<string> { "Manajemen Gereja", "Eksegesis PL", "Kepemimpinan Kristiani" },
+                DisplayOrder = 13,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Budiyanto Santosa",
+                Title = "Dosen Pendidikan & Biblika",
+                Rank = "tetap",
+                Degree = "D.Min. Gordon Conwell Theological Seminary USA; M.Th. Trinity Theological Seminary Singapore; S.Th. SAAT Malang; S.Pd. Universitas Katolik Indonesia Atmajaya Jakarta",
+                Specialization = "Pendidikan & Biblika",
+                ImageUrl = "/uploads/lecturers/budiyanto-1.png",
+                Bio = "Dr. Budiyanto Santosa adalah ahli dalam pendidikan biblika yang menggabungkan metode pedagogi modern dengan kedalaman eksegetis. Beliau berfokus pada literasi Alkitab di kalangan jemaat awam.",
+                AlmaMater = "Gordon-Conwell Theological Seminary",
+                Origin = "South Hamilton, Massachusetts — USA",
+                Courses = new List<string> { "Pedagogi Alkitab", "Teologi Biblika", "Pengantar PL & PB" },
+                DisplayOrder = 14,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            }
+        };
+
+        db.Lecturers.AddRange(lecturers);
         await db.SaveChangesAsync();
     }
 }
