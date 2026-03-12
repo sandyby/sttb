@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, Fragment } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { differenceInYears } from "date-fns";
@@ -238,6 +238,17 @@ export function HeroSection() {
               </motion.div>
             </AnimatePresence>
           </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
+          <span className="text-white/40 text-xs uppercase tracking-widest">Scroll</span>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ChevronDown className="w-5 h-5 text-white/40" />
+          </motion.div>
         </div>
 
         {/* Bottom bar */}
