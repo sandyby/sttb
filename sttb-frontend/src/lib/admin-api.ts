@@ -1,6 +1,7 @@
 import apiClient from "./axios";
 import type { GetNewsListResponse } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
+import type { GetLecturerListResponse } from "@/types/lecturers";
 import type { GetMediaListResponse, GetMediaListRequest } from "@/types/media";
 import type {
   PageListItem,
@@ -305,4 +306,68 @@ export async function adminCreateMediaCategory(
     headers: authHeader(token),
   });
   return data;
+}
+
+// ─── Lecturers ────────────────────────────────────────────────────────────────
+
+export interface LecturerPayload {
+  name: string;
+  title: string;
+  rank: string;
+  degree: string;
+  specialization: string;
+  imageUrl?: string | null;
+  email?: string | null;
+  bio: string;
+  courses: string[];
+  almaMater: string;
+  origin: string;
+  displayOrder: number;
+  isActive: boolean;
+}
+
+export async function adminGetLecturerList(
+  token: string,
+  params: { page?: number; pageSize?: number; rank?: string; search?: string; isActive?: boolean } = {},
+): Promise<GetLecturerListResponse> {
+  const { data } = await apiClient.get<GetLecturerListResponse>("/api/lecturers/list", {
+    headers: authHeader(token),
+    params: {
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
+      ...(params.rank && { rank: params.rank }),
+      ...(params.search && { search: params.search }),
+      ...(params.isActive !== undefined && { isActive: params.isActive }),
+    },
+  });
+  return data;
+}
+
+export async function adminCreateLecturer(
+  token: string,
+  payload: LecturerPayload,
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/lecturers/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+export async function adminUpdateLecturer(
+  token: string,
+  id: string,
+  payload: LecturerPayload,
+): Promise<void> {
+  await apiClient.put(`/api/lecturers/update/${id}`, payload, {
+    headers: authHeader(token),
+  });
+}
+
+export async function adminDeleteLecturer(
+  token: string,
+  id: string,
+): Promise<void> {
+  await apiClient.delete(`/api/lecturers/delete/${id}`, {
+    headers: authHeader(token),
+  });
 }

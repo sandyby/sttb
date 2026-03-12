@@ -8,7 +8,7 @@ public static class FileConstants
     public const long MaxImageSizeBytes = 10L * 1024 * 1024;   // 10 MB
     public const long MaxVideoSizeBytes = 500L * 1024 * 1024;  // 500 MB
 
-    public static readonly string[] AllowedUploadTypes = { "news", "events", "media", "pages" };
+    public static readonly string[] AllowedUploadTypes = { "news", "events", "media", "pages", "lecturers" };
 
     // Magic number signatures (file headers) — never trust Content-Type alone
     public static readonly Dictionary<string, byte[]> ImageSignatures = new()
