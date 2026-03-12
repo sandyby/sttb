@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Page> Pages => Set<Page>();
     public DbSet<StudyProgram> StudyPrograms => Set<StudyProgram>();
     public DbSet<Lecturer> Lecturers => Set<Lecturer>();
+    public DbSet<FoundationMember> FoundationMembers => Set<FoundationMember>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
