@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,9 +12,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,7 +29,7 @@ import { toast } from "sonner";
 
 const categorySchema = z.object({
   name: z.string().min(2, "Nama kategori minimal 2 karakter"),
-  slug: z.string().min(2, "Slug minimal 2 karakter"),
+  slug: z.string().min(2, "Slug minimal 2 karakter").regex(/^[a-z0-9-]+$/, "Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung"),
 });
 
 type CategoryFormValues = z.infer<typeof categorySchema>;
@@ -37,6 +44,17 @@ interface CreateCategoryDialogProps {
   mutationHookAction: () => any; // Use the useMutation hook returned type
 }
 
+/* ─── Utilities ──────────────────────────────────────────── */
+
+const slugify = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-") // Remove consecutive hyphens
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+};
+
 /* ─── Component ──────────────────────────────────────────── */
 
 export function CreateCategoryDialog({
@@ -48,13 +66,7 @@ export function CreateCategoryDialog({
 }: CreateCategoryDialogProps) {
   const mutation = mutationHookAction();
   
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<CategoryFormValues>({
+  const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
       name: "",
@@ -62,23 +74,28 @@ export function CreateCategoryDialog({
     },
   });
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setValue("name", name);
-    // Auto-generate slug: lowercase, replace spaces with hyphens, remove non-alphanumeric
-    const slug = name
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
-    setValue("slug", slug);
-  };
+  const { watch, setValue, reset } = form;
+  const nameValue = watch("name");
+
+  // Auto-generate slug when name changes
+  useEffect(() => {
+    if (nameValue) {
+      setValue("slug", slugify(nameValue), { shouldValidate: true });
+    }
+  }, [nameValue, setValue]);
+
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+    }
+  }, [isOpen, reset]);
 
   const onSubmit = (data: CategoryFormValues) => {
     mutation.mutate(data, {
       onSuccess: (id: string) => {
         toast.success("Kategori berhasil dibuat");
         onSuccessAction({ id, name: data.name });
-        reset();
         onCloseAction();
       },
       onError: (error: any) => {
@@ -88,7 +105,7 @@ export function CreateCategoryDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onCloseAction}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onCloseAction()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -97,44 +114,54 @@ export function CreateCategoryDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nama Kategori</Label>
-            <Input
-              id="name"
-              {...register("name")}
-              onChange={handleNameChange}
-              placeholder="Contoh: Berita Kampus"
-            />
-            {errors.name && (
-              <p className="text-xs text-red-500">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="slug">Slug</Label>
-            <Input
-              id="slug"
-              {...register("slug")}
-              placeholder="contoh-berita-kampus"
-            />
-            {errors.slug && (
-              <p className="text-xs text-red-500">{errors.slug.message}</p>
-            )}
-          </div>
-
-          <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onCloseAction} disabled={mutation.isPending}>
-              Batal
-            </Button>
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nama Kategori</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Contoh: Berita Kampus" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              Simpan Kategori
-            </Button>
-          </DialogFooter>
-        </form>
+            />
+
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <Input placeholder="contoh-berita-kampus" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter className="pt-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onCloseAction} 
+                disabled={mutation.isPending}
+              >
+                Batal
+              </Button>
+              <Button type="submit" disabled={mutation.isPending}>
+                {mutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Simpan Kategori
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
