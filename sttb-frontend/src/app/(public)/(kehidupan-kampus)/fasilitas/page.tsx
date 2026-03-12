@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "motion/react";
 import { BookOpen, Heart, Home, Monitor, Dumbbell, Users, ChevronRight, X, Camera, Grid3X3 } from "lucide-react";
-import Masonry from "react-masonry-css";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import PageHeader from "@/components/shared/PageHeader";
+
+const Masonry = dynamic(() => import("react-masonry-css"), { ssr: false });
 
 /* ─── DATA ──────────────────────────────────────────────── */
 
@@ -136,8 +138,13 @@ function MasonryGallery() {
     const inView = useInView(ref, { once: true, margin: "-80px" });
     const [activeTag, setActiveTag] = useState("Semua");
     const [lightbox, setLightbox] = useState<typeof galleryImages[0] | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => { setMounted(true); }, []);
 
     const filtered = activeTag === "Semua" ? galleryImages : galleryImages.filter((img) => img.tag === activeTag);
+
+    if (!mounted) return null;
 
     return (
         <section ref={ref} className="py-20 bg-gray-950">
@@ -410,7 +417,7 @@ function CategorySection({ cat, index }: { cat: typeof categories[0]; index: num
                             <Image
                                 src={cat.image}
                                 alt={cat.label}
-                                preload
+                                priority
                                 fill
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
@@ -445,7 +452,7 @@ function CategorySection({ cat, index }: { cat: typeof categories[0]; index: num
                                         src={img.url}
                                         alt={img.label}
                                         fill
-                                        preload
+                                        priority
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
                                     <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5">

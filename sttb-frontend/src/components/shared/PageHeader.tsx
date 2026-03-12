@@ -106,7 +106,7 @@ export default function PageHeader({
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   {breadcrumb.map((item, index) => (
-                    <React.Fragment key={item.href}>
+                    <React.Fragment key={`${item.href}-${index}`}>
                       <BreadcrumbSeparator className="text-white/20" />
                       <BreadcrumbItem>
                         {index === breadcrumb.length - 1 ? (

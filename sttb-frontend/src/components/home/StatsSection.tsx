@@ -1,8 +1,34 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useInView, useSpring, useTransform, animate } from "motion/react";
+import { useEffect, useRef } from "react";
 import { Users, GraduationCap, BookOpen, Award, Clock, Globe } from "lucide-react";
 import { stats } from "../../data/mock-data";
+
+function Counter({ value, className }: { value: string; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+  
+  // Extract number from string (e.g., "33+" -> 33)
+  const numericValue = parseInt(value.replace(/[^0-9]/g, "")) || 0;
+  const suffix = value.replace(/[0-9]/g, "");
+
+  useEffect(() => {
+    if (isInView && ref.current) {
+      animate(0, numericValue, {
+        duration: 2,
+        ease: "easeOut",
+        onUpdate: (latest) => {
+          if (ref.current) {
+            ref.current.textContent = Math.floor(latest) + suffix;
+          }
+        },
+      });
+    }
+  }, [numericValue, isInView, suffix]);
+
+  return <span ref={ref} className={className}>0{suffix}</span>;
+}
 
 const statItems = [
   {
@@ -83,9 +109,10 @@ export function StatsSection() {
                 <div className={`w-12 h-12 rounded-full ${item.bg} flex items-center justify-center mb-3`}>
                   <Icon className={`w-6 h-6 ${item.color}`} />
                 </div>
-                <span className={`text-2xl font-bold ${item.color} mb-0.5`}>
-                  {item.value}
-                </span>
+                <Counter 
+                  value={item.value} 
+                  className={`text-2xl font-bold ${item.color} mb-0.5`} 
+                />
                 <span className="text-gray-900 dark:text-white text-sm font-medium">
                   {item.label}
                 </span>

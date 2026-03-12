@@ -169,7 +169,10 @@ export function HeroSection() {
                 </motion.div>
 
                 {/* Title */}
-                <h1
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
                   className="text-white mb-2"
                   style={{
                     fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
@@ -180,8 +183,11 @@ export function HeroSection() {
                   }}
                 >
                   {slide.title}
-                </h1>
-                <h1
+                </motion.h1>
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
                   className="mb-2"
                   style={{
                     fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
@@ -193,12 +199,12 @@ export function HeroSection() {
                   }}
                 >
                   {slide.titleAccent}
-                </h1>
+                </motion.h1>
 
                 <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
                   className="text-white/70 mb-4 max-w-xl leading-relaxed"
                   style={{ fontSize: "clamp(0.95rem, 1.5vw, 1.1rem)" }}
                 >
@@ -207,14 +213,14 @@ export function HeroSection() {
 
                 {/* CTAs */}
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
                   className="flex flex-wrap gap-4"
                 >
                   <Link
                     href={slide.ctaHref}
-                    className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-white font-semibold transition-all"
+                    className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-white font-semibold transition-all hover:scale-105 active:scale-95"
                     style={{ backgroundColor: slide.accent }}
                   >
                     {slide.cta}
@@ -223,7 +229,7 @@ export function HeroSection() {
                   {slide.secondaryCta != undefined && (
                     <Link
                       href={slide.secondaryHref}
-                      className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-white font-semibold bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all"
+                      className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg text-white font-semibold bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all hover:scale-105 active:scale-95"
                     >
                       {slide.secondaryCta}
                     </Link>

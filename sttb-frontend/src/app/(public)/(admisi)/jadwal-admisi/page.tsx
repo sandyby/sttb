@@ -65,8 +65,7 @@ export default function JadwalAdmisiPage() {
                 category="Admisi"
                 description={`Pendaftaran Tahun Akademik 2026–2027. Tersedia ${waves.length || 3} gelombang pendaftaran dengan jadwal tes yang telah ditentukan.`}
                 breadcrumb={[
-                    { label: "Admisi", href: "/jadwal-admisi" },
-                    { label: "Jadwal", href: "/jadwal-admisi" }
+                    { label: "Admisi", href: "/jadwal-admisi" }
                 ]}
             />
 
