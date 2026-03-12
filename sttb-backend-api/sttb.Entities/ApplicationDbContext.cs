@@ -23,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<StudyProgram> StudyPrograms => Set<StudyProgram>();
     public DbSet<Lecturer> Lecturers => Set<Lecturer>();
     public DbSet<FoundationMember> FoundationMembers => Set<FoundationMember>();
+    public DbSet<AdmissionWave> AdmissionWaves => Set<AdmissionWave>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -75,7 +76,30 @@ public class ApplicationDbContext : IdentityDbContext<User>
             ConfigureStringListMapping(entity.Property(l => l.Courses));
         });
 
+        builder.Entity<AdmissionWave>(entity =>
+        {
+            ConfigureJsonListMapping(entity.Property(w => w.Steps));
+        });
+
         builder.Entity<RefreshToken>().HasIndex(r => r.Token).IsUnique();
+    }
+
+    private static void ConfigureJsonListMapping<T>(PropertyBuilder<List<T>> property) where T : class
+    {
+        property.HasConversion(
+            v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+            v => JsonSerializer.Deserialize<List<T>>(v, (JsonSerializerOptions?)null) ?? new List<T>(),
+            new ValueComparer<List<T>>(
+                (c1, c2) => JsonSerializer.Serialize(c1, (JsonSerializerOptions?)null)
+                            == JsonSerializer.Serialize(c2, (JsonSerializerOptions?)null),
+                c => c == null ? 0 : JsonSerializer.Serialize(c, (JsonSerializerOptions?)null).GetHashCode(),
+                c => c == null ? new List<T>() :
+                    JsonSerializer.Deserialize<List<T>>(
+                        JsonSerializer.Serialize(c, (JsonSerializerOptions?)null),
+                        (JsonSerializerOptions?)null) ?? new List<T>()
+            )
+        );
+        property.HasColumnType("nvarchar(max)");
     }
 
     private static void ConfigureStringListMapping(PropertyBuilder<List<string>> property)
