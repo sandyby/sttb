@@ -7,7 +7,7 @@ import * as z from "zod";
 import { ArrowLeft, Save, Plus, X, Upload, Loader2, Users } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { useUploadImage } from "@/hooks/useUpload";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";

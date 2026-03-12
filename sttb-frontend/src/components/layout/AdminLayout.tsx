@@ -23,6 +23,7 @@ import {
   ExternalLink,
   GraduationCap,
   Building2,
+  Award,
 } from "lucide-react";
 import { cn } from "../ui/utils";
 import { useSession, signOut } from "next-auth/react";
@@ -116,6 +117,15 @@ const navGroups: NavGroup[] = [
     children: [
       { label: "Semua Gelombang", href: "/admin/admission-waves", icon: Calendar },
       { label: "Tambah Baru", href: "/admin/admission-waves/create", icon: Plus },
+    ],
+  },
+  {
+    label: "Beasiswa",
+    href: "/admin/scholarships",
+    icon: Award,
+    children: [
+      { label: "Semua Beasiswa", href: "/admin/scholarships", icon: Award },
+      { label: "Tambah Baru", href: "/admin/scholarships/create", icon: Plus },
     ],
   },
   {
@@ -231,6 +241,8 @@ function getBreadcrumb(pathname: string): { parent?: string; current: string } {
   if (pathname.match(/\/foundation\/\w+\/edit/)) return { parent: "Yayasan", current: "Edit Anggota" };
   if (pathname.includes("/admission-waves/create")) return { parent: "Jadwal Admisi", current: "Tambah Gelombang" };
   if (pathname.match(/\/admission-waves\/[\w-]+\/edit/)) return { parent: "Jadwal Admisi", current: "Edit Gelombang" };
+  if (pathname.includes("/scholarships/create")) return { parent: "Beasiswa", current: "Tambah Baru" };
+  if (pathname.match(/\/scholarships\/\w+\/edit/)) return { parent: "Beasiswa", current: "Edit Beasiswa" };
   const found = navGroups.find(n => n.href === pathname);
   return { current: found?.label ?? "Admin" };
 }
