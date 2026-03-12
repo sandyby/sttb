@@ -25,31 +25,34 @@ public class GetAdmissionWaveListRequestHandler
         if (request.IsActive.HasValue)
             query = query.Where(w => w.IsActive == request.IsActive.Value);
 
-        var items = await query
+        // ToListAsync first — Steps is a JSON-mapped collection that cannot be
+        // projected inside a SQL SELECT; the mapping happens in-memory after load.
+        var waves = await query
             .OrderBy(w => w.DisplayOrder)
             .ThenBy(w => w.WaveNumber)
-            .Select(w => new AdmissionWaveListItem
-            {
-                Id = w.Id,
-                WaveNumber = w.WaveNumber,
-                Label = w.Label,
-                Deadline = w.Deadline,
-                Status = w.Status,
-                Color = w.Color,
-                PsikotesSchedule = w.PsikotesSchedule,
-                TertulisSchedule = w.TertulisSchedule,
-                WawancaraSchedule = w.WawancaraSchedule,
-                Steps = w.Steps.Select(s => new AdmissionWaveStepDto
-                {
-                    StepNumber = s.StepNumber,
-                    Title = s.Title,
-                    WhenText = s.WhenText,
-                    Via = s.Via,
-                }).ToList(),
-                DisplayOrder = w.DisplayOrder,
-                IsActive = w.IsActive,
-            })
             .ToListAsync(cancellationToken);
+
+        var items = waves.Select(w => new AdmissionWaveListItem
+        {
+            Id = w.Id,
+            WaveNumber = w.WaveNumber,
+            Label = w.Label,
+            Deadline = w.Deadline,
+            Status = w.Status,
+            Color = w.Color,
+            PsikotesSchedule = w.PsikotesSchedule,
+            TertulisSchedule = w.TertulisSchedule,
+            WawancaraSchedule = w.WawancaraSchedule,
+            Steps = w.Steps.Select(s => new AdmissionWaveStepDto
+            {
+                StepNumber = s.StepNumber,
+                Title = s.Title,
+                WhenText = s.WhenText,
+                Via = s.Via,
+            }).ToList(),
+            DisplayOrder = w.DisplayOrder,
+            IsActive = w.IsActive,
+        }).ToList();
 
         return new GetAdmissionWaveListResponse { Items = items };
     }

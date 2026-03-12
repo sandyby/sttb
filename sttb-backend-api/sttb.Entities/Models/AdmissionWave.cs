@@ -28,14 +28,11 @@ public class AdmissionWave : IHaveCreateAndUpdateAudit
     [StringLength(20)]
     public string Color { get; set; } = "#0A2C74";
 
-    [StringLength(300)]
-    public string PsikotesSchedule { get; set; } = string.Empty;
+    public DateTime? PsikotesSchedule { get; set; }
 
-    [StringLength(300)]
-    public string TertulisSchedule { get; set; } = string.Empty;
+    public DateTime? TertulisSchedule { get; set; }
 
-    [StringLength(300)]
-    public string WawancaraSchedule { get; set; } = string.Empty;
+    public DateTime? WawancaraSchedule { get; set; }
 
     /// <summary>Ordered list of admission activities, stored as JSON.</summary>
     public List<AdmissionWaveStepItem> Steps { get; set; } = new();
