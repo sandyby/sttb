@@ -1,15 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "motion/react";
-import { Mail, GraduationCap, BookOpen, X, ChevronRight, Globe, Star, Users } from "lucide-react";
-import { facultyData, FacultyEnriched } from "@/data/mock-data";
-import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
-
-/* ─── DATA ───────────────────────────────────────────────── */
-
-const specializations = ["Semua", "Perjanjian Baru", "Perjanjian Lama", "Teologi", "Pendidikan", "Misiologi", "Konseling", "Sejarah"];
+import { Mail, GraduationCap, BookOpen, X, ChevronRight, Globe, Star, Users, Loader2 } from "lucide-react";
+import { FadeIn } from "@/components/ui/FadeIn";
+import { useGetLecturers } from "@/hooks/useLecturers";
+import { getImageUrl } from "@/lib/api";
+import type { LecturerListItem } from "@/types/lecturers";
 
 /* Leader Card */
 
@@ -18,7 +16,7 @@ function LeaderCard({
     index,
     onClick,
 }: {
-    person: FacultyEnriched;
+    person: LecturerListItem;
     index: number;
     onClick: () => void;
 }) {
@@ -29,6 +27,8 @@ function LeaderCard({
     const accentGrad = index === 0
         ? "from-[#E62129] to-[#0A2C74]"
         : "from-[#0A2C74] to-[#0570CD]";
+
+    const imgSrc = getImageUrl(person.imageUrl) ?? "https://placehold.co/600x800/png";
 
     return (
         <motion.div
@@ -42,33 +42,27 @@ function LeaderCard({
             onMouseLeave={() => setHovered(false)}
             onClick={onClick}
         >
-            {/* Gradient glow */}
             <motion.div
                 className={`absolute -inset-0.5 rounded-3xl bg-gradient-to-br ${accentGrad} opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-md pointer-events-none`}
             />
 
             <div className="relative bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm group-hover:shadow-2xl transition-all duration-500">
-                {/* Top accent stripe */}
                 <div className={`h-1 bg-gradient-to-r ${accentGrad}`} />
 
                 <div className="flex flex-col sm:flex-row">
-                    {/* Portrait */}
                     <div className="relative sm:w-56 lg:w-64 flex-shrink-0 overflow-hidden" style={{ minHeight: "280px" }}>
                         <motion.img
-                            src={person.imageUrl}
+                            src={imgSrc}
                             alt={person.name}
                             className="w-full h-full object-cover object-top absolute inset-0"
                             animate={{ scale: hovered ? 1.06 : 1 }}
                             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                         />
-                        {/* Side gradient */}
                         <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-r from-transparent to-white dark:to-gray-900 hidden sm:block" />
                     </div>
 
-                    {/* Info */}
                     <div className="flex-1 p-6 lg:p-8 flex flex-col justify-between">
                         <div>
-                            {/* Title badge */}
                             <div className="flex items-center gap-2 mb-3">
                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-white bg-gradient-to-r ${accentGrad}`} style={{ fontWeight: 700 }}>
                                     <Star className="w-3 h-3" />
@@ -89,7 +83,6 @@ function LeaderCard({
                                 {person.bio}
                             </p>
 
-                            {/* Courses taught */}
                             <div className="flex flex-wrap gap-1.5">
                                 {person.courses.slice(0, 3).map((c) => (
                                     <span key={c} className="px-2.5 py-0.5 rounded-full bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs border border-gray-100 dark:border-gray-700">
@@ -99,7 +92,6 @@ function LeaderCard({
                             </div>
                         </div>
 
-                        {/* Footer */}
                         <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-100 dark:border-gray-800">
                             <div className="flex items-center gap-1.5 text-gray-400 text-xs">
                                 <Globe className="w-3.5 h-3.5" />
@@ -129,7 +121,7 @@ function FacultyCard({
     index,
     onClick,
 }: {
-    person: FacultyEnriched;
+    person: LecturerListItem;
     index: number;
     onClick: () => void;
 }) {
@@ -137,6 +129,8 @@ function FacultyCard({
     const inView = useInView(ref, { once: true, margin: "-60px" });
     const [hovered, setHovered] = useState(false);
     const isNotTetap = person.rank === "tidak-tetap";
+
+    const imgSrc = getImageUrl(person.imageUrl) ?? "https://placehold.co/600x800/png";
 
     return (
         <motion.div
@@ -151,18 +145,15 @@ function FacultyCard({
             whileHover={{ y: -5 }}
         >
             <div className="relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm group-hover:shadow-xl group-hover:border-gray-200 dark:group-hover:border-gray-700 transition-all duration-400">
-
-                {/* Image */}
                 <div className="relative overflow-hidden" style={{ height: "210px" }}>
                     <motion.img
-                        src={person.imageUrl}
+                        src={imgSrc}
                         alt={person.name}
                         className="w-full h-full object-cover object-top"
                         animate={{ scale: hovered ? 1.07 : 1 }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     />
 
-                    {/* Hover overlay */}
                     <motion.div
                         className="absolute inset-0 flex items-end p-4"
                         animate={{ opacity: hovered ? 1 : 0 }}
@@ -175,7 +166,6 @@ function FacultyCard({
                         </div>
                     </motion.div>
 
-                    {/* Not-tetap badge */}
                     {isNotTetap && (
                         <div className="absolute top-3 left-3">
                             <span className="bg-[#0570CD]/90 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full" style={{ fontWeight: 600 }}>
@@ -185,7 +175,6 @@ function FacultyCard({
                     )}
                 </div>
 
-                {/* Content */}
                 <div className="p-4">
                     <span className="inline-block px-2 py-0.5 rounded text-xs mb-2 bg-[#E62129]/8 text-[#E62129]" style={{ fontWeight: 600 }}>
                         {person.title}
@@ -200,7 +189,6 @@ function FacultyCard({
                     <p className="text-gray-400 text-xs leading-relaxed line-clamp-2">{person.degree}</p>
                 </div>
 
-                {/* Bottom accent bar */}
                 <motion.div
                     className="h-0.5"
                     animate={{ scaleX: hovered ? 1 : 0 }}
@@ -214,7 +202,9 @@ function FacultyCard({
 
 /* ─── DETAIL MODAL ───────────────────────────────────────── */
 
-function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onClose: () => void }) {
+function FacultyModal({ person, onClose }: { person: LecturerListItem | null; onClose: () => void }) {
+    const imgSrc = person ? (getImageUrl(person.imageUrl) ?? "https://placehold.co/600x800/png") : "";
+
     return (
         <AnimatePresence>
             {person && (
@@ -236,18 +226,14 @@ function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onC
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex flex-col sm:flex-row h-full">
-                            {/* ── Left: Full portrait ──────────────────── */}
                             <div className="relative sm:w-56 flex-shrink-0 overflow-hidden" style={{ minHeight: "280px" }}>
                                 <Image
-                                    src={person.imageUrl}
+                                    src={imgSrc}
                                     alt={person.name}
                                     height={300}
                                     width={500}
-                                    objectFit="contain"
-                                    preload
                                     className="absolute inset-0 w-full h-full object-cover object-top"
                                 />
-                                {/* Bottom gradient for name on mobile */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent sm:hidden" />
                                 <div className="absolute bottom-4 left-4 sm:hidden">
                                     <span className="bg-[#E62129] text-white text-xs px-2.5 py-0.5 rounded-full" style={{ fontWeight: 700 }}>
@@ -256,7 +242,6 @@ function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onC
                                     <p className="text-white mt-1 text-sm" style={{ fontWeight: 700 }}>{person.name}</p>
                                 </div>
 
-                                {/* Rank indicator bar at bottom of image (desktop) */}
                                 <div
                                     className="absolute bottom-0 left-0 right-0 h-1 hidden sm:block"
                                     style={{
@@ -267,9 +252,7 @@ function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onC
                                 />
                             </div>
 
-                            {/* ── Right: Details ───────────────────────── */}
                             <div className="flex-1 flex flex-col overflow-y-auto" style={{ maxHeight: "90vh" }}>
-                                {/* Header */}
                                 <div className="flex items-start justify-between p-5 border-b border-gray-100 dark:border-gray-800">
                                     <div className="hidden sm:block">
                                         <span
@@ -296,16 +279,12 @@ function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onC
                                     </button>
                                 </div>
 
-                                {/* Body */}
                                 <div className="p-5 space-y-4 flex-1">
-
-                                    {/* Bio */}
                                     <div>
                                         <p className="text-gray-400 text-xs uppercase tracking-wider mb-1.5">Profil</p>
                                         <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{person.bio}</p>
                                     </div>
 
-                                    {/* Degree */}
                                     <div className="flex items-start gap-3 p-3.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
                                         <div className="w-8 h-8 rounded-lg bg-[#0570CD]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
                                             <GraduationCap className="w-4 h-4 text-[#0570CD]" />
@@ -317,7 +296,6 @@ function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onC
                                         </div>
                                     </div>
 
-                                    {/* Specialization */}
                                     <div className="flex items-start gap-3 p-3.5 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-800">
                                         <div className="w-8 h-8 rounded-lg bg-[#E62129]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                                             <BookOpen className="w-4 h-4 text-[#E62129]" />
@@ -328,23 +306,23 @@ function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onC
                                         </div>
                                     </div>
 
-                                    {/* Courses */}
-                                    <div>
-                                        <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Mata Kuliah yang Diajarkan</p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {person.courses.map((c) => (
-                                                <span
-                                                    key={c}
-                                                    className="px-3 py-1.5 rounded-xl text-xs bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700"
-                                                    style={{ fontWeight: 500 }}
-                                                >
-                                                    {c}
-                                                </span>
-                                            ))}
+                                    {person.courses.length > 0 && (
+                                        <div>
+                                            <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Mata Kuliah yang Diajarkan</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {person.courses.map((c) => (
+                                                    <span
+                                                        key={c}
+                                                        className="px-3 py-1.5 rounded-xl text-xs bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700"
+                                                        style={{ fontWeight: 500 }}
+                                                    >
+                                                        {c}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
 
-                                    {/* Email if exists */}
                                     {person.email && (
                                         <a
                                             href={`mailto:${person.email}`}
@@ -372,11 +350,22 @@ function FacultyModal({ person, onClose }: { person: FacultyEnriched | null; onC
 /* ─── PAGE ────────────────────────────────────────────────── */
 
 export default function DewanDosenPage() {
-    const [selectedFaculty, setSelectedFaculty] = useState<FacultyEnriched | null>(null);
+    const [selectedFaculty, setSelectedFaculty] = useState<LecturerListItem | null>(null);
     const [filter, setFilter] = useState("Semua");
 
-    const leaders = facultyData.filter((f) => f.rank === "pimpinan");
-    const regularFaculty = facultyData.filter((f) => f.rank !== "pimpinan");
+    const { data, isLoading, error } = useGetLecturers({ isActive: true, pageSize: 200 });
+    const allLecturers = data?.items ?? [];
+
+    const leaders = allLecturers.filter((f) => f.rank === "pimpinan");
+    const regularFaculty = allLecturers.filter((f) => f.rank !== "pimpinan");
+
+    const specializations = useMemo(() => {
+        const terms = new Set<string>();
+        regularFaculty.forEach((f) => {
+            f.specialization.split(/[,&]/).map((s) => s.trim()).filter(Boolean).forEach((t) => terms.add(t));
+        });
+        return ["Semua", ...Array.from(terms).sort()];
+    }, [regularFaculty]);
 
     const filteredRegular = filter === "Semua"
         ? regularFaculty
@@ -392,7 +381,6 @@ export default function DewanDosenPage() {
                 className="relative pt-28 pb-24 overflow-hidden min-h-[420px] flex items-center"
                 style={{ background: "linear-gradient(135deg, #060C1A 0%, #0A2C74 60%, #0570CD 100%)" }}
             >
-                {/* Decorative rings */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                     {[...Array(5)].map((_, i) => (
                         <motion.div
@@ -451,105 +439,134 @@ export default function DewanDosenPage() {
                 </div>
             </div>
 
-            {/* ── PIMPINAN AKADEMIK ────────────────────────────────── */}
-            <section className="py-16 bg-white dark:bg-gray-950">
-                <div className="max-w-7xl mx-auto px-4">
-                    <FadeIn>
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#E62129] to-[#0A2C74] flex items-center justify-center">
-                                <Star className="w-4 h-4 text-white" />
-                            </div>
-                            <div>
-                                <h2 className="text-gray-900 dark:text-white" style={{ fontWeight: 800, fontSize: "1.25rem" }}>
-                                    Pimpinan Akademik
-                                </h2>
-                                <p className="text-gray-400 text-xs">Pemimpin institusi STTB yang membentuk arah pendidikan teologi</p>
-                            </div>
-                        </div>
-                    </FadeIn>
-
-                    <div className="space-y-5">
-                        {leaders.map((person, i) => (
-                            <LeaderCard
-                                key={person.id}
-                                person={person}
-                                index={i}
-                                onClick={() => setSelectedFaculty(person)}
-                            />
-                        ))}
-                    </div>
+            {/* Loading state */}
+            {isLoading && (
+                <div className="flex items-center justify-center py-32">
+                    <Loader2 className="w-8 h-8 animate-spin text-[#E62129]" />
                 </div>
-            </section>
+            )}
 
-            {/* ── DOSEN TETAP & TIDAK TETAP ────────────────────────── */}
-            <section className="py-16 bg-gray-50 dark:bg-gray-900">
-                <div className="max-w-7xl mx-auto px-4">
+            {/* Error state */}
+            {error && (
+                <div className="flex items-center justify-center py-32 text-gray-400">
+                    Gagal memuat data dosen. Silakan coba lagi.
+                </div>
+            )}
 
-                    {/* Sub-section header + filter */}
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-                        <FadeIn>
-                            <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-xl bg-[#0A2C74] flex items-center justify-center">
-                                    <Users className="w-4 h-4 text-white" />
-                                </div>
-                                <div>
-                                    <h2 className="text-gray-900 dark:text-white" style={{ fontWeight: 800, fontSize: "1.25rem" }}>
-                                        Dewan Pengajar
-                                    </h2>
-                                    <p className="text-gray-400 text-xs">Dosen tetap & tidak tetap berpengalaman di bidangnya</p>
+            {!isLoading && !error && (
+                <>
+                    {/* ── PIMPINAN AKADEMIK ────────────────────────────────── */}
+                    {leaders.length > 0 && (
+                        <section className="py-16 bg-white dark:bg-gray-950">
+                            <div className="max-w-7xl mx-auto px-4">
+                                <FadeIn>
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#E62129] to-[#0A2C74] flex items-center justify-center">
+                                            <Star className="w-4 h-4 text-white" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-gray-900 dark:text-white" style={{ fontWeight: 800, fontSize: "1.25rem" }}>
+                                                Pimpinan Akademik
+                                            </h2>
+                                            <p className="text-gray-400 text-xs">Pemimpin institusi STTB yang membentuk arah pendidikan teologi</p>
+                                        </div>
+                                    </div>
+                                </FadeIn>
+
+                                <div className="space-y-5">
+                                    {leaders.map((person, i) => (
+                                        <LeaderCard
+                                            key={person.id}
+                                            person={person}
+                                            index={i}
+                                            onClick={() => setSelectedFaculty(person)}
+                                        />
+                                    ))}
                                 </div>
                             </div>
-                        </FadeIn>
-                    </div>
-
-                    {/* Filter */}
-                    <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide">
-                        <span className="text-gray-400 text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0">Filter:</span>
-                        {specializations.map((spec) => (
-                            <button
-                                key={spec}
-                                onClick={() => setFilter(spec)}
-                                className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all flex-shrink-0 ${filter === spec
-                                    ? "bg-[#E62129] text-white shadow-md shadow-red-200 dark:shadow-none"
-                                    : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700"
-                                    }`}
-                                style={{ fontWeight: 500 }}
-                            >
-                                {spec}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Grid */}
-                    {filteredRegular.length === 0 ? (
-                        <div className="text-center py-20 text-gray-400">
-                            <GraduationCap className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                            <p>Tidak ada dosen ditemukan untuk filter ini.</p>
-                        </div>
-                    ) : (
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={filter}
-                                layout
-                                initial={{ opacity: 0, y: 12 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
-                            >
-                                {filteredRegular.map((f, i) => (
-                                    <FacultyCard
-                                        key={f.id}
-                                        person={f}
-                                        index={i}
-                                        onClick={() => setSelectedFaculty(f)}
-                                    />
-                                ))}
-                            </motion.div>
-                        </AnimatePresence>
+                        </section>
                     )}
-                </div>
-            </section>
+
+                    {/* ── DOSEN TETAP & TIDAK TETAP ────────────────────────── */}
+                    {regularFaculty.length > 0 && (
+                        <section className="py-16 bg-gray-50 dark:bg-gray-900">
+                            <div className="max-w-7xl mx-auto px-4">
+                                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+                                    <FadeIn>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-xl bg-[#0A2C74] flex items-center justify-center">
+                                                <Users className="w-4 h-4 text-white" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-gray-900 dark:text-white" style={{ fontWeight: 800, fontSize: "1.25rem" }}>
+                                                    Dewan Pengajar
+                                                </h2>
+                                                <p className="text-gray-400 text-xs">Dosen tetap & tidak tetap berpengalaman di bidangnya</p>
+                                            </div>
+                                        </div>
+                                    </FadeIn>
+                                </div>
+
+                                {/* Filter */}
+                                <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide">
+                                    <span className="text-gray-400 text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0">Filter:</span>
+                                    {specializations.map((spec) => (
+                                        <button
+                                            key={spec}
+                                            onClick={() => setFilter(spec)}
+                                            className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all flex-shrink-0 ${filter === spec
+                                                ? "bg-[#E62129] text-white shadow-md shadow-red-200 dark:shadow-none"
+                                                : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700"
+                                                }`}
+                                            style={{ fontWeight: 500 }}
+                                        >
+                                            {spec}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {filteredRegular.length === 0 ? (
+                                    <div className="text-center py-20 text-gray-400">
+                                        <GraduationCap className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                                        <p>Tidak ada dosen ditemukan untuk filter ini.</p>
+                                    </div>
+                                ) : (
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={filter}
+                                            layout
+                                            initial={{ opacity: 0, y: 12 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+                                        >
+                                            {filteredRegular.map((f, i) => (
+                                                <FacultyCard
+                                                    key={f.id}
+                                                    person={f}
+                                                    index={i}
+                                                    onClick={() => setSelectedFaculty(f)}
+                                                />
+                                            ))}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                )}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Empty state when no lecturers at all */}
+                    {allLecturers.length === 0 && (
+                        <section className="py-32 bg-white dark:bg-gray-950">
+                            <div className="text-center text-gray-400">
+                                <GraduationCap className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                                <p>Data dosen belum tersedia.</p>
+                            </div>
+                        </section>
+                    )}
+                </>
+            )}
 
             {/* ── CTA ───────────────────────────────────────────────── */}
             <section className="py-16 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0A2C74, #060C1A)" }}>
