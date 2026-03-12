@@ -20,6 +20,91 @@ public static class DataSeeder
         await SeedLecturersAsync(db, adminUserId);
         await SeedFoundationMembersAsync(db, adminUserId);
         await SeedAdmissionWavesAsync(db, adminUserId);
+        await SeedScholarshipsAsync(db, adminUserId);
+    }
+
+    // ─── Scholarships ─────────────────────────────────────────────────────────
+
+    private static async Task SeedScholarshipsAsync(ApplicationDbContext db, string adminUserId)
+    {
+        if (await db.Scholarships.AnyAsync())
+            return;
+
+        var scholarships = new List<Scholarship>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Beasiswa Pastor Scholar",
+                Level = "S1",
+                Color = "#E62129",
+                ImageUrl = "https://images.unsplash.com/photo-1757143137392-0b1e1a27a7de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
+                Description = "Beasiswa bergengsi untuk mahasiswa S1 terpilih yang menjadikan STTB sebagai pilihan pertama dan memiliki prestasi akademik menonjol.",
+                Requirements = new List<string>
+                {
+                    "Diperuntukkan bagi mahasiswa S1 yang menjadikan STTB sebagai pilihan pertama",
+                    "Beasiswa meliputi biaya pendidikan dari semester 1",
+                    "Memiliki prestasi menonjol di SMA (rata-rata rapor minimal 8.0)",
+                    "Memiliki panggilan yang jelas",
+                    "Memiliki rekomendasi yang kuat",
+                    "Minimal IPK 2.75 pada semester 1 dan minimal IPK 3.0 pada semester 2–4",
+                    "Bersedia mengalokasikan waktu 15 jam/bulan untuk membantu kegiatan administrasi/akademik di STTB",
+                    "Kelanjutan beasiswa akan dievaluasi per semester",
+                    "Bersedia memenuhi ikatan dinas 0.5 N (setara 2 tahun) setelah lulus",
+                },
+                DisplayOrder = 1,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Beasiswa Formatio",
+                Level = "S1",
+                Color = "#0A2C74",
+                ImageUrl = "https://images.unsplash.com/photo-1722962674485-d34e69a9a406?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
+                Description = "Beasiswa untuk mahasiswa S1 aktif yang telah memasuki tahun kedua studi dan menunjukkan prestasi akademik yang baik.",
+                Requirements = new List<string>
+                {
+                    "Beasiswa meliputi biaya pendidikan S1 dari tahun kedua atau telah menempuh semester 2",
+                    "Memiliki prestasi belajar yang baik serta lolos seleksi dan wawancara",
+                    "Kelanjutan beasiswa akan dievaluasi per semester",
+                    "Bersedia menyediakan waktu 15 jam/bulan untuk membantu kegiatan administrasi/akademik di STTB",
+                    "Bersedia memenuhi ikatan dinas 0.5 N",
+                },
+
+                DisplayOrder = 2,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Beasiswa Transformative Leadership",
+                Level = "S1 – S2",
+                Color = "#0570CD",
+                ImageUrl = "https://images.unsplash.com/photo-1607332796965-436d1bf61731?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
+                Description = "Beasiswa untuk mahasiswa S2 dengan prestasi akademik dan non-akademik menonjol yang berkomitmen dalam pelayanan.",
+                Requirements = new List<string>
+                {
+                    "Diperuntukkan bagi mahasiswa S2 dengan prestasi akademik maupun non-akademik yang menonjol",
+                    "Memiliki integritas dan panggilan yang jelas",
+                    "Meliputi maksimal 50% dari total biaya pendidikan",
+                    "Memberikan surat keterangan pelayanan minimal 10 jam di lembaga pelayanan atau domisili setempat",
+                    "Bersedia menjadi bagian kepanitiaan event STTB dan bersedia menjadi ketua & koordinator kelas",
+                    "Tidak diberlakukan ikatan dinas",
+                },
+                DisplayOrder = 3,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+        };
+
+        db.Scholarships.AddRange(scholarships);
+        await db.SaveChangesAsync();
     }
 
     // ─── Categories ──────────────────────────────────────────────────────────
