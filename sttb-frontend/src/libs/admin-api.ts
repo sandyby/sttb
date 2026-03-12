@@ -474,3 +474,54 @@ export async function adminDeleteAdmissionWave(
     headers: authHeader(token),
   });
 }
+
+// ─── Scholarships ────────────────────────────────────────────────────────────
+
+import type {
+  Scholarship,
+  GetScholarshipListResponse,
+  CreateScholarshipRequest,
+  UpdateScholarshipRequest,
+} from "@/types/scholarship";
+
+export async function adminGetScholarshipList(
+  token: string,
+  params: { isActive?: boolean } = {},
+): Promise<GetScholarshipListResponse> {
+  const { data } = await apiClient.get<GetScholarshipListResponse>("/api/scholarships/list", {
+    headers: authHeader(token),
+    params: {
+      IsActive: params.isActive,
+    },
+  });
+  return data;
+}
+
+export async function adminCreateScholarship(
+  token: string,
+  payload: CreateScholarshipRequest,
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/scholarships/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+export async function adminUpdateScholarship(
+  token: string,
+  id: string,
+  payload: CreateScholarshipRequest,
+): Promise<void> {
+  await apiClient.put(`/api/scholarships/update/${id}`, payload, {
+    headers: authHeader(token),
+  });
+}
+
+export async function adminDeleteScholarship(
+  token: string,
+  id: string,
+): Promise<void> {
+  await apiClient.delete(`/api/scholarships/delete/${id}`, {
+    headers: authHeader(token),
+  });
+}
