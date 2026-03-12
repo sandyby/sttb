@@ -119,15 +119,6 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: "Jadwal Admisi",
-    href: "/admin/admission-waves",
-    icon: Calendar,
-    children: [
-      { label: "Semua Gelombang", href: "/admin/admission-waves", icon: Calendar },
-      { label: "Tambah Baru", href: "/admin/admission-waves/create", icon: Plus },
-    ],
-  },
-  {
     label: "Pengguna",
     href: "/admin/users",
     icon: Users,
