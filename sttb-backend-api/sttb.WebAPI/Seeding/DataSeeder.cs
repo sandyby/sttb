@@ -18,6 +18,7 @@ public static class DataSeeder
         await SeedPagesAsync(db, adminUserId);
         await SeedStudyProgramsAsync(db, adminUserId);
         await SeedLecturersAsync(db, adminUserId);
+        await SeedFoundationMembersAsync(db, adminUserId);
     }
 
     // ─── Categories ──────────────────────────────────────────────────────────
@@ -1677,6 +1678,208 @@ public static class DataSeeder
         };
 
         db.Lecturers.AddRange(lecturers);
+        await db.SaveChangesAsync();
+    }
+
+    // ─── Foundation ──────────────────────────────────────────────────────────
+
+    private static async Task SeedFoundationMembersAsync(ApplicationDbContext db, string adminUserId)
+    {
+        if (await db.FoundationMembers.AnyAsync())
+            return;
+
+        var members = new List<FoundationMember>
+        {
+            // Dewan Pembina
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pdt. Agus Gunawan, Ph.D.",
+                Position = "Anggota Dewan Pembina",
+                Category = "pembina",
+                Description = "Pdt. Dr. Agus Gunawan adalah hamba Tuhan senior yang berdedikasi pada pendidikan teologi dan bimbingan spiritual yayasan.",
+                ImageUrl = "/uploads/foundation/agus-gunawan.png",
+                DisplayOrder = 1,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnt. Subianto Tjandra",
+                Position = "Anggota Dewan Pembina",
+                Category = "pembina",
+                Description = "Penatua Subianto Tjandra berkontribusi dalam pengawasan tata kelola dan integritas operasional yayasan.",
+                ImageUrl = "/uploads/foundation/subianto-tjandra.jpg",
+                DisplayOrder = 2,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pdt. Budiyanto Santosa, D.Min.",
+                Position = "Anggota Dewan Pembina",
+                Category = "pembina",
+                Description = "Pdt. Dr. Budiyanto Santosa memberikan arahan strategis dalam bidang pelayanan misi dan pengembangan gereja.",
+                ImageUrl = "/uploads/foundation/budiyanto-1.png",
+                DisplayOrder = 3,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+
+            // Category: pengurus
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnts. Benny Soenarjo",
+                Position = "Ketua Dewan Pengurus",
+                Category = "pengurus",
+                Description = "Penatua Benny Soenarjo memimpin operasional yayasan dengan visi transformatif, berfokus pada efektivitas pelayanan dan kolaborasi.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 1,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnts. Ginawan Chondro",
+                Position = "Wakil Ketua Dewan Pengurus",
+                Category = "pengurus",
+                Description = "Penatua Ginawan Chondro mendampingi Ketua dalam perencanaan strategis dan pengawasan pelaksanaan program kerja yayasan.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 2,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnt. Arif Subagyo",
+                Position = "Sekretaris",
+                Category = "pengurus",
+                Description = "Penatua Arif Subagyo mengelola korespondensi formal, pencatatan rapat, dan administrasi umum yayasan dengan teliti.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 3,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnt. Widianto Tjandradipura",
+                Position = "Bendahara",
+                Category = "pengurus",
+                Description = "Penatua Widianto Tjandradipura bertanggung jawab atas penyusunan anggaran, pelaporan keuangan, dan kepatuhan finansial yayasan.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 4,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+
+            // Category: anggota
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnts. Agus Tjandra",
+                Position = "Anggota Dewan",
+                Category = "anggota",
+                Description = "Penatua Agus Tjandra aktif dalam memberikan masukan strategis bagi pengembangan pelayanan jemaat dan komunitas.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 1,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Ev. Doroti Tunggal Widjaja, M.Th.",
+                Position = "Anggota Dewan",
+                Category = "anggota",
+                Description = "Penginjil Doroti Tunggal Widjaja, M.Th. berkontribusi dalam inisiatif pendidikan iman dan pengembangan kurikulum teologi.",
+                ImageUrl = "/uploads/foundation/doroti-tong-rev.png",
+                DisplayOrder = 2,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bp. Eddy Samuel Affendie",
+                Position = "Anggota Dewan",
+                Category = "anggota",
+                Description = "Bapak Eddy Samuel Affendie memberikan saran ahli dalam manajemen aset dan optimalisasi sumber daya yayasan.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 3,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnts. Edi Sukamto Josana",
+                Position = "Anggota Dewan",
+                Category = "anggota",
+                Description = "Penatua Edi Sukamto Josana fokus pada program pemberdayaan ekonomi jemaat dan pengembangan kemitraan strategis.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 4,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Bp. Herjanto Gunawan",
+                Position = "Anggota Dewan",
+                Category = "anggota",
+                Description = "Bapak Herjanto Gunawan berkontribusi dengan kepakaran teknisnya dalam proyek infrastruktur dan teknologi informasi yayasan.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 5,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnts. Joseph Koshan",
+                Position = "Anggota Dewan",
+                Category = "anggota",
+                Description = "Penatua Joseph Koshan fokus pada pengembangan pelayanan pemuda dan inisiatif penginjilan kontemporer.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 6,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Pnt. Suwito Kwee",
+                Position = "Anggota Dewan",
+                Category = "anggota",
+                Description = "Penatua Suwito Kwee memberikan masukan strategis dalam upaya menjalin hubungan baik dengan pemerintah dan masyarakat luas.",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
+                DisplayOrder = 7,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+            }
+        };
+
+        db.FoundationMembers.AddRange(members);
         await db.SaveChangesAsync();
     }
 }
