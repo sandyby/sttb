@@ -21,6 +21,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<MediaCategory> MediaCategories => Set<MediaCategory>();
     public DbSet<Page> Pages => Set<Page>();
     public DbSet<StudyProgram> StudyPrograms => Set<StudyProgram>();
+    public DbSet<Lecturer> Lecturers => Set<Lecturer>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -66,6 +67,11 @@ public class ApplicationDbContext : IdentityDbContext<User>
             ConfigureStringListMapping(entity.Property(s => s.Courses));
             ConfigureStringListMapping(entity.Property(s => s.Careers));
             ConfigureStringListMapping(entity.Property(s => s.Tags));
+        });
+
+        builder.Entity<Lecturer>(entity =>
+        {
+            ConfigureStringListMapping(entity.Property(l => l.Courses));
         });
 
         builder.Entity<RefreshToken>().HasIndex(r => r.Token).IsUnique();
