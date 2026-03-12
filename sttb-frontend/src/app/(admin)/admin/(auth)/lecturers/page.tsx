@@ -18,6 +18,8 @@ import {
 import { toast } from "sonner";
 import { useAdminLecturerList, useAdminDeleteLecturer } from "@/hooks/useAdminLecturers";
 import { getImageUrl } from "@/libs/api";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 const PAGE_SIZE = 10;
 
@@ -37,7 +39,8 @@ export default function AdminLecturersPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [rankFilter, setRankFilter] = useState("");
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteName, setDeleteName] = useState("");
 
   const { data, isLoading } = useAdminLecturerList({
     page,
@@ -51,16 +54,15 @@ export default function AdminLecturersPage() {
   const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 1;
   const items = data?.items ?? [];
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Hapus dosen "${name}"? Tindakan ini tidak dapat dibatalkan.`)) return;
-    setDeletingId(id);
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      await deleteLecturer.mutateAsync(id);
+      await deleteLecturer.mutateAsync(deleteId);
       toast.success("Dosen berhasil dihapus");
     } catch {
       toast.error("Gagal menghapus dosen");
     } finally {
-      setDeletingId(null);
+      setDeleteId(null);
     }
   };
 
@@ -114,16 +116,13 @@ export default function AdminLecturersPage() {
             <Loader2 className="w-6 h-6 animate-spin text-[#E62129]" />
           </div>
         ) : items.length === 0 ? (
-          <div className="text-center py-20">
-            <GraduationCap className="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-            <p className="text-gray-500 dark:text-gray-400 text-sm">Belum ada dosen</p>
-            <Link
-              href="/admin/lecturers/create"
-              className="inline-flex items-center gap-1 mt-3 text-[#E62129] text-sm font-medium hover:underline"
-            >
-              <Plus className="w-3.5 h-3.5" /> Tambah dosen pertama
-            </Link>
-          </div>
+          <AdminEmptyState
+            icon={GraduationCap}
+            title="Belum ada dosen"
+            description="Belum ada data dosen yang terdaftar di sistem. Mulai dengan menambahkan dosen baru."
+            actionLabel="Tambah Dosen Pertama"
+            actionHref="/admin/lecturers/create"
+          />
         ) : (
           <table className="w-full text-sm">
             <thead className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
@@ -190,12 +189,15 @@ export default function AdminLecturersPage() {
                         <Pencil className="w-4 h-4" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(lecturer.id, lecturer.name)}
-                        disabled={deletingId === lecturer.id}
+                        onClick={() => {
+                            setDeleteId(lecturer.id);
+                            setDeleteName(lecturer.name);
+                        }}
+                        disabled={deleteLecturer.isPending && deleteId === lecturer.id}
                         className="p-1.5 rounded-lg text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                         title="Hapus"
                       >
-                        {deletingId === lecturer.id ? (
+                        {deleteLecturer.isPending && deleteId === lecturer.id ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
                           <Trash2 className="w-4 h-4" />
@@ -234,6 +236,14 @@ export default function AdminLecturersPage() {
           </div>
         </div>
       )}
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onCloseAction={() => setDeleteId(null)}
+        onConfirmAction={handleDelete}
+        title="Hapus Dosen?"
+        description={`Tindakan ini tidak dapat dibatalkan. Dosen "${deleteName}" akan dihapus secara permanen dari sistem.`}
+        isPending={deleteLecturer.isPending}
+      />
     </div>
   );
 }

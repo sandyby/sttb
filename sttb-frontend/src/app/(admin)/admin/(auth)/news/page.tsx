@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Star,
   Inbox,
+  Newspaper,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -23,11 +24,13 @@ import Image from "next/image";
 import { useAdminNewsList, useDeleteNews } from "@/hooks/useAdminNews";
 import { useNewsCategories } from "@/hooks/useNews";
 import { getImageUrl } from "@/libs/api";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 export default function AdminNewsPage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Semua");
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
@@ -41,20 +44,23 @@ export default function AdminNewsPage() {
     search: search || undefined,
   });
 
+
   const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 1;
 
   const deleteNews = useDeleteNews();
   const articles = data?.items ?? [];
 
-  const handleDelete = (id: string) => {
-    deleteNews.mutate(id, {
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    deleteNews.mutate(deleteId, {
       onSuccess: () => {
         toast.success("Berita berhasil dihapus");
-        setDeleteConfirm(null);
+        setDeleteId(null);
       },
       onError: () => {
         toast.error("Gagal menghapus berita");
-        setDeleteConfirm(null);
+        setDeleteId(null);
       },
     });
   };
@@ -172,9 +178,15 @@ export default function AdminNewsPage() {
                 ))
               ) : articles.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-gray-400">
-                    <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                    <p>Tidak ada berita ditemukan</p>
+                  <td colSpan={5} className="py-0">
+                    <AdminEmptyState
+                        icon={Newspaper}
+                        title="Tidak ada berita ditemukan"
+                        description="Belum ada data berita yang sesuai dengan filter saat ini. Coba ubah kata kunci atau kategori."
+                        actionLabel="Tambah Berita Baru"
+                        actionHref="/admin/news/create"
+                        className="border-none rounded-none shadow-none"
+                    />
                   </td>
                 </tr>
               ) : (
@@ -278,7 +290,9 @@ export default function AdminNewsPage() {
                             <Edit2 className="w-4 h-4" />
                           </Link>
                           <button
-                            onClick={() => setDeleteConfirm(article.id)}
+                            onClick={() => {
+                                setDeleteId(article.id);
+                            }}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                             title="Hapus"
                           >
@@ -349,37 +363,14 @@ export default function AdminNewsPage() {
       </div>
 
       {/* Delete confirm */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
-              <Trash2 className="w-6 h-6 text-[#E62129]" />
-            </div>
-            <h3 className="text-gray-900 dark:text-white font-bold text-center mb-2">
-              Hapus Berita?
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm text-center mb-5">
-              Tindakan ini tidak dapat dibatalkan. Berita akan dihapus secara
-              permanen.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm hover:bg-gray-50 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => handleDelete(deleteConfirm)}
-                disabled={deleteNews.isPending}
-                className="flex-1 px-4 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50"
-              >
-                {deleteNews.isPending ? "Menghapus..." : "Hapus"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onCloseAction={() => setDeleteId(null)}
+        onConfirmAction={handleDelete}
+        title="Hapus Berita?"
+        description="Tindakan ini tidak dapat dibatalkan. Berita akan dihapus secara permanen dari sistem."
+        isPending={deleteNews.isPending}
+      />
     </div>
   );
 }

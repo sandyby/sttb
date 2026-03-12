@@ -41,7 +41,7 @@ export default function AdminDashboardPage() {
                 {stats.map((s) => {
                     const Icon = s.icon;
                     return (
-                        <div key={s.label} className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
+                        <div key={s.label} className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-default">
                             <div className="flex items-center justify-between mb-3">
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${s.color}`}>
                                     <Icon className="w-5 h-5" />

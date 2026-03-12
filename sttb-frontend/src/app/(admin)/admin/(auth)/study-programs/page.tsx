@@ -21,6 +21,8 @@ import {
   useAdminStudyProgramsList,
   useDeleteStudyProgram,
 } from "@/hooks/useAdminStudyPrograms";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 export default function AdminStudyProgramsPage() {
   const [search, setSearch] = useState("");
@@ -156,13 +158,13 @@ export default function AdminStudyProgramsPage() {
                     <td className="py-4 px-4">
                       <div className="h-4 w-48 bg-gray-100 dark:bg-gray-800 rounded" />
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-4 hidden sm:table-cell">
                       <div className="h-4 w-12 bg-gray-100 dark:bg-gray-800 rounded" />
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-4 hidden md:table-cell">
                       <div className="h-4 w-16 bg-gray-100 dark:bg-gray-800 rounded" />
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-4 hidden lg:table-cell">
                       <div className="h-4 w-8 bg-gray-100 dark:bg-gray-800 rounded" />
                     </td>
                     <td className="py-4 px-4">
@@ -173,9 +175,19 @@ export default function AdminStudyProgramsPage() {
                 ))
               ) : paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-gray-400">
-                    <GraduationCap className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                    <p>Tidak ada program studi ditemukan</p>
+                  <td colSpan={6} className="py-0">
+                    <AdminEmptyState
+                      icon={GraduationCap}
+                      title="Tidak ada program studi"
+                      description={
+                        search
+                          ? "Tidak ada program studi yang sesuai dengan kriteria pencarian Anda."
+                          : "Belum ada data program studi yang terdaftar."
+                      }
+                      actionLabel="Tambah Program Studi"
+                      actionHref="/admin/study-programs/new"
+                      className="border-none rounded-none shadow-none"
+                    />
                   </td>
                 </tr>
               ) : (
@@ -256,37 +268,14 @@ export default function AdminStudyProgramsPage() {
       </div>
 
       {/* Delete Modal */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4 text-[#E62129]">
-              <Trash2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-gray-900 font-bold text-center mb-2">
-              Hapus Program Studi?
-            </h3>
-            <p className="text-gray-500 text-sm text-center mb-5">
-              Tindakan ini permanen. Data mahasiswa yang terkait dengan program
-              ini (jika ada) mungkin akan terdampak.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 text-sm hover:bg-gray-50 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => handleDelete(deleteConfirm)}
-                disabled={deleteProgram.isPending}
-                className="flex-1 px-4 py-2 rounded-lg bg-[#E62129] text-white text-sm font-medium hover:bg-[#c4131a] disabled:opacity-50"
-              >
-                {deleteProgram.isPending ? "Menghapus..." : "Hapus"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteConfirmModal 
+        isOpen={!!deleteConfirm}
+        onCloseAction={() => setDeleteConfirm(null)}
+        onConfirmAction={() => deleteConfirm && handleDelete(deleteConfirm)}
+        title="Hapus Program Studi?"
+        description="Tindakan ini permanen. Data mahasiswa yang terkait dengan program ini (jika ada) mungkin akan terdampak."
+        isPending={deleteProgram.isPending}
+      />
     </div>
   );
 }

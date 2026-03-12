@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search, Edit2, Trash2, Eye, Globe, Clock, Link as LinkIcon, ChevronRight, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Eye, Globe, Clock, Link as LinkIcon, ChevronRight, CheckCircle, XCircle, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 
 import { useAdminPagesList, useUpdatePage, useDeletePage } from "@/hooks/useAdminPages";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 import { PageListItem } from "@/types/pages";
 
 const sections = ["Semua", "Publik", "Tentang", "Program Studi", "Admisi", "Kehidupan Kampus", "Keuangan"];
@@ -170,61 +172,65 @@ export default function AdminHalamanPage() {
             </div>
 
             {/* Grouped pages */}
-            {Object.entries(grouped).map(([section, sectionPages]) => (
-                <div key={section} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-                        <div className="w-2 h-4 rounded-full" style={{ backgroundColor: sectionColors[section] ?? "#666" }} />
-                        <span className="text-gray-900 dark:text-white font-semibold text-sm">{section}</span>
-                        <span className="text-gray-400 text-xs">({sectionPages.length})</span>
-                    </div>
-                    <div className="divide-y divide-gray-50 dark:divide-gray-800/50">
-                        {sectionPages.map((p) => (
-                            <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors group">
-                                <Globe className="w-4 h-4 text-gray-400 shrink-0" />
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-gray-900 dark:text-white font-medium text-sm">{p.title}</p>
-                                    <div className="flex items-center gap-1 mt-0.5">
-                                        <LinkIcon className="w-3 h-3 text-gray-400" />
-                                        <span className="text-gray-400 text-xs font-mono">{p.slug}</span>
+            {Object.keys(grouped).length === 0 ? (
+                <AdminEmptyState 
+                    icon={FileText}
+                    title="Tidak ada halaman ditemukan"
+                    description={search ? "Tidak ada halaman yang sesuai dengan kriteria pencarian Anda." : "Belum ada data halaman yang terdaftar."}
+                    className="mt-8"
+                />
+            ) : (
+                Object.entries(grouped).map(([section, sectionPages]) => (
+                    <div key={section} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
+                            <div className="w-2 h-4 rounded-full" style={{ backgroundColor: sectionColors[section] ?? "#666" }} />
+                            <span className="text-gray-900 dark:text-white font-semibold text-sm">{section}</span>
+                            <span className="text-gray-400 text-xs">({sectionPages.length})</span>
+                        </div>
+                        <div className="divide-y divide-gray-50 dark:divide-gray-800/50">
+                            {sectionPages.map((p) => (
+                                <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors group">
+                                    <Globe className="w-4 h-4 text-gray-400 shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-gray-900 dark:text-white font-medium text-sm">{p.title}</p>
+                                        <div className="flex items-center gap-1 mt-0.5">
+                                            <LinkIcon className="w-3 h-3 text-gray-400" />
+                                            <span className="text-gray-400 text-xs font-mono">{p.slug}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <span className="hidden lg:flex items-center gap-1 text-gray-400 text-xs">
+                                            <Clock className="w-3 h-3" />
+                                            {new Date(p.updatedAt ?? p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+                                        </span>
+                                        <button onClick={() => handleToggle(p)} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${p.isPublished ? "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"}`}>
+                                            {p.isPublished ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                                            {p.isPublished ? "Terbit" : "Draft"}
+                                        </button>
+                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onClick={() => setEditing(p)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0A2C74] transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                                            <a href={p.slug} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0570CD] transition-colors"><Eye className="w-3.5 h-3.5" /></a>
+                                            <button onClick={() => setDeleteConfirm(p.id)} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-[#E62129] transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 text-gray-300 dark:text-gray-600" />
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 shrink-0">
-                                    <span className="hidden lg:flex items-center gap-1 text-gray-400 text-xs">
-                                        <Clock className="w-3 h-3" />
-                                        {new Date(p.updatedAt ?? p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
-                                    </span>
-                                    <button onClick={() => handleToggle(p)} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${p.isPublished ? "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"}`}>
-                                        {p.isPublished ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                                        {p.isPublished ? "Terbit" : "Draft"}
-                                    </button>
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={() => setEditing(p)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0A2C74] transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
-                                        <a href={p.slug} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0570CD] transition-colors"><Eye className="w-3.5 h-3.5" /></a>
-                                        <button onClick={() => setDeleteConfirm(p.id)} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-[#E62129] transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-gray-300 dark:text-gray-600" />
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))
+            )}
 
             <AnimatePresence>
                 {editing && <EditPageModal page={editing} onClose={() => setEditing(null)} />}
-                {deleteConfirm && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)} />
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative bg-white dark:bg-gray-900 rounded-xl p-6 shadow-2xl max-w-sm w-full">
-                            <h3 className="text-gray-900 dark:text-white font-bold mb-2">Hapus Halaman?</h3>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-5">Halaman yang dihapus tidak dapat dikembalikan.</p>
-                            <div className="flex gap-3 justify-end">
-                                <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm">Batal</button>
-                                <button onClick={() => handleDelete(deleteConfirm!)} className="px-4 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium">Hapus</button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
+            <DeleteConfirmModal 
+                isOpen={!!deleteConfirm}
+                onCloseAction={() => setDeleteConfirm(null)}
+                onConfirmAction={() => deleteConfirm && handleDelete(deleteConfirm)}
+                title="Hapus Halaman?"
+                description="Halaman yang dihapus tidak dapat dikembalikan. Apakah Anda yakin?"
+                isPending={deletePage.isPending}
+            />
             </AnimatePresence>
         </div>
     );
