@@ -32,7 +32,7 @@ import type { AdmissionWaveStep } from "@/types/admission";
 
 export default function JadwalAdmisiPage() {
     const { data, isLoading } = useAdmissionWaves(true);
-    const waves = data?.items ?? [];
+    const waves = [...(data?.items ?? [])].sort((a, b) => a.displayOrder - b.displayOrder);
 
     const [activeWaveId, setActiveWaveId] = useState<string | null>(null);
 
@@ -164,14 +164,14 @@ export default function JadwalAdmisiPage() {
                                 className="absolute left-[19px] top-3 bottom-3 w-0.5"
                                 style={{ background: `linear-gradient(to bottom, ${activeWave.color}, ${activeWave.color}40)` }}
                             />
-                            <StaggerGroup staggerDelay={0.07} className="space-y-3">
+                            <StaggerGroup key={activeWave.id} staggerDelay={0.07} className="space-y-3">
                                 {activeWave.steps
                                     .slice()
                                     .sort((a, b) => a.stepNumber - b.stepNumber)
                                     .map((step: AdmissionWaveStep) => {
                                         const MethodIcon = methodIcons[step.via] || FileText;
                                         return (
-                                            <StaggerItem key={step.stepNumber}>
+                                            <StaggerItem key={`${activeWave.id}-${step.stepNumber}`}>
                                                 <div className="flex gap-4">
                                                     <div
                                                         className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 z-10 relative shadow-md"
