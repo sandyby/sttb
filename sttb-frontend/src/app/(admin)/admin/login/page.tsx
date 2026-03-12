@@ -58,12 +58,6 @@ export default function AdminLoginPage() {
     } else if (result?.error) {
       toast.error(result.error || "Email atau password salah!");
     }
-    // } catch (error) {
-    //     toast.error("Terjadi kesalahan! Silakan coba lagi nanti");
-    //     console.error("Login error:", error);
-    // } finally {
-    //     setIsLoading(false);
-    // }
   };
 
   // Don't render if already authenticated

@@ -1,6 +1,7 @@
+@source "../**/*.{js,ts,jsx,tsx}";
+
 @import "./fonts.css";
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -24,6 +25,7 @@
   --muted-foreground: #6b7280;
   /* STTB Accent Blue */
   --accent: #0570cd;
+  --accent-light: #4d9de3;
   --accent-foreground: #ffffff;
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
@@ -109,6 +111,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);

@@ -182,8 +182,8 @@ function ProgramCard({ program, index }: { program: any; index: number }) {
   const Icon = programIcons[program.slug] || BookOpen;
   const image =
     // TODO: sementara force placeholder, nnti bikin image upload untuk study program (opsional?)
-    // `${process.env.NEXT_PUBLIC_API_BASE_URL}${program.coverImageUrl}` ||
-    "https://placehold.co/285x210/png";
+    // TODO: mungkin custom hook untuk cek apakah file exist di path itU?
+    `${program.coverImageUrl.startsWith("/uploads/") ? `${process.env.NEXT_PUBLIC_API_BASE_URL}${program.coverImageUrl}` : "https://placehold.co/285x210/png"}`;
   const tags =
     program.tags && program.tags.length > 0
       ? program.tags
@@ -226,7 +226,7 @@ function ProgramCard({ program, index }: { program: any; index: number }) {
             {/* Level badge */}
             <div className="absolute top-2 left-2 flex gap-x-1.5">
               <span
-                className="px-4 py-1.5 rounded-full backdrop-blur-sm text-white text-xs font-bold"
+                className="px-4 py-2 rounded-full backdrop-blur-sm text-white text-xs font-bold"
                 style={{
                   background: isS2
                     ? "var(--color-accent)"
@@ -236,7 +236,7 @@ function ProgramCard({ program, index }: { program: any; index: number }) {
                 {program.level}
               </span>
               <span
-                className={`px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-sm ${isS2 ? "text-accent" : "text-primary"} text-xs border font-semibold border-white/30`}
+                className={`px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm ${isS2 ? "text-accent" : "text-primary"} text-xs font-semibold border-white/30`}
               >
                 {program.degree}
               </span>
@@ -490,12 +490,12 @@ export default function ProgramStudiPage() {
           <FadeIn delay={0.5}>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/15 max-w-3xl">
               <StatCard
-                value={programs.length}
+                value={publishedPrograms.length}
                 label="Program Studi"
                 icon={BookOpen}
               />
               <StatCard
-                value={[...new Set(programs.map((p) => p.level))].length}
+                value={[...new Set(publishedPrograms.map((p) => p.level))].length}
                 label="Jenjang (S1 & S2)"
                 icon={GraduationCap}
               />
@@ -503,7 +503,7 @@ export default function ProgramStudiPage() {
                 value={Math.abs(
                   differenceInYears(new Date(1992, 7, 1), new Date()),
                 )}
-                suffix="+"
+                suffix={"+"}
                 label="Tahun Berdiri"
                 icon={Star}
               />
@@ -593,7 +593,7 @@ export default function ProgramStudiPage() {
                     )}
                     <span className="relative z-10">
                       {filter === "all"
-                        ? `Semua (${programs.length})`
+                        ? `Semua (${publishedPrograms.length})`
                         : filter === "S1"
                           ? `Sarjana – S1 (${s1Programs.length})`
                           : `Magister – S2 (${s2Programs.length})`}

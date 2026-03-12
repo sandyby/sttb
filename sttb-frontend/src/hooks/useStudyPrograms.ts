@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getStudyProgramsList, getStudyProgramBySlug } from "@/lib/api";
+import { getStudyProgramsList, getStudyProgramBySlug } from "@/libs/api";
 
 export const studyProgramKeys = {
   all: ["study-programs"] as const,

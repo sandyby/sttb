@@ -1,7 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { adminGetNewsList, adminCreateNews, adminDeleteNews, adminUpdateNews, type CreateNewsPayload, type UpdateNewsPayload } from "@/lib/admin-api";
-import { getNewsDetail } from "@/lib/api";
+import {
+  adminGetNewsList,
+  adminCreateNews,
+  adminDeleteNews,
+  adminUpdateNews,
+  type CreateNewsPayload,
+  type UpdateNewsPayload,
+} from "@/libs/admin-api";
+import { getNewsDetail } from "@/libs/api";
 
 interface NewsListParams {
   page?: number;

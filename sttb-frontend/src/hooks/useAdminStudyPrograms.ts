@@ -1,13 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { 
-  adminGetStudyProgramsList, 
-  adminCreateStudyProgram, 
-  adminUpdateStudyProgram, 
+import {
+  adminGetStudyProgramsList,
+  adminCreateStudyProgram,
+  adminUpdateStudyProgram,
   adminDeleteStudyProgram,
-  adminGetStudyProgramById 
-} from "@/lib/admin-api";
-import { CreateStudyProgramRequest, UpdateStudyProgramRequest } from "@/types/study-programs";
+  adminGetStudyProgramById,
+} from "@/libs/admin-api";
+import {
+  CreateStudyProgramRequest,
+  UpdateStudyProgramRequest,
+} from "@/types/study-programs";
 import { studyProgramKeys } from "./useStudyPrograms";
 
 export function useAdminStudyProgramsList() {
@@ -27,7 +30,8 @@ export function useCreateStudyProgram() {
   const token = session?.accessToken ?? "";
 
   return useMutation({
-    mutationFn: (payload: CreateStudyProgramRequest) => adminCreateStudyProgram(token, payload),
+    mutationFn: (payload: CreateStudyProgramRequest) =>
+      adminCreateStudyProgram(token, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "study-programs"] });
       queryClient.invalidateQueries({ queryKey: studyProgramKeys.all });
@@ -41,8 +45,13 @@ export function useUpdateStudyProgram() {
   const token = session?.accessToken ?? "";
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateStudyProgramRequest }) =>
-      adminUpdateStudyProgram(token, id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateStudyProgramRequest;
+    }) => adminUpdateStudyProgram(token, id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "study-programs"] });
       queryClient.invalidateQueries({ queryKey: studyProgramKeys.all });

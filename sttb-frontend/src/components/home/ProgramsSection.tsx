@@ -14,8 +14,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useStudyProgramsList } from "@/hooks/useStudyPrograms";
 import { FadeIn } from "../ui/FadeIn";
 
-const s1Color = "#E62129";
-const s2Color = "#0A2C74";
+const s1Color = "var(--color-primary)";
+const s2Color = "var(--color-accent)";
 
 // Short taglines for each program - kept as fallback or specific override if needed
 // though backend now has Tagline field
@@ -81,8 +81,8 @@ export function ProgramsSection() {
           <FadeIn delay={0.1} direction="left">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <p className="text-gray-500 dark:text-gray-400 max-w-xs text-sm leading-relaxed">
-                8 program studi dari jenjang Sarjana hingga Magister,
-                terakreditasi BAN-PT.
+                {publishedPrograms.length} program studi dari jenjang Sarjana
+                hingga Magister, terakreditasi BAN-PT.
               </p>
               <Link
                 href="/program-studi"
@@ -105,7 +105,12 @@ export function ProgramsSection() {
                 <button
                   onClick={() => setActiveTab("S1")}
                   className="relative flex-1 py-4 text-sm font-bold transition-colors"
-                  style={{ color: activeTab === "S1" ? "white" : "#9ca3af" }}
+                  style={{
+                    color:
+                      activeTab === "S1"
+                        ? "white"
+                        : "var(--color-muted-foreground)",
+                  }}
                 >
                   {activeTab === "S1" && (
                     <motion.div
@@ -127,7 +132,12 @@ export function ProgramsSection() {
                 <button
                   onClick={() => setActiveTab("S2")}
                   className="relative flex-1 py-4 text-sm font-bold transition-colors"
-                  style={{ color: activeTab === "S2" ? "white" : "#9ca3af" }}
+                  style={{
+                    color:
+                      activeTab === "S2"
+                        ? "white"
+                        : "var(--color-muted-foreground)",
+                  }}
                 >
                   {activeTab === "S2" && (
                     <motion.div
@@ -203,9 +213,9 @@ export function ProgramsSection() {
                       [s2Programs.length > 0 ? s2Programs.length : 0, "Prodi"],
                     ]
                 ).map(([val, lbl]) => (
-                  <div key={lbl} className="px-4 py-3 text-center">
+                  <div key={lbl} className="px-4 pt-6 py-2 text-center">
                     <div
-                      className="text-gray-900 dark:text-white text-sm"
+                      className="text-gray-900 dark:text-white text-2xl"
                       style={{ fontWeight: 700 }}
                     >
                       {val}
@@ -221,7 +231,7 @@ export function ProgramsSection() {
                   href="/program-studi"
                   className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
                   style={{
-                    background: `linear-gradient(135deg, ${activeTab === "S1" ? "#E62129, #c4131a" : "#0A2C74, #0570CD"})`,
+                    background: `linear-gradient(135deg, ${activeTab === "S1" ? "var(--color-primary), var(--color-primary-light-accent)" : "var(--color-accent), var(--color-accent-light)"})`,
                   }}
                 >
                   <span>
@@ -265,8 +275,8 @@ export function ProgramsSection() {
                         style={{
                           background:
                             activeTab === "S1"
-                              ? `linear-gradient(135deg, #E62129, #c4131a)`
-                              : `linear-gradient(135deg, #0A2C74, #0570CD)`,
+                              ? `linear-gradient(315deg, var(--color-primary), var(--color-primary-light-accent))`
+                              : `linear-gradient(315deg, var(--color-accent), var(--color-accent-light))`,
                           fontWeight: 800,
                         }}
                       >
@@ -276,7 +286,7 @@ export function ProgramsSection() {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <p
-                          className="text-gray-900 dark:text-white mb-0.5 leading-snug transition-colors group-hover:text-[#E62129] dark:group-hover:text-red-400"
+                          className={`text-gray-900 dark:text-white mb-0.5 leading-snug transition-colors ${activeTab === "S1" ? "group-hover:text-[#E62129] dark:group-hover:text-red-400" : "group-hover:text-accent dark:group-hover:text-blue-400"}`}
                           style={{ fontWeight: 700, fontSize: "0.95rem" }}
                         >
                           {program.name}
@@ -300,26 +310,36 @@ export function ProgramsSection() {
             </AnimatePresence>
 
             {/* Bottom CTA row */}
-            <FadeIn delay={0.3}>
-              <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-[#0A2C74] to-[#0570CD]">
-                <div className="text-center sm:text-left">
-                  <p className="text-white text-sm" style={{ fontWeight: 700 }}>
-                    Belum yakin dengan program yang tepat?
-                  </p>
-                  <p className="text-blue-200 text-xs">
-                    Lihat perbandingan lengkap semua program di halaman Program
-                    Studi.
-                  </p>
+            <AnimatePresence mode="wait">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-secondary">
+                  <div className="text-center sm:text-left">
+                    <p
+                      className="text-white text-sm"
+                      style={{ fontWeight: 700 }}
+                    >
+                      Belum yakin dengan program yang tepat?
+                    </p>
+                    <p className="text-blue-200 text-xs">
+                      Lihat perbandingan lengkap semua program di halaman
+                      Program Studi.
+                    </p>
+                  </div>
+                  <Link
+                    href="/program-studi"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#0A2C74] text-sm font-bold hover:bg-blue-50 transition-colors whitespace-nowrap flex-shrink-0"
+                  >
+                    Bandingkan Semua
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
-                <Link
-                  href="/program-studi"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#0A2C74] text-sm font-bold hover:bg-blue-50 transition-colors whitespace-nowrap flex-shrink-0"
-                >
-                  Bandingkan Semua
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </FadeIn>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>

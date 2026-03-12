@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api";
+import { apiClient } from "@/libs/api-client";
 import type {
   EventListItem,
   GetEventListResponse,
@@ -29,9 +29,12 @@ export function useGetEvents(params: GetEventListRequest = {}) {
   return useQuery({
     queryKey: eventKeys.list({ page, pageSize, ...rest }),
     queryFn: async () => {
-      const res = await apiClient.get<GetEventListResponse>("/api/events/list", {
-        params: { page, pageSize, ...rest },
-      });
+      const res = await apiClient.get<GetEventListResponse>(
+        "/api/events/list",
+        {
+          params: { page, pageSize, ...rest },
+        },
+      );
       return res.data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes — public data, can be cached a while
@@ -105,7 +108,7 @@ export function useDeleteEvent() {
   });
 }
 import { useQuery } from "@tanstack/react-query";
-import { getEventList, getEventCategories } from "@/lib/api";
+import { getEventList, getEventCategories } from "@/libs/api";
 
 interface EventListParams {
   page?: number;

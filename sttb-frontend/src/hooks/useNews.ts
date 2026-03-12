@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api";
+import { apiClient } from "@/libs/api-client";
 import type {
   NewsListItem,
   NewsDetail,
@@ -78,10 +78,7 @@ export function useCreateNews() {
 export function useUpdateNews() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      id,
-      ...data
-    }: UpdateNewsRequest & { id: string }) => {
+    mutationFn: async ({ id, ...data }: UpdateNewsRequest & { id: string }) => {
       await apiClient.put<void>(`/api/news/update/${id}`, data);
     },
     onSuccess: () => {
@@ -105,7 +102,7 @@ export function useDeleteNews() {
   });
 }
 import { useQuery } from "@tanstack/react-query";
-import { getNewsList, getNewsCategories } from "@/lib/api";
+import { getNewsList, getNewsCategories } from "@/libs/api";
 
 interface NewsListParams {
   page?: number;

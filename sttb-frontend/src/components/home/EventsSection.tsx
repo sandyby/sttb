@@ -5,7 +5,7 @@ import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEventList } from "@/hooks/useEvents";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { EventListItem } from "@/types/events";
 
 export function EventsSection() {
@@ -31,7 +31,10 @@ export function EventsSection() {
             </p>
             <h2
               className="text-gray-900 dark:text-white"
-              style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", fontWeight: 700 }}
+              style={{
+                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+                fontWeight: 700,
+              }}
             >
               Kegiatan Mendatang
             </h2>
@@ -47,7 +50,10 @@ export function EventsSection() {
         {isLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse">
+              <div
+                key={i}
+                className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse"
+              >
                 <div className="h-40 bg-gray-100 dark:bg-gray-800" />
                 <div className="p-4 space-y-2">
                   <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded w-3/4" />
@@ -64,8 +70,12 @@ export function EventsSection() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {closestEvents.map((event, i) => {
               const dateObj = new Date(event.startDate);
-              const day = dateObj.toLocaleDateString("id-ID", { day: "2-digit" });
-              const month = dateObj.toLocaleDateString("id-ID", { month: "short" });
+              const day = dateObj.toLocaleDateString("id-ID", {
+                day: "2-digit",
+              });
+              const month = dateObj.toLocaleDateString("id-ID", {
+                month: "short",
+              });
               const imgSrc = getImageUrl(event.imageUrl);
 
               return (
@@ -94,8 +104,12 @@ export function EventsSection() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     {/* Date badge */}
                     <div className="absolute top-3 right-3 bg-[#E62129] text-white rounded-lg px-2.5 py-1.5 text-center min-w-[46px]">
-                      <div className="font-bold text-lg leading-none">{day}</div>
-                      <div className="text-xs uppercase opacity-90">{month}</div>
+                      <div className="font-bold text-lg leading-none">
+                        {day}
+                      </div>
+                      <div className="text-xs uppercase opacity-90">
+                        {month}
+                      </div>
                     </div>
                     {/* Category */}
                     {event.category && (
@@ -123,7 +137,12 @@ export function EventsSection() {
                           })}
                           {event.endDate && (
                             <span className="text-gray-400">
-                              {" "}– {new Date(event.endDate).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}
+                              {" "}
+                              –{" "}
+                              {new Date(event.endDate).toLocaleDateString(
+                                "id-ID",
+                                { day: "numeric", month: "long" },
+                              )}
                             </span>
                           )}
                         </span>
@@ -227,7 +246,12 @@ function EventCard({ event, index }: { event: EventListItem; index: number }) {
               })}
               {event.endDate && (
                 <span className="text-gray-400">
-                  {" "}– {new Date(event.endDate).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}
+                  {" "}
+                  –{" "}
+                  {new Date(event.endDate).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                  })}
                 </span>
               )}
             </span>
