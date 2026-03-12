@@ -32,9 +32,12 @@ export function useGetEvents(params: GetEventListRequest = {}) {
   return useQuery({
     queryKey: eventKeys.list({ page, pageSize, ...rest }),
     queryFn: async () => {
-      const res = await apiClient.get<GetEventListResponse>("/api/events/list", {
-        params: { page, pageSize, ...rest },
-      });
+      const res = await apiClient.get<GetEventListResponse>(
+        "/api/events/list",
+        {
+          params: { page, pageSize, ...rest },
+        },
+      );
       return res.data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes — public data, can be cached a while

@@ -41,7 +41,21 @@ public class StudyProgramsController : ControllerBase
     )
     {
         var result = await _mediator.Send(
-            new GetStudyProgramRequest { Slug = slug },
+            new GetStudyProgramBySlugRequest { Slug = slug },
+            cancellationToken
+        );
+        return Ok(result);
+    }
+
+    [HttpGet("id/{id}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<GetStudyProgramResponse>> GetById(
+        [FromRoute] string id,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await _mediator.Send(
+            new GetStudyProgramByIdRequest { Id = id },
             cancellationToken
         );
         return Ok(result);

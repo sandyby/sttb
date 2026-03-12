@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api";
-import { getMediaList, getMediaCategories } from "@/lib/api";
-import { adminCreateMediaCategory } from "@/lib/admin-api";
+import { apiClient } from "@/libs/api-client";
+import { getMediaList, getMediaCategories } from "@/libs/api";
+import { adminCreateMediaCategory } from "@/libs/admin-api";
 import { useSession } from "next-auth/react";
 import type {
   MediaListItem,
@@ -15,7 +15,8 @@ import type {
 export const mediaKeys = {
   all: ["media"] as const,
   lists: () => [...mediaKeys.all, "list"] as const,
-  list: (params: GetMediaListRequest) => [...mediaKeys.lists(), params] as const,
+  list: (params: GetMediaListRequest) =>
+    [...mediaKeys.lists(), params] as const,
   details: () => [...mediaKeys.all, "detail"] as const,
   detail: (id: string) => [...mediaKeys.details(), id] as const,
 };

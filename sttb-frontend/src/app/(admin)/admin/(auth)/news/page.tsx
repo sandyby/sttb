@@ -14,13 +14,15 @@ import {
   XCircle,
   ChevronLeft,
   ChevronRight,
+  Star,
+  Inbox,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
 import { useAdminNewsList, useDeleteNews } from "@/hooks/useAdminNews";
 import { useNewsCategories } from "@/hooks/useNews";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 
 export default function AdminNewsPage() {
   const [search, setSearch] = useState("");
@@ -234,7 +236,7 @@ export default function AdminNewsPage() {
                           className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
                             article.isPublished
                               ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                              : "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400"
+                              : "bg-gray-100 dark:bg-gray-900/20 text-gray-700/60 dark:text-white/60"
                           }`}
                         >
                           {article.isPublished ? (
@@ -243,23 +245,17 @@ export default function AdminNewsPage() {
                             </>
                           ) : (
                             <>
-                              <XCircle className="w-3 h-3" /> Draft
+                              <Inbox className="w-3 h-3" /> Draft
                             </>
                           )}
                         </span>
                         {article.isFeatured && (
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-500 dark:text-yellow-400`}
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100/60 dark:bg-yellow-300/60 text-yellow-500 dark:text-white/60`}
                           >
-                            {article.isPublished ? (
-                              <>
-                                <CheckCircle className="w-3 h-3" /> Terbit
-                              </>
-                            ) : (
-                              <>
-                                <XCircle className="w-3 h-3" /> Draft
-                              </>
-                            )}
+                            <>
+                              <Star className="w-3 h-3" /> Featured
+                            </>
                           </span>
                         )}
                       </td>

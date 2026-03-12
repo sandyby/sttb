@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import { differenceInYears } from "date-fns";
+import { useStudyProgramsList } from "@/hooks/useStudyPrograms";
 
 const slides = [
   {
@@ -54,13 +56,6 @@ const slides = [
   },
 ];
 
-const STATS = [
-  { value: "30+", label: "Tahun Melayani" },
-  { value: "8", label: "Program Studi" },
-  { value: "47K+", label: "Koleksi Buku" },
-  { value: "BAN-PT", label: "Terakreditasi" },
-];
-
 export function HeroSection() {
   const [current, setCurrent] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -68,6 +63,18 @@ export function HeroSection() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const DURATION = 7000;
+
+  const { data: programs = [] } = useStudyProgramsList();
+
+  const STATS = [
+    {
+      value: `${Math.abs(differenceInYears(new Date(1992, 7, 1), new Date()))}+`,
+      label: "Tahun Melayani",
+    },
+    { value: programs.length, label: "Program Studi" },
+    { value: "47K+", label: "Koleksi Buku" },
+    { value: "BAN-PT", label: "Terakreditasi" },
+  ];
 
   const startProgress = () => {
     setProgress(0);
@@ -228,9 +235,9 @@ export function HeroSection() {
         </div>
 
         {/* Bottom bar */}
-        <div className="relative z-10 pb-8">
+        <div className="relative z-10 pb-4">
           {/* Stats strip */}
-          <div className="max-w-7xl mx-auto px-6 mb-8">
+          <div className="max-w-7xl mx-auto px-6 mb-4">
             <div className="flex items-center gap-8 md:gap-16 flex-wrap">
               {STATS.map((s, i) => (
                 <Fragment key={s.label}>

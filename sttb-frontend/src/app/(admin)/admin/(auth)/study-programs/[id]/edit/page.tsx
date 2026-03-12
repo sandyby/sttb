@@ -67,7 +67,20 @@ export default function EditStudyProgramPage({
 
   return (
     <div className="py-4">
-      <ProgramStudiForm initialData={program} onSave={handleSave} />
+      <ProgramStudiForm
+        initialData={{
+          ...program,
+          level: program.level as "S1" | "S2",
+          description: program.description ?? "",
+          vision: program.vision ?? "",
+          mission: program.mission ?? "",
+          tagline: program.tagline ?? "",
+          accreditation: program.accreditation ?? "",
+          coverImageUrl: program.coverImageUrl ?? "",
+        }}
+        onSave={handleSave}
+      />
+
     </div>
   );
 }

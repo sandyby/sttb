@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api";
+import { apiClient } from "@/libs/api-client";
 import type { UploadResponse } from "@/types/media";
 
 interface UploadArgs {
@@ -27,7 +27,7 @@ export function useUploadImage() {
         `/api/upload/image?uploadType=${encodeURIComponent(uploadType)}`,
         formData,
         // Let axios set the correct multipart boundary automatically
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
       return res.data;
     },
@@ -47,7 +47,7 @@ export function useUploadVideo() {
       const res = await apiClient.post<UploadResponse>(
         `/api/upload/video?uploadType=${encodeURIComponent(uploadType)}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
       return res.data;
     },

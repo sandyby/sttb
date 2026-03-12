@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { 
-  adminGetPagesList, 
-  adminCreatePage, 
-  adminUpdatePage, 
+import {
+  adminGetPagesList,
+  adminCreatePage,
+  adminUpdatePage,
   adminDeletePage,
-  adminGetPageById 
-} from "@/lib/admin-api";
+  adminGetPageById,
+} from "@/libs/admin-api";
 import { CreatePageRequest, UpdatePageRequest } from "@/types/pages";
 import { pageKeys } from "./usePages";
 
@@ -41,8 +41,13 @@ export function useUpdatePage() {
   const token = session?.accessToken ?? "";
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdatePageRequest }) =>
-      adminUpdatePage(token, id, payload),
+    mutationFn: ({
+      slug,
+      payload,
+    }: {
+      slug: string;
+      payload: UpdatePageRequest;
+    }) => adminUpdatePage(token, slug, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "pages"] });
       queryClient.invalidateQueries({ queryKey: pageKeys.all });

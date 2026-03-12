@@ -11,7 +11,7 @@ export const studyProgramSchema = z.object({
   degree: z.string().min(1, "Gelar wajib diisi"),
   vision: z.string().nullable().optional(),
   mission: z.string().nullable().optional(),
-  accreditation: z.string().nullable().optional(),
+  accreditation: z.string().min(1, "Akreditasi wajib diisi"),
   coverImageUrl: z.string().nullable().optional(),
   isPublished: z.boolean().default(false),
   objectives: z.array(z.string()).default([]),

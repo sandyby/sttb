@@ -5,16 +5,8 @@ import { Plus, Search, Edit2, Trash2, Eye, Globe, Clock, Link as LinkIcon, Chevr
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 
-interface Page {
-    id: string;
-    title: string;
-    slug: string;
-    section: string;
-    status: "published" | "draft";
-    updatedAt: string;
-}
-
 import { useAdminPagesList, useUpdatePage, useDeletePage } from "@/hooks/useAdminPages";
+import { PageListItem } from "@/types/pages";
 
 const sections = ["Semua", "Publik", "Tentang", "Program Studi", "Admisi", "Kehidupan Kampus", "Keuangan"];
 
@@ -27,12 +19,15 @@ const sectionColors: Record<string, string> = {
     "Keuangan": "#D97706",
 };
 
-function EditPageModal({ page, onClose }: { page: any; onClose: () => void }) {
-    const [form, setForm] = useState({ ...page });
+function EditPageModal({ page, onClose }: { page: PageListItem; onClose: () => void }) {
+    const [form, setForm] = useState({ 
+        ...page,
+        content: (page as any).content ?? "" // Ensure content exists for UpdatePageRequest
+    });
     const updatePage = useUpdatePage();
 
     const handleSave = () => {
-        updatePage.mutate({ id: page.id, payload: form }, {
+        updatePage.mutate({ slug: page.slug, payload: form }, {
             onSuccess: () => {
                 toast.success("Halaman berhasil diperbarui");
                 onClose();
@@ -102,10 +97,10 @@ export default function AdminHalamanPage() {
 
     const [search, setSearch] = useState("");
     const [activeSection, setActiveSection] = useState("Semua");
-    const [editing, setEditing] = useState<any | null>(null);
+  const [editing, setEditing] = useState<PageListItem | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-    const filtered = pages.filter((p) => {
+  const filtered = pages.filter((p: PageListItem) => {
         const matchSearch = search === "" || p.title.toLowerCase().includes(search.toLowerCase()) || p.slug.toLowerCase().includes(search.toLowerCase());
         const matchSection = activeSection === "Semua" || p.section === activeSection;
         return matchSearch && matchSection;
@@ -130,10 +125,16 @@ export default function AdminHalamanPage() {
         });
     };
 
-    const handleToggle = (page: any) => {
+  const handleToggle = (page: PageListItem) => {
         updatePage.mutate({ 
-            id: page.id, 
-            payload: { ...page, isPublished: !page.isPublished } 
+            slug: page.slug, 
+            payload: { 
+                title: page.title,
+                slug: page.slug,
+                section: page.section,
+                isPublished: !page.isPublished,
+                content: (page as any).content ?? "" 
+            } 
         }, {
             onSuccess: () => {
                 toast.success(page.isPublished ? "Halaman dijadikan draft" : "Halaman diterbitkan");
@@ -179,7 +180,7 @@ export default function AdminHalamanPage() {
                     <div className="divide-y divide-gray-50 dark:divide-gray-800/50">
                         {sectionPages.map((p) => (
                             <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors group">
-                                <Globe className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                <Globe className="w-4 h-4 text-gray-400 shrink-0" />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-gray-900 dark:text-white font-medium text-sm">{p.title}</p>
                                     <div className="flex items-center gap-1 mt-0.5">
@@ -187,7 +188,7 @@ export default function AdminHalamanPage() {
                                         <span className="text-gray-400 text-xs font-mono">{p.slug}</span>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 flex-shrink-0">
+                                <div className="flex items-center gap-2 shrink-0">
                                     <span className="hidden lg:flex items-center gap-1 text-gray-400 text-xs">
                                         <Clock className="w-3 h-3" />
                                         {new Date(p.updatedAt ?? p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}

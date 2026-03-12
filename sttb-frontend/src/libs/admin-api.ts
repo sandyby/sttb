@@ -177,7 +177,7 @@ export async function adminDeleteEvent(
 export async function adminGetPagesList(
   token: string,
 ): Promise<PageListItem[]> {
-  const { data } = await apiClient.get<PageListItem[]>("/api/page", {
+  const { data } = await apiClient.get<PageListItem[]>("/api/pages/list", {
     headers: authHeader(token),
   });
   return data;
@@ -185,9 +185,9 @@ export async function adminGetPagesList(
 
 export async function adminGetPageById(
   token: string,
-  id: string,
+  slug: string,
 ): Promise<PageDetail> {
-  const { data } = await apiClient.get<PageDetail>(`/api/page/detail/${id}`, {
+  const { data } = await apiClient.get<PageDetail>(`/api/pages/${slug}`, {
     headers: authHeader(token),
   });
   return data;
@@ -197,7 +197,7 @@ export async function adminCreatePage(
   token: string,
   payload: CreatePageRequest,
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/page/create", payload, {
+  const { data } = await apiClient.post<string>("/api/pages/create", payload, {
     headers: authHeader(token),
   });
   return data;
@@ -205,10 +205,10 @@ export async function adminCreatePage(
 
 export async function adminUpdatePage(
   token: string,
-  id: string,
+  slug: string,
   payload: UpdatePageRequest,
 ): Promise<void> {
-  await apiClient.put(`/api/page/update/${id}`, payload, {
+  await apiClient.put(`/api/pages/update/${slug}`, payload, {
     headers: authHeader(token),
   });
 }
@@ -217,7 +217,7 @@ export async function adminDeletePage(
   token: string,
   id: string,
 ): Promise<void> {
-  await apiClient.delete(`/api/page/delete/${id}`, {
+  await apiClient.delete(`/api/pages/delete/${id}`, {
     headers: authHeader(token),
   });
 }
@@ -241,7 +241,7 @@ export async function adminGetStudyProgramById(
   id: string,
 ): Promise<StudyProgramDetail> {
   const { data } = await apiClient.get<StudyProgramDetail>(
-    `/api/study-programs/detail/${id}`,
+    `/api/study-programs/id/${id}`,
     {
       headers: authHeader(token),
     },

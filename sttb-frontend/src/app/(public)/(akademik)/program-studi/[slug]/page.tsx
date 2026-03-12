@@ -15,7 +15,7 @@ import {
 import { programs } from "@/data/mock-data";
 
 import { notFound } from "next/navigation";
-import { getStudyProgramBySlug, getImageUrl } from "@/lib/api";
+import { getStudyProgramBySlug, getImageUrl } from "@/libs/api";
 
 const DEFAULT_PROGRAM_IMAGE =
   "https://images.unsplash.com/photo-1505427214476-47e71e07abfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800";
@@ -181,10 +181,18 @@ export default async function ProgramPage({
                     Visi Program
                   </h2>
                   <div className="flex gap-x-2">
-                    <Eye className="w-5 h-5 text-[#E62129] mt-0.5 flex-shrink-0" />
-                    <p className="text-gray-700 dark:text-gray-300 mt-0.5 text-sm leading-relaxed">
-                      {program.vision}
-                    </p>
+                    {program.vision ? (
+                      <>
+                        <Eye className="w-5 h-5 text-[#E62129] mt-0.5 flex-shrink-0" />
+                        <p className="text-gray-700 dark:text-gray-300 mt-0.5 text-sm leading-relaxed">
+                          {program.vision}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">
+                        Informasi prospek karir belum tersedia.
+                      </p>
+                    )}
                   </div>
                 </div>
                 {/* Mission */}
@@ -196,10 +204,18 @@ export default async function ProgramPage({
                     Misi Program
                   </h2>
                   <div className="flex gap-x-2">
-                    <Target className="w-5 h-5 text-[#E62129] mt-0.5 flex-shrink-0" />
-                    <p className="text-gray-700 dark:text-gray-300 mt-0.5 text-sm leading-relaxed">
-                      {program.vision}
-                    </p>
+                    {program.mission ? (
+                      <>
+                        <Eye className="w-5 h-5 text-[#E62129] mt-0.5 flex-shrink-0" />
+                        <p className="text-gray-700 dark:text-gray-300 mt-0.5 text-sm leading-relaxed">
+                          {program.mission}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">
+                        Informasi prospek karir belum tersedia.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

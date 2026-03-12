@@ -103,10 +103,7 @@ export function useCreateNews() {
 export function useUpdateNews() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      id,
-      ...data
-    }: UpdateNewsRequest & { id: string }) => {
+    mutationFn: async ({ id, ...data }: UpdateNewsRequest & { id: string }) => {
       await apiClient.put<void>(`/api/news/update/${id}`, data);
     },
     onSuccess: () => {

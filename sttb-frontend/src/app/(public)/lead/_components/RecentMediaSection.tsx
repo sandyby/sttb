@@ -3,7 +3,7 @@
 import { Play, FileText, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { useMediaList } from "@/hooks/useMedia";
 
 export function RecentMediaSection() {
@@ -71,13 +71,16 @@ export function RecentMediaSection() {
                       />
                     ) : (
                       <div className="w-full h-40 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        {isVideo
-                          ? <Play className="w-8 h-8 text-gray-300 dark:text-gray-600" />
-                          : <FileText className="w-8 h-8 text-gray-300 dark:text-gray-600" />
-                        }
+                        {isVideo ? (
+                          <Play className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+                        ) : (
+                          <FileText className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+                        )}
                       </div>
                     )}
-                    <span className={`absolute top-3 left-3 px-2 py-0.5 rounded text-white text-xs font-medium ${isVideo ? "bg-[#E62129]" : "bg-[#0A2C74]"}`}>
+                    <span
+                      className={`absolute top-3 left-3 px-2 py-0.5 rounded text-white text-xs font-medium ${isVideo ? "bg-[#E62129]" : "bg-[#0A2C74]"}`}
+                    >
                       {isVideo ? "Video" : "Artikel"}
                     </span>
                   </div>

@@ -6,7 +6,7 @@ import {
   adminUpdateEvent,
   adminDeleteEvent,
   type EventPayload,
-} from "@/lib/admin-api";
+} from "@/libs/admin-api";
 
 interface EventListParams {
   page?: number;

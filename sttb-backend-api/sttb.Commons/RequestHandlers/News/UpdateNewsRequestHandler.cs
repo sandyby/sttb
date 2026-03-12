@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using sttb.Commons.Exceptions;
 using sttb.Contracts.RequestModels.News;
@@ -16,7 +17,8 @@ public class UpdateNewsRequestHandler : IRequestHandler<UpdateNewsRequest>
     public UpdateNewsRequestHandler(
         ApplicationDbContext dbContext,
         IHttpContextAccessor httpContextAccessor,
-        ILogger<UpdateNewsRequestHandler> logger)
+        ILogger<UpdateNewsRequestHandler> logger
+    )
     {
         _dbContext = dbContext;
         _httpContextAccessor = httpContextAccessor;
@@ -30,8 +32,11 @@ public class UpdateNewsRequestHandler : IRequestHandler<UpdateNewsRequest>
         if (news is null)
             throw new NotFoundException("News", request.Id);
 
-        var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(
-            System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userId =
+            _httpContextAccessor
+                .HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)
+                ?.Value
+            ?? string.Empty;
 
         news.Title = request.Title;
         news.Slug = request.Slug;

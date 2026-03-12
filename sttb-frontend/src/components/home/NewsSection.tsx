@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import { useGetNews } from "@/hooks/useNews";
 import { NewsListItem } from "@/types/news";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 
 function NewsCardSkeleton() {
   return (
@@ -23,7 +23,13 @@ function NewsCardSkeleton() {
   );
 }
 
-function NewsCard({ article, index }: { article: NewsListItem; index: number }) {
+function NewsCard({
+  article,
+  index,
+}: {
+  article: NewsListItem;
+  index: number;
+}) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -35,7 +41,9 @@ function NewsCard({ article, index }: { article: NewsListItem; index: number }) 
       {/* Image */}
       <div className="relative overflow-hidden h-48">
         <Image
-          src={getImageUrl(article.thumbnailUrl) ?? "https://placehold.co/192/png"}
+          src={
+            getImageUrl(article.thumbnailUrl) ?? "https://placehold.co/192/png"
+          }
           alt={article.title}
           fill
           priority
@@ -119,7 +127,10 @@ export function NewsSection() {
             </p>
             <h2
               className="text-gray-900 dark:text-white"
-              style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", fontWeight: 700 }}
+              style={{
+                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+                fontWeight: 700,
+              }}
             >
               Berita Terkini STTB
             </h2>
@@ -145,35 +156,50 @@ export function NewsSection() {
             </>
           ) : featuredNews ? (
             <>
-              <motion.article
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="lg:col-span-5 group"
+              <Link
+                href={`/berita/${featuredNews.slug}`}
+                className="lg:col-span-5 group h-fit p-5 rounded-xl hover:shadow-lg bg-white"
               >
-                <Link href={`/berita/${featuredNews.slug}`} className="block">
+                <motion.article
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className=""
+                >
                   <div className="relative overflow-hidden rounded-xl h-72 lg:h-80 mb-4">
                     <Image
-                      src={getImageUrl(featuredNews.thumbnailUrl) || "/images/placeholder.jpg"}
+                      src={
+                        getImageUrl(featuredNews.thumbnailUrl) ||
+                        "/images/placeholder.jpg"
+                      }
                       alt={featuredNews.title}
                       fill
                       priority
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#E62129] text-white text-xs font-medium mb-2">
+                    <div className="absolute top-0 left-0 p-3">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#E62129] text-white text-xs font-medium mb-2 shadow-md">
                         <Tag className="w-3 h-3" />
                         {featuredNews.category || "Berita"}
                       </span>
-                      <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-[#E62129] transition-colors">
-                        {featuredNews.title}
-                      </h3>
-                      <div className="flex items-center gap-2 text-white/70 text-xs mt-1.5">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <time>
-                          {new Date(featuredNews.publishedAt || featuredNews.createdAt).toLocaleDateString("id-ID", {
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-y-2">
+                    <h3 className="text-primary font-bold text-xl truncate line-clamp-1 transition-colors">
+                      {featuredNews.title}
+                    </h3>
+                    <div className="flex gap-x-4 justify-between items-center">
+                      <p className="text-gray-600 min-w-0 dark:text-gray-400 text-sm truncate">
+                        {featuredNews.excerpt}
+                      </p>
+                      <div className="flex text-xs text-gray-400 shrink-0 items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 shrink-0" />
+                        <time className="whitespace-nowrap">
+                          {new Date(
+                            featuredNews.publishedAt || featuredNews.createdAt,
+                          ).toLocaleDateString("id-ID", {
                             day: "numeric",
                             month: "long",
                             year: "numeric",
@@ -182,11 +208,8 @@ export function NewsSection() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
-                    {featuredNews.excerpt}
-                  </p>
-                </Link>
-              </motion.article>
+                </motion.article>
+              </Link>
 
               {/* Regular news list */}
               <div className="lg:col-span-7 space-y-5">
@@ -201,7 +224,10 @@ export function NewsSection() {
                   >
                     <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
                       <Image
-                        src={getImageUrl(article.thumbnailUrl) || "/images/placeholder.jpg"}
+                        src={
+                          getImageUrl(article.thumbnailUrl) ||
+                          "/images/placeholder.jpg"
+                        }
                         alt={article.title}
                         fill
                         priority
@@ -210,16 +236,22 @@ export function NewsSection() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-red-50 dark:bg-red-900/20 text-[#E62129]">
+                        <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-red-50 inline-flex items-center gap-1 dark:bg-red-900/20 text-[#E62129]">
+                          <Tag className="w-3 h-3" />
                           {article.category || "Berita"}
                         </span>
-                        <time className="text-xs text-gray-400">
-                          {new Date(article.publishedAt || article.createdAt).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </time>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <time className="">
+                            {new Date(
+                              article.publishedAt || article.createdAt,
+                            ).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </time>
+                        </div>
                       </div>
                       <h3 className="text-gray-900 dark:text-white font-semibold text-sm group-hover:text-[#E62129] transition-colors line-clamp-2 mb-1.5">
                         {article.title}

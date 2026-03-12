@@ -2,7 +2,7 @@ import { Calendar, Tag, ArrowLeft, Share2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getNewsDetail, getNewsList, getImageUrl } from "@/lib/api";
+import { getNewsDetail, getNewsList, getImageUrl } from "@/libs/api";
 
 type Params = Promise<{ slug: string }>;
 
@@ -42,7 +42,11 @@ export default async function BeritaDetailPage({ params }: { params: Params }) {
           )}
           <h1
             className="text-white mb-4"
-            style={{ fontSize: "clamp(1.5rem, 4vw, 2.4rem)", fontWeight: 700, lineHeight: 1.3 }}
+            style={{
+              fontSize: "clamp(1.5rem, 4vw, 2.4rem)",
+              fontWeight: 700,
+              lineHeight: 1.3,
+            }}
           >
             {article.title}
           </h1>
@@ -50,7 +54,9 @@ export default async function BeritaDetailPage({ params }: { params: Params }) {
             <div className="flex items-center gap-1.5">
               <Calendar className="w-4 h-4" />
               <time dateTime={article.publishedAt ?? article.createdAt}>
-                {new Date(article.publishedAt ?? article.createdAt).toLocaleDateString("id-ID", {
+                {new Date(
+                  article.publishedAt ?? article.createdAt,
+                ).toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -140,7 +146,9 @@ export default async function BeritaDetailPage({ params }: { params: Params }) {
                               {n.title}
                             </p>
                             <p className="text-gray-400 text-xs">
-                              {new Date(n.publishedAt ?? n.createdAt).toLocaleDateString("id-ID", {
+                              {new Date(
+                                n.publishedAt ?? n.createdAt,
+                              ).toLocaleDateString("id-ID", {
                                 day: "numeric",
                                 month: "short",
                               })}
@@ -154,8 +162,8 @@ export default async function BeritaDetailPage({ params }: { params: Params }) {
                   <div className="mt-6 p-4 bg-[#0A2C74] rounded-xl text-white">
                     <h4 className="font-semibold mb-2">Daftar Sekarang</h4>
                     <p className="text-blue-100 text-xs mb-3 leading-relaxed">
-                      Jadilah bagian dari keluarga besar STTB. Pendaftaran mahasiswa baru 2025/2026
-                      masih terbuka.
+                      Jadilah bagian dari keluarga besar STTB. Pendaftaran
+                      mahasiswa baru 2025/2026 masih terbuka.
                     </p>
                     <Link
                       href="/prosedur-admisi"

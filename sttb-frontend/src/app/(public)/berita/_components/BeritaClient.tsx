@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useRef, useEffect } from "react";
 import { Calendar, Tag, ArrowRight, Search, ChevronDown } from "lucide-react";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { useNewsList, useNewsCategories } from "@/hooks/useNews";
 
 export function BeritaClient() {
@@ -44,7 +44,10 @@ export function BeritaClient() {
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     }
@@ -77,8 +80,14 @@ export function BeritaClient() {
                 onClick={() => setDropdownOpen((v) => !v)}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
               >
-                <span>{activeCategory === "Semua" ? "Semua Kategori" : activeCategory}</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                <span>
+                  {activeCategory === "Semua"
+                    ? "Semua Kategori"
+                    : activeCategory}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+                />
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-lg overflow-hidden z-50">
@@ -86,7 +95,10 @@ export function BeritaClient() {
                     {allCategories.map((cat) => (
                       <button
                         key={cat}
-                        onClick={() => { updateParams({ category: cat }); setDropdownOpen(false); }}
+                        onClick={() => {
+                          updateParams({ category: cat });
+                          setDropdownOpen(false);
+                        }}
                         className={`w-full text-left px-4 py-2 text-xs font-medium transition-colors ${
                           activeCategory === cat
                             ? "bg-[#E62129]/10 text-[#E62129]"
@@ -130,7 +142,9 @@ export function BeritaClient() {
             </div>
           ) : !data || data.items.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-gray-400 text-lg mb-2">Tidak ada berita ditemukan</p>
+              <p className="text-gray-400 text-lg mb-2">
+                Tidak ada berita ditemukan
+              </p>
               <p className="text-gray-500 text-sm">
                 Coba ubah kata pencarian atau kategori yang Anda pilih.
               </p>
@@ -170,11 +184,16 @@ export function BeritaClient() {
                       <div className="flex flex-col flex-1 p-5">
                         <div className="flex items-center gap-2 text-xs text-gray-400 mb-2.5">
                           <Calendar className="w-3.5 h-3.5" />
-                          <time dateTime={article.publishedAt ?? article.createdAt}>
-                            {new Date(article.publishedAt ?? article.createdAt).toLocaleDateString(
-                              "id-ID",
-                              { day: "numeric", month: "long", year: "numeric" },
-                            )}
+                          <time
+                            dateTime={article.publishedAt ?? article.createdAt}
+                          >
+                            {new Date(
+                              article.publishedAt ?? article.createdAt,
+                            ).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
                           </time>
                         </div>
                         <h2 className="text-gray-900 dark:text-white font-semibold group-hover:text-[#E62129] transition-colors mb-2 line-clamp-2 flex-1">
@@ -189,7 +208,8 @@ export function BeritaClient() {
                           href={`/berita/${article.slug}`}
                           className="inline-flex items-center gap-1 text-[#E62129] text-sm font-medium hover:gap-2 transition-all"
                         >
-                          Baca Selengkapnya <ArrowRight className="w-3.5 h-3.5" />
+                          Baca Selengkapnya{" "}
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
                     </article>
@@ -200,24 +220,29 @@ export function BeritaClient() {
               {/* Pagination */}
               {data.totalCount > data.pageSize && (
                 <div className="flex justify-center gap-2 mt-10">
-                  {Array.from({ length: Math.ceil(data.totalCount / data.pageSize) }, (_, i) => {
-                    const p = i + 1;
-                    const params = new URLSearchParams(searchParams.toString());
-                    params.set("page", String(p));
-                    return (
-                      <Link
-                        key={p}
-                        href={`/berita?${params.toString()}`}
-                        className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
-                          page === p
-                            ? "bg-[#E62129] text-white"
-                            : "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-[#E62129] hover:text-[#E62129]"
-                        }`}
-                      >
-                        {p}
-                      </Link>
-                    );
-                  })}
+                  {Array.from(
+                    { length: Math.ceil(data.totalCount / data.pageSize) },
+                    (_, i) => {
+                      const p = i + 1;
+                      const params = new URLSearchParams(
+                        searchParams.toString(),
+                      );
+                      params.set("page", String(p));
+                      return (
+                        <Link
+                          key={p}
+                          href={`/berita?${params.toString()}`}
+                          className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                            page === p
+                              ? "bg-[#E62129] text-white"
+                              : "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-[#E62129] hover:text-[#E62129]"
+                          }`}
+                        >
+                          {p}
+                        </Link>
+                      );
+                    },
+                  )}
                 </div>
               )}
             </>

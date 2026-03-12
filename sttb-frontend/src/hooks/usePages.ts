@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPagesList, getPageBySlug } from "@/lib/api";
+import { getPagesList, getPageBySlug } from "@/libs/api";
 
 export const pageKeys = {
   all: ["pages"] as const,
