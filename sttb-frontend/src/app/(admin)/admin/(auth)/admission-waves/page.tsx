@@ -142,12 +142,12 @@ export default function AdminAdmissionWavesPage() {
                         {wave.steps.length} aktivitas
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[wave.status] ?? STATUS_COLORS.closed}`}>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap w-fit ${STATUS_COLORS[wave.status] ?? STATUS_COLORS.closed}`}>
                           {STATUS_LABELS[wave.status] ?? wave.status}
                         </span>
                       </td>
                       <td className="py-3 px-4 hidden lg:table-cell">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap w-fit ${
                           wave.isActive
                             ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
                             : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
