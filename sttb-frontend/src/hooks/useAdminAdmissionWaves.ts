@@ -5,7 +5,7 @@ import {
   adminCreateAdmissionWave,
   adminUpdateAdmissionWave,
   adminDeleteAdmissionWave,
-} from "@/lib/admin-api";
+} from "@/libs/admin-api";
 import type { CreateAdmissionWavePayload } from "@/types/admission";
 
 export function useAdminAdmissionWaveList(params: { isActive?: boolean } = {}) {

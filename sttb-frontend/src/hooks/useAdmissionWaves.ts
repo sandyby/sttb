@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "@/lib/axios";
+import apiClient from "@/libs/axios";
 import type { GetAdmissionWaveListResponse } from "@/types/admission";
 
 async function getAdmissionWaves(isActive?: boolean): Promise<GetAdmissionWaveListResponse> {
