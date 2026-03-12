@@ -82,16 +82,6 @@ export async function adminCreateNewsCategory(
   return data;
 }
 
-export async function adminCreateNewsCategory(
-  token: string,
-  payload: { name: string; slug: string },
-): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/news/categories/create", payload, {
-    headers: authHeader(token),
-  });
-  return data;
-}
-
 export interface UpdateNewsPayload {
   title: string;
   slug: string;
@@ -282,39 +272,6 @@ export async function adminDeleteStudyProgram(
   await apiClient.delete(`/api/study-programs/delete/${id}`, {
     headers: authHeader(token),
   });
-}
-
-export async function adminCreateEventCategory(
-  token: string,
-  payload: { name: string; slug: string },
-): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/events/categories/create", payload, {
-    headers: authHeader(token),
-  });
-  return data;
-}
-
-// ─── Media ────────────────────────────────────────────────────────────────────
-
-export async function adminGetMediaList(
-  token: string,
-  params: GetMediaListRequest = {},
-): Promise<GetMediaListResponse> {
-  const { data } = await apiClient.get<GetMediaListResponse>("/api/media/list", {
-    headers: authHeader(token),
-    params,
-  });
-  return data;
-}
-
-export async function adminCreateMediaCategory(
-  token: string,
-  payload: { name: string; slug: string },
-): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/media/categories/create", payload, {
-    headers: authHeader(token),
-  });
-  return data;
 }
 
 export async function adminCreateEventCategory(
