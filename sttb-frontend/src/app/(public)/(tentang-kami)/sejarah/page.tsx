@@ -281,7 +281,6 @@ export default function SejarahPage() {
                                     alt="Kampus STTB"
                                     width={600}
                                     height={600}
-                                    preload
                                     className="w-full h-80 object-cover" />
                             </div>
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 0.6 }}
@@ -384,7 +383,6 @@ export default function SejarahPage() {
                                             alt={f.name}
                                             width={400}
                                             height={400}
-                                            preload
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[#E62129] flex items-center justify-center shadow-md">

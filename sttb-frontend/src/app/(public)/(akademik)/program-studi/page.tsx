@@ -215,7 +215,6 @@ function ProgramCard({ program, index }: { program: any; index: number }) {
               src={image}
               alt={program.name}
               fill
-              preload
               className="w-full h-full object-cover"
               //   animate={{ scale: hovered ? 1.08 : 1 }}
               //   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}

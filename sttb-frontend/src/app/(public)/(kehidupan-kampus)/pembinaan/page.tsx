@@ -193,9 +193,7 @@ export default function PembinaanPage() {
                                         height={256}
                                         width={0}
                                         sizes="max-w-fit"
-                                        className="w-full 
-                                        h-64 object-cover"
-                                        preload
+                                        className="w-full h-64 object-cover"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                     <div className="absolute bottom-4 left-4">

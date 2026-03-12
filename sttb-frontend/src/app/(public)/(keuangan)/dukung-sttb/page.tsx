@@ -168,7 +168,6 @@ export default function DukungSttbPage() {
                                 alt="Dukung STTB"
                                 width={400}
                                 height={400}
-                                preload
                                 className="w-full h-80 object-cover rounded-2xl shadow-xl"
                             />
                         </FadeIn>
@@ -204,7 +203,6 @@ export default function DukungSttbPage() {
                                                 src={p.img}
                                                 alt={p.title}
                                                 fill
-                                                preload
                                                 className="w-full h-full object-cover"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -321,7 +319,6 @@ export default function DukungSttbPage() {
                                     alt="QR Code Placeholder"
                                     width={256}
                                     height={256}
-                                    preload
                                     className="rounded-lg"
                                 />
                                 <p className="text-gray-500 dark:text-gray-400 text-xs">

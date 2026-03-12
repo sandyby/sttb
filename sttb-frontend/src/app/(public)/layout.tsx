@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BackToTop } from "@/components/ui/BackToTop";
 import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 
@@ -21,6 +22,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         {children}
       </motion.main>
       <Footer />
+      <BackToTop />
     </>
   );
 }

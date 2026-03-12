@@ -135,7 +135,6 @@ export default function SenatPage() {
                                                 src={act.img}
                                                 alt={act.category}
                                                 fill
-                                                preload
                                                 className="w-full h-full object-cover" />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                             <div

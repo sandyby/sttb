@@ -6,10 +6,9 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { useEventList } from "@/hooks/useEvents";
 import { getImageUrl } from "@/libs/api";
-import { EventListItem } from "@/types/events";
 
 export function EventsSection() {
-  const { data, isLoading } = useEventList({ pageSize: 100 });
+  const { data, isLoading } = useEventList({ pageSize: 8 });
 
   const now = new Date().getTime();
   const closestEvents = [...(data?.items ?? [])]
@@ -190,96 +189,5 @@ export function EventsSection() {
         </div>
       </div>
     </section>
-  );
-}
-
-function EventCard({ event, index }: { event: EventListItem; index: number }) {
-  const dateObj = new Date(event.startDate);
-  const day = dateObj.toLocaleDateString("id-ID", { day: "2-digit" });
-  const month = dateObj.toLocaleDateString("id-ID", { month: "short" });
-
-  return (
-    <motion.div
-      key={event.id}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group flex flex-col bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all hover:-translate-y-1"
-    >
-      {/* Image */}
-      <div className="relative h-40 overflow-hidden">
-        <Image
-          src={event.imageUrl || "/images/placeholder.jpg"}
-          alt={event.title}
-          fill
-          priority
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        {/* Date badge */}
-        <div className="absolute top-3 right-3 bg-[#E62129] text-white rounded-lg px-2.5 py-1.5 text-center min-w-[46px]">
-          <div className="font-bold text-lg leading-none">{day}</div>
-          <div className="text-xs uppercase opacity-90">{month}</div>
-        </div>
-        {/* Category */}
-        <div className="absolute bottom-3 left-3">
-          <span className="px-2 py-0.5 rounded text-xs font-medium bg-white/20 backdrop-blur-sm text-white border border-white/30">
-            {event.category || "Kegiatan"}
-          </span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-col flex-1 p-4">
-        <h3 className="text-gray-900 dark:text-white font-semibold group-hover:text-[#E62129] transition-colors mb-2 line-clamp-2">
-          {event.title}
-        </h3>
-        <div className="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 mb-3 flex-1">
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-[#E62129]" />
-            <span>
-              {dateObj.toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-              {event.endDate && (
-                <span className="text-gray-400">
-                  {" "}
-                  –{" "}
-                  {new Date(event.endDate).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                  })}
-                </span>
-              )}
-            </span>
-          </div>
-          {event.location && (
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-[#E62129]" />
-              <span className="line-clamp-1">{event.location}</span>
-            </div>
-          )}
-        </div>
-
-        {event.registrationUrl ? (
-          <Link
-            href={event.registrationUrl}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#E62129] text-white text-xs font-medium hover:bg-[#c4131a] transition-colors"
-          >
-            Daftar Sekarang
-          </Link>
-        ) : (
-          <Link
-            href="/kegiatan"
-            className="inline-flex items-center gap-1 text-[#E62129] text-xs font-medium hover:gap-2 transition-all"
-          >
-            Info Selengkapnya <ArrowRight className="w-3 h-3" />
-          </Link>
-        )}
-      </div>
-    </motion.div>
   );
 }
