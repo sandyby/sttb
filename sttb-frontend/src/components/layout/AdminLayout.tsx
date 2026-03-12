@@ -21,7 +21,8 @@ import {
   Plus,
   Edit,
   ExternalLink,
-  GraduationCap
+  GraduationCap,
+  Building2
 } from "lucide-react";
 import { cn } from "../ui/utils";
 import { useSession, signOut } from "next-auth/react";
@@ -93,6 +94,15 @@ const navGroups: NavGroup[] = [
     label: "Halaman",
     href: "/admin/pages",
     icon: FileText,
+  },
+  {
+    label: "Yayasan",
+    href: "/admin/foundation",
+    icon: Building2,
+    children: [
+      { label: "Semua Anggota", href: "/admin/foundation", icon: Building2 },
+      { label: "Tambah Baru", href: "/admin/foundation/create", icon: Plus },
+    ],
   },
   {
     label: "Pengguna",
@@ -197,6 +207,8 @@ function getBreadcrumb(pathname: string): { parent?: string; current: string } {
   if (pathname.match(/\/study-programs\/[\w-]+\/edit/)) return { parent: "Program Studi", current: "Edit Program" };
   if (pathname.includes("/lecturers/create")) return { parent: "Dewan Dosen", current: "Tambah Dosen" };
   if (pathname.match(/\/lecturers\/\w+\/edit/)) return { parent: "Dewan Dosen", current: "Edit Dosen" };
+  if (pathname.includes("/foundation/create")) return { parent: "Yayasan", current: "Tambah Baru" };
+  if (pathname.match(/\/foundation\/\w+\/edit/)) return { parent: "Yayasan", current: "Edit Anggota" };
   const found = navGroups.find(n => n.href === pathname);
   return { current: found?.label ?? "Admin" };
 }

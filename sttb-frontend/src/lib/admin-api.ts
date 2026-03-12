@@ -15,6 +15,13 @@ import type {
   CreateStudyProgramRequest,
   UpdateStudyProgramRequest,
 } from "@/types/study-programs";
+import type {
+  FoundationMember,
+  GetFoundationMemberListResponse,
+  CreateFoundationMemberPayload,
+  UpdateFoundationMemberPayload,
+  FoundationMemberListParams,
+} from "@/types/foundation";
 
 function authHeader(token: string) {
   return { Authorization: `Bearer ${token}` };
@@ -368,6 +375,48 @@ export async function adminDeleteLecturer(
   id: string,
 ): Promise<void> {
   await apiClient.delete(`/api/lecturers/delete/${id}`, {
+    headers: authHeader(token),
+  });
+}
+
+// ─── Foundation ──────────────────────────────────────────────────────────────
+
+export async function adminGetFoundationMemberList(
+  token: string,
+  params: FoundationMemberListParams = {},
+): Promise<GetFoundationMemberListResponse> {
+  const { data } = await apiClient.get<GetFoundationMemberListResponse>("/api/foundation/list", {
+    headers: authHeader(token),
+    params,
+  });
+  return data;
+}
+
+export async function adminCreateFoundationMember(
+  token: string,
+  payload: CreateFoundationMemberPayload,
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/foundation/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+export async function adminUpdateFoundationMember(
+  token: string,
+  id: string,
+  payload: CreateFoundationMemberPayload,
+): Promise<void> {
+  await apiClient.put(`/api/foundation/update/${id}`, payload, {
+    headers: authHeader(token),
+  });
+}
+
+export async function adminDeleteFoundationMember(
+  token: string,
+  id: string,
+): Promise<void> {
+  await apiClient.delete(`/api/foundation/delete/${id}`, {
     headers: authHeader(token),
   });
 }
