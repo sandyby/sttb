@@ -81,7 +81,7 @@ export default function AdminLecturerEditPage() {
     <div className="max-w-4xl mx-auto">
       <LecturerForm
         initialData={initialData}
-        onSave={handleSave}
+        onSaveAction={handleSave}
         backHref="/admin/lecturers"
         isEditing
       />

@@ -32,7 +32,7 @@ export default function AdminLecturerCreatePage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <LecturerForm onSave={handleSave} backHref="/admin/lecturers" />
+      <LecturerForm onSaveAction={handleSave} backHref="/admin/lecturers" />
     </div>
   );
 }

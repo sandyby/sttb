@@ -22,8 +22,8 @@ const foundationMemberSchema = z.object({
   category: z.enum(["pembina", "pengurus", "anggota"]),
   description: z.string().max(1000).optional().or(z.literal("")),
   imageUrl: z.string().max(1000).optional().or(z.literal("")),
-  displayOrder: z.coerce.number().int().min(0).default(0),
-  isActive: z.boolean().default(true),
+  displayOrder: z.number().int().min(0),
+  isActive: z.boolean(),
 });
 
 type FoundationMemberFormValues = z.infer<typeof foundationMemberSchema>;
@@ -276,7 +276,7 @@ export function FoundationMemberForm({
 
             <Field label="Urutan Tampil" error={errors.displayOrder?.message}>
               <input
-                {...register("displayOrder")}
+                {...register("displayOrder", { valueAsNumber: true })}
                 type="number"
                 min={0}
                 className={inputCls}

@@ -23,7 +23,7 @@ const lecturerFormSchema = z.object({
   bio: z.string().min(1, "Bio wajib diisi"),
   almaMater: z.string().min(1, "Alma mater wajib diisi"),
   origin: z.string().min(1, "Asal institusi wajib diisi"),
-  displayOrder: z.coerce.number().int().min(0),
+  displayOrder: z.number().int().min(0),
   isActive: z.boolean(),
 });
 
@@ -35,7 +35,7 @@ export interface LecturerFormData extends LecturerFormValues {
 
 interface LecturerFormProps {
   initialData?: LecturerFormData;
-  onSave: (data: LecturerFormData) => Promise<void>;
+  onSaveAction: (data: LecturerFormData) => Promise<void>;
   backHref: string;
   isEditing?: boolean;
 }
@@ -134,7 +134,7 @@ function CoursesInput({
 
 // ─── Main Form ────────────────────────────────────────────────────────────────
 
-export function LecturerForm({ initialData, onSave, backHref, isEditing }: LecturerFormProps) {
+export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEditing }: LecturerFormProps) {
   const [courses, setCourses] = useState<string[]>(initialData?.courses ?? []);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -383,7 +383,7 @@ export function LecturerForm({ initialData, onSave, backHref, isEditing }: Lectu
 
             <Field label="Urutan Tampil" error={errors.displayOrder?.message}>
               <input
-                {...register("displayOrder")}
+                {...register("displayOrder", { valueAsNumber: true })}
                 type="number"
                 min={0}
                 className={inputCls}

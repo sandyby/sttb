@@ -17,10 +17,10 @@ import { useUploadImage } from "@/hooks/useUpload";
 
 interface UploadMediaDialogProps {
     isOpen: boolean;
-    onClose: () => void;
+    onCloseAction: () => void;
 }
 
-export function UploadMediaDialog({ isOpen, onClose }: UploadMediaDialogProps) {
+export function UploadMediaDialog({ isOpen, onCloseAction: onClose }: UploadMediaDialogProps) {
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [dragOver, setDragOver] = useState(false);
