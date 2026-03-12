@@ -387,7 +387,11 @@ export async function adminGetFoundationMemberList(
 ): Promise<GetFoundationMemberListResponse> {
   const { data } = await apiClient.get<GetFoundationMemberListResponse>("/api/foundation/list", {
     headers: authHeader(token),
-    params,
+    params: {
+      ...params,
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
+    },
   });
   return data;
 }

@@ -2,6 +2,8 @@ export interface FoundationMemberListParams {
   category?: string;
   isActive?: boolean;
   orderByRecent?: boolean;
+  page?: number;
+  pageSize?: number;
 }
 
 export interface FoundationMember {
@@ -17,6 +19,7 @@ export interface FoundationMember {
 
 export interface GetFoundationMemberListResponse {
   members: FoundationMember[];
+  totalCount: number;
 }
 
 export interface CreateFoundationMemberPayload {

@@ -8,4 +8,6 @@ public class GetFoundationMemberListRequest : IRequest<GetFoundationMemberListRe
     public string? Category { get; set; }
     public bool? IsActive { get; set; }
     public bool OrderByRecent { get; set; } = false;
+    public int? Page { get; set; }
+    public int? PageSize { get; set; }
 }

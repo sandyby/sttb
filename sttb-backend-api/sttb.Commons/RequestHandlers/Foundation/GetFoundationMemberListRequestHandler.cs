@@ -29,6 +29,8 @@ public class GetFoundationMemberListRequestHandler : IRequestHandler<GetFoundati
             query = query.Where(m => m.IsActive == request.IsActive.Value);
         }
 
+        var totalCount = await query.CountAsync(cancellationToken);
+
         if (request.OrderByRecent)
         {
             query = query.OrderByDescending(m => m.CreatedAt);
@@ -36,6 +38,11 @@ public class GetFoundationMemberListRequestHandler : IRequestHandler<GetFoundati
         else
         {
             query = query.OrderBy(m => m.DisplayOrder).ThenBy(m => m.Name);
+        }
+
+        if (request.Page.HasValue && request.PageSize.HasValue)
+        {
+            query = query.Skip((request.Page.Value - 1) * request.PageSize.Value).Take(request.PageSize.Value);
         }
 
         var members = await query
@@ -52,6 +59,6 @@ public class GetFoundationMemberListRequestHandler : IRequestHandler<GetFoundati
             })
             .ToListAsync(cancellationToken);
 
-        return new GetFoundationMemberListResponse { Members = members };
+        return new GetFoundationMemberListResponse { Members = members, TotalCount = totalCount };
     }
 }

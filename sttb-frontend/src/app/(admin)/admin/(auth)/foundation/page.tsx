@@ -38,17 +38,23 @@ const CATEGORY_ICONS: Record<string, any> = {
   anggota: Users,
 };
 
+const PAGE_SIZE = 10;
+
 export default function AdminFoundationPage() {
+  const [page, setPage] = useState(1);
   const [categoryFilter, setCategoryFilter] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const { data, isLoading } = useAdminFoundationList({
+    page,
+    pageSize: PAGE_SIZE,
     category: categoryFilter || undefined,
     orderByRecent: true,
   });
 
   const deleteMember = useAdminDeleteFoundationMember();
 
+  const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 1;
   const items = data?.members ?? [];
 
   const handleDelete = async (id: string, name: string) => {
@@ -70,7 +76,7 @@ export default function AdminFoundationPage() {
         <div>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">Pengurus Yayasan</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {items.length} orang terdaftar
+            {data?.totalCount ?? 0} orang terdaftar
           </p>
         </div>
         <Link
@@ -85,7 +91,7 @@ export default function AdminFoundationPage() {
       <div className="flex flex-col sm:flex-row gap-3">
         <select
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
+          onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#E62129]/40"
         >
           <option value="">Semua Kategori</option>
@@ -199,6 +205,31 @@ export default function AdminFoundationPage() {
           </table>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Halaman {page} dari {totalPages}
+          </p>
+          <div className="flex gap-1">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

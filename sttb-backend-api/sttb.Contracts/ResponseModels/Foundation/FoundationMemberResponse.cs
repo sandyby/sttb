@@ -15,4 +15,5 @@ public class FoundationMemberResponse
 public class GetFoundationMemberListResponse
 {
     public List<FoundationMemberResponse> Members { get; set; } = new();
+    public int TotalCount { get; set; }
 }
