@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { useAdminLecturerList, useAdminDeleteLecturer } from "@/hooks/useAdminLecturers";
 import { getImageUrl } from "@/lib/api";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 const RANK_LABELS: Record<string, string> = {
   pimpinan: "Pimpinan",
