@@ -277,7 +277,7 @@ export default function SejarahPage() {
                         <motion.div initial={{ opacity: 0, x: 60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} className="relative">
                             <div className="rounded-2xl overflow-hidden shadow-2xl">
                                 <Image
-                                    src="https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80"
+                                    src="/sejarah/sejarah-2-rev.png"
                                     alt="Kampus STTB"
                                     width={600}
                                     height={600}

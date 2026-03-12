@@ -38,7 +38,7 @@ const activities = [
         color: "#E62129",
         bg: "bg-red-50 dark:bg-red-900/20",
         items: ["Orientasi Mahasiswa Baru", "Pemilihan Senat", "Wisuda & Dies Natalis STTB", "Games/Sport Day"],
-        img: "https://images.unsplash.com/photo-1757143137392-0b1e1a27a7de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
+        img: "/senat/senat-30.png",
     },
 ];
 
@@ -56,7 +56,7 @@ export default function SenatPage() {
                 title="Senat Mahasiswa"
                 category="Kehidupan Kampus"
                 description="Ladang sangat luas dan siap dituai, namun penuai sangat sedikit dan tidak siap. Senat hadir untuk mengasah dan membentuk kepemimpinan dalam diri setiap mahasiswa STTB."
-                image="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
+                image="/senat/download.jpg"
                 breadcrumb={[
                     { label: "Kampus", href: "#" },
                     { label: "Senat", href: "/senat" }

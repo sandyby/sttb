@@ -517,7 +517,7 @@ export default function VisiMisiPage() {
                 category="Tentang STTB"
                 description='Fondasi filosofis yang mengarahkan setiap aspek kehidupan dan pelayanan STTB — dari Lausanne Movement: "Seluruh Umat membawa Seluruh Injil ke Seluruh Dunia."'
                 breadcrumb={[{ label: "Visi & Misi", href: "/visi-misi" }]}
-                image="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
+                image="/visi-misi/domino-optimo-maximo.png"
             />
             <VisiSection />
             <MisiSection />

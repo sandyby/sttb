@@ -131,7 +131,7 @@ export function VisiMisiSection() {
             {/* Image with overlay label */}
             <div className="relative rounded-2xl overflow-hidden mb-8 shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80"
+                src="/visi-misi/domino-optimo-maximo.png"
                 alt="Kehidupan kampus STTB"
                 className="w-full h-56 object-cover"
               />
