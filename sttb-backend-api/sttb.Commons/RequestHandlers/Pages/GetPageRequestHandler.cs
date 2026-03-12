@@ -30,7 +30,11 @@ public class GetPageRequestHandler : IRequestHandler<GetPageRequest, GetPageResp
             Id = page.Id,
             Slug = page.Slug,
             Title = page.Title,
-            Body = page.Body,
+            Section = page.Section,
+            Content = page.Content,
+            IsPublished = page.IsPublished,
+            MetaDescription = page.MetaDescription,
+            MetaKeywords = page.MetaKeywords,
             UpdatedAt = page.UpdatedAt,
             UpdatedBy = page.UpdatedBy
         };

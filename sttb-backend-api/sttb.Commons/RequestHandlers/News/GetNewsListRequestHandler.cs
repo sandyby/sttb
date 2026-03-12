@@ -15,15 +15,18 @@ public class GetNewsListRequestHandler : IRequestHandler<GetNewsListRequest, Get
         _dbContext = dbContext;
     }
 
-    public async Task<GetNewsListResponse> Handle(GetNewsListRequest request, CancellationToken cancellationToken)
+    public async Task<GetNewsListResponse> Handle(
+        GetNewsListRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var query = _dbContext.News.AsNoTracking();
 
-        if (request.IsPublished.HasValue)
-            query = query.Where(n => n.IsPublished == request.IsPublished.Value);
+        if (request.IsPublished.HasValue && request.IsPublished.Value == true)
+            query = query.Where(n => n.IsPublished == true);
 
-        if (request.IsFeatured.HasValue)
-            query = query.Where(n => n.IsFeatured == request.IsFeatured.Value);
+        if (request.IsFeatured.HasValue && request.IsFeatured.Value == true)
+            query = query.Where(n => n.IsFeatured == true);
 
         if (!string.IsNullOrWhiteSpace(request.Category))
             query = query.Where(n => n.Category != null && n.Category.Name == request.Category);
@@ -48,7 +51,7 @@ public class GetNewsListRequestHandler : IRequestHandler<GetNewsListRequest, Get
                 IsFeatured = n.IsFeatured,
                 IsPublished = n.IsPublished,
                 PublishedAt = n.PublishedAt,
-                CreatedAt = n.CreatedAt
+                CreatedAt = n.CreatedAt,
             })
             .ToListAsync(cancellationToken);
 
@@ -57,7 +60,7 @@ public class GetNewsListRequestHandler : IRequestHandler<GetNewsListRequest, Get
             Items = items,
             TotalCount = totalCount,
             Page = request.Page,
-            PageSize = request.PageSize
+            PageSize = request.PageSize,
         };
     }
 }

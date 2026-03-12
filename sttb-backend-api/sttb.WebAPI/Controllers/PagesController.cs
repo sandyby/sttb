@@ -19,7 +19,7 @@ public class PagesController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet(ApiRoutes.Pages.Get)]
+    [HttpGet("{slug}")]
     [AllowAnonymous]
     public async Task<ActionResult<GetPageResponse>> Get(
         [FromRoute] string slug,
@@ -27,6 +27,24 @@ public class PagesController : ControllerBase
     {
         var result = await _mediator.Send(new GetPageRequest { Slug = slug }, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpGet("list")]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<ActionResult<List<GetPageResponse>>> List(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetPageListRequest(), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("create")]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<ActionResult<Guid>> Create(
+        [FromBody] CreatePageRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(request, cancellationToken);
+        return CreatedAtAction(nameof(Get), new { slug = request.Slug }, result);
     }
 
     [HttpPut("update/{slug}")]
@@ -38,6 +56,16 @@ public class PagesController : ControllerBase
     {
         request.Slug = slug;
         await _mediator.Send(request, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpDelete("delete/{id}")]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<IActionResult> Delete(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeletePageRequest { Id = id }, cancellationToken);
         return NoContent();
     }
 }

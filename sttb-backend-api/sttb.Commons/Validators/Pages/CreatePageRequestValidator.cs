@@ -3,9 +3,9 @@ using sttb.Contracts.RequestModels.Pages;
 
 namespace sttb.Commons.Validators.Pages;
 
-public class UpdatePageRequestValidator : AbstractValidator<UpdatePageRequest>
+public class CreatePageRequestValidator : AbstractValidator<CreatePageRequest>
 {
-    public UpdatePageRequestValidator()
+    public CreatePageRequestValidator()
     {
         RuleFor(x => x.Slug)
             .NotEmpty()
@@ -20,7 +20,7 @@ public class UpdatePageRequestValidator : AbstractValidator<UpdatePageRequest>
             .MaximumLength(200);
 
         RuleFor(x => x.Content)
-            .MaximumLength(50000); // 50k chars is plenty
+            .MaximumLength(50000);
 
         RuleFor(x => x.MetaDescription)
             .MaximumLength(500);

@@ -1,15 +1,15 @@
-namespace sttb.Contracts.ResponseModels.Pages;
+using MediatR;
+using sttb.Contracts.ResponseModels.Pages;
 
-public class GetPageResponse
+namespace sttb.Contracts.RequestModels.Pages;
+
+public class CreatePageRequest : IRequest<Guid>
 {
-    public Guid Id { get; set; }
     public string Slug { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Section { get; set; } = string.Empty;
     public string? Content { get; set; }
-    public bool IsPublished { get; set; }
+    public bool IsPublished { get; set; } = true;
     public string? MetaDescription { get; set; }
     public string? MetaKeywords { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public string? UpdatedBy { get; set; }
 }
