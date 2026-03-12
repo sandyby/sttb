@@ -81,6 +81,15 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Dewan Dosen",
+    href: "/admin/lecturers",
+    icon: GraduationCap,
+    children: [
+      { label: "Semua Dosen", href: "/admin/lecturers", icon: GraduationCap },
+      { label: "Tambah Baru", href: "/admin/lecturers/create", icon: Plus },
+    ],
+  },
+  {
     label: "Halaman",
     href: "/admin/pages",
     icon: FileText,
@@ -186,6 +195,8 @@ function getBreadcrumb(pathname: string): { parent?: string; current: string } {
   if (pathname.match(/\/events\/\w+\/edit/)) return { parent: "Kegiatan", current: "Edit Kegiatan" };
   if (pathname.includes("/study-programs/new")) return { parent: "Program Studi", current: "Tambah Baru" };
   if (pathname.match(/\/study-programs\/[\w-]+\/edit/)) return { parent: "Program Studi", current: "Edit Program" };
+  if (pathname.includes("/lecturers/create")) return { parent: "Dewan Dosen", current: "Tambah Dosen" };
+  if (pathname.match(/\/lecturers\/\w+\/edit/)) return { parent: "Dewan Dosen", current: "Edit Dosen" };
   const found = navGroups.find(n => n.href === pathname);
   return { current: found?.label ?? "Admin" };
 }
