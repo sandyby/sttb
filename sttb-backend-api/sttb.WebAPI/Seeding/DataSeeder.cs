@@ -1711,7 +1711,7 @@ public static class DataSeeder
                 Position = "Anggota Dewan Pembina",
                 Category = "pembina",
                 Description = "Penatua Subianto Tjandra berkontribusi dalam pengawasan tata kelola dan integritas operasional yayasan.",
-                ImageUrl = "/uploads/foundation/subianto-tjandra.jpg",
+                ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 2,
                 IsActive = true,
                 CreatedBy = adminUserId,
