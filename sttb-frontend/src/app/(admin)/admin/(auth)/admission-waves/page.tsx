@@ -6,6 +6,26 @@ import { Plus, Pencil, Trash2, Loader2, Calendar, ChevronUp, ChevronDown } from 
 import { toast } from "sonner";
 import { useAdminAdmissionWaveList, useAdminDeleteAdmissionWave } from "@/hooks/useAdminAdmissionWaves";
 
+function formatDeadline(dateStr: string) {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function formatSchedule(str: string | null) {
+  if (!str) return "";
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return str;
+  const dateStr = d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  if (d.getHours() !== 0 || d.getMinutes() !== 0) {
+    const h = d.getHours().toString().padStart(2, "0");
+    const m = d.getMinutes().toString().padStart(2, "0");
+    return `${dateStr}, ${h}.${m}`;
+  }
+  return dateStr;
+}
+
 const STATUS_LABELS: Record<string, string> = {
   open: "Berjalan",
   closed: "Ditutup",
@@ -100,14 +120,14 @@ export default function AdminAdmissionWavesPage() {
                         <p className="font-medium text-gray-900 dark:text-white">{wave.label}</p>
                         {wave.psikotesSchedule && (
                           <p className="text-xs text-gray-400 line-clamp-1">
-                            Psikotes: {wave.psikotesSchedule}
+                            Psikotes: {formatSchedule(wave.psikotesSchedule)}
                           </p>
                         )}
                       </div>
                     </div>
                   </td>
                   <td className="py-3 px-4 text-gray-600 dark:text-gray-400 text-xs">
-                    {wave.deadline}
+                    {formatDeadline(wave.deadline)}
                   </td>
                   <td className="py-3 px-4 hidden md:table-cell text-gray-600 dark:text-gray-400 text-xs">
                     {wave.steps.length} aktivitas

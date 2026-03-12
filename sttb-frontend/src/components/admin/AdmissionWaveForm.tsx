@@ -8,17 +8,36 @@ import { ArrowLeft, Save, Plus, X, GripVertical, Loader2 } from "lucide-react";
 import Link from "next/link";
 import type { AdmissionWave, AdmissionWaveStep, CreateAdmissionWavePayload } from "@/types/admission";
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function parseDatetime(s: string | null | undefined) {
+  if (!s) return { date: "", time: "" };
+  // ISO format: "2026-01-15T09:00:00"
+  const isoMatch = s.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
+  if (isoMatch) return { date: isoMatch[1], time: isoMatch[2] };
+  return { date: "", time: "" };
+}
+
+function combineDatetime(date: string, time: string): string | null {
+  if (!date) return null;
+  return `${date}T${time || "00:00"}:00`;
+}
+
 // ─── Schema ──────────────────────────────────────────────────────────────────
 
 const admissionWaveSchema = z.object({
   waveNumber: z.string().min(1, "Wajib diisi").max(20),
   label: z.string().min(1, "Wajib diisi").max(100),
-  deadline: z.string().min(1, "Wajib diisi").max(200),
+  deadline: z.string().min(1, "Wajib diisi").regex(/^\d{4}-\d{2}-\d{2}$/, "Pilih tanggal yang valid"),
   status: z.enum(["open", "closed", "upcoming"]),
   color: z.string().min(1, "Wajib diisi").max(20),
-  psikotesSchedule: z.string().max(300).optional().or(z.literal("")),
-  tertulisSchedule: z.string().max(300).optional().or(z.literal("")),
-  wawancaraSchedule: z.string().max(300).optional().or(z.literal("")),
+  psikotesDate: z.string(),
+  psikotesTime: z.string(),
+  // Tertulis & Wawancara: specific date + optional time
+  tertulisDate: z.string(),
+  tertulisTime: z.string(),
+  wawancaraDate: z.string(),
+  wawancaraTime: z.string(),
   displayOrder: z.number().int().min(0),
   isActive: z.boolean(),
 });
@@ -70,7 +89,8 @@ function StepsEditor({
   onChange: (steps: AdmissionWaveStep[]) => void;
 }) {
   const [newTitle, setNewTitle] = useState("");
-  const [newWhen, setNewWhen] = useState("");
+  const [newWhenDate, setNewWhenDate] = useState("");
+  const [newWhenTime, setNewWhenTime] = useState("");
   const [newVia, setNewVia] = useState("");
 
   const addStep = () => {
@@ -78,12 +98,13 @@ function StepsEditor({
     const step: AdmissionWaveStep = {
       stepNumber: steps.length + 1,
       title: newTitle.trim(),
-      whenText: newWhen.trim(),
+      whenText: combineDatetime(newWhenDate, newWhenTime),
       via: newVia.trim(),
     };
     onChange([...steps, step]);
     setNewTitle("");
-    setNewWhen("");
+    setNewWhenDate("");
+    setNewWhenTime("");
     setNewVia("");
   };
 
@@ -99,48 +120,67 @@ function StepsEditor({
     onChange(updated);
   };
 
+  const updateStepWhen = (idx: number, date: string, time: string) => {
+    const updated = steps.map((s, i) => i === idx ? { ...s, whenText: combineDatetime(date, time) } : s);
+    onChange(updated);
+  };
+
   return (
     <div className="space-y-3">
-      {steps.map((step, idx) => (
-        <div
-          key={idx}
-          className="flex gap-2 items-start bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 border border-gray-100 dark:border-gray-700"
-        >
-          <div className="flex items-center gap-1.5 flex-shrink-0 mt-2">
-            <GripVertical className="w-3.5 h-3.5 text-gray-300" />
-            <span className="w-6 h-6 rounded-full bg-[#E62129] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
-              {step.stepNumber}
-            </span>
-          </div>
-          <div className="flex-1 grid sm:grid-cols-3 gap-2">
-            <input
-              value={step.title}
-              onChange={(e) => updateStep(idx, "title", e.target.value)}
-              placeholder="Judul aktivitas"
-              className={inputCls + " sm:col-span-3"}
-            />
-            <input
-              value={step.whenText}
-              onChange={(e) => updateStep(idx, "whenText", e.target.value)}
-              placeholder="Jadwal (mis. Oktober, minggu ketiga)"
-              className={inputCls + " sm:col-span-2"}
-            />
-            <input
-              value={step.via}
-              onChange={(e) => updateStep(idx, "via", e.target.value)}
-              placeholder="Metode (mis. Via Zoom)"
-              className={inputCls}
-            />
-          </div>
-          <button
-            type="button"
-            onClick={() => removeStep(idx)}
-            className="mt-2 p-1 rounded text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex-shrink-0"
+      {steps.map((step, idx) => {
+        const { date: stepDate, time: stepTime } = parseDatetime(step.whenText);
+        return (
+          <div
+            key={idx}
+            className="flex gap-2 items-start bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 border border-gray-100 dark:border-gray-700"
           >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      ))}
+            <div className="flex items-center gap-1.5 flex-shrink-0 mt-2">
+              <GripVertical className="w-3.5 h-3.5 text-gray-300" />
+              <span className="w-6 h-6 rounded-full bg-[#E62129] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                {step.stepNumber}
+              </span>
+            </div>
+            <div className="flex-1 space-y-2">
+              <input
+                value={step.title}
+                onChange={(e) => updateStep(idx, "title", e.target.value)}
+                placeholder="Judul aktivitas"
+                className={inputCls}
+              />
+              <div className="grid sm:grid-cols-3 gap-2">
+                {/* Date + time — EventForm style */}
+                <div className="flex gap-2 sm:col-span-2">
+                  <input
+                    type="date"
+                    value={stepDate}
+                    onChange={(e) => updateStepWhen(idx, e.target.value, stepTime)}
+                    className={inputCls + " flex-1"}
+                  />
+                  <input
+                    type="time"
+                    value={stepTime}
+                    onChange={(e) => updateStepWhen(idx, stepDate, e.target.value)}
+                    className={inputCls + " w-28"}
+                  />
+                </div>
+                <input
+                  value={step.via}
+                  onChange={(e) => updateStep(idx, "via", e.target.value)}
+                  placeholder="Metode (mis. Via Zoom)"
+                  className={inputCls}
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => removeStep(idx)}
+              className="mt-2 p-1 rounded text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex-shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        );
+      })}
 
       {/* Add new step */}
       <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-3 space-y-2">
@@ -152,13 +192,21 @@ function StepsEditor({
           placeholder="Judul aktivitas *"
           className={inputCls}
         />
-        <div className="grid sm:grid-cols-2 gap-2">
-          <input
-            value={newWhen}
-            onChange={(e) => setNewWhen(e.target.value)}
-            placeholder="Jadwal (mis. Oktober, minggu ketiga)"
-            className={inputCls}
-          />
+        <div className="grid sm:grid-cols-3 gap-2">
+          <div className="flex gap-2 sm:col-span-2">
+            <input
+              type="date"
+              value={newWhenDate}
+              onChange={(e) => setNewWhenDate(e.target.value)}
+              className={inputCls + " flex-1"}
+            />
+            <input
+              type="time"
+              value={newWhenTime}
+              onChange={(e) => setNewWhenTime(e.target.value)}
+              className={inputCls + " w-28"}
+            />
+          </div>
           <input
             value={newVia}
             onChange={(e) => setNewVia(e.target.value)}
@@ -190,6 +238,11 @@ export function AdmissionWaveForm({
   const [steps, setSteps] = useState<AdmissionWaveStep[]>(initialData?.steps ?? []);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Parse stored schedule strings back into split fields for editing
+  const psikotes = parseDatetime(initialData?.psikotesSchedule ?? "");
+  const tertulis = parseDatetime(initialData?.tertulisSchedule ?? "");
+  const wawancara = parseDatetime(initialData?.wawancaraSchedule ?? "");
+
   const {
     register,
     handleSubmit,
@@ -203,20 +256,33 @@ export function AdmissionWaveForm({
       deadline: initialData?.deadline ?? "",
       status: (initialData?.status as "open" | "closed" | "upcoming") ?? "upcoming",
       color: initialData?.color ?? "#0A2C74",
-      psikotesSchedule: initialData?.psikotesSchedule ?? "",
-      tertulisSchedule: initialData?.tertulisSchedule ?? "",
-      wawancaraSchedule: initialData?.wawancaraSchedule ?? "",
+      psikotesDate: psikotes.date,
+      psikotesTime: psikotes.time,
+      tertulisDate: tertulis.date,
+      tertulisTime: tertulis.time,
+      wawancaraDate: wawancara.date,
+      wawancaraTime: wawancara.time,
       displayOrder: initialData?.displayOrder ?? 0,
       isActive: initialData?.isActive ?? true,
     },
   });
 
-  const isActive = watch("isActive");
-
   const onSubmit = async (values: WaveFormValues) => {
     setIsSaving(true);
     try {
-      await onSaveAction({ ...values, steps });
+      await onSaveAction({
+        waveNumber: values.waveNumber,
+        label: values.label,
+        deadline: values.deadline,
+        status: values.status,
+        color: values.color,
+        psikotesSchedule: combineDatetime(values.psikotesDate, values.psikotesTime),
+        tertulisSchedule: combineDatetime(values.tertulisDate, values.tertulisTime),
+        wawancaraSchedule: combineDatetime(values.wawancaraDate, values.wawancaraTime),
+        displayOrder: values.displayOrder,
+        isActive: values.isActive,
+        steps,
+      });
     } finally {
       setIsSaving(false);
     }
@@ -259,28 +325,16 @@ export function AdmissionWaveForm({
 
             <div className="grid sm:grid-cols-2 gap-4">
               <Field label="Nomor Gelombang" required error={errors.waveNumber?.message}>
-                <input
-                  {...register("waveNumber")}
-                  className={inputCls}
-                  placeholder="I"
-                />
+                <input {...register("waveNumber")} className={inputCls} placeholder="I" />
               </Field>
               <Field label="Label" required error={errors.label?.message}>
-                <input
-                  {...register("label")}
-                  className={inputCls}
-                  placeholder="Gelombang I"
-                />
+                <input {...register("label")} className={inputCls} placeholder="Gelombang I" />
               </Field>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">
               <Field label="Batas Pendaftaran" required error={errors.deadline?.message}>
-                <input
-                  {...register("deadline")}
-                  className={inputCls}
-                  placeholder="13 Oktober 2025"
-                />
+                <input type="date" {...register("deadline")} className={inputCls} />
               </Field>
               <Field label="Status" required error={errors.status?.message}>
                 <select {...register("status")} className={inputCls}>
@@ -293,11 +347,7 @@ export function AdmissionWaveForm({
 
             <Field label="Warna Aksen (Hex)" required error={errors.color?.message}>
               <div className="flex gap-2 items-center">
-                <input
-                  {...register("color")}
-                  className={inputCls}
-                  placeholder="#0A2C74"
-                />
+                <input {...register("color")} className={inputCls} placeholder="#0A2C74" />
                 <input
                   type="color"
                   value={watch("color")}
@@ -314,26 +364,53 @@ export function AdmissionWaveForm({
           {/* Test schedules */}
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
             <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Jadwal Tes</h2>
-            <Field label="Jadwal Psikotes" error={errors.psikotesSchedule?.message}>
-              <input
-                {...register("psikotesSchedule")}
-                className={inputCls}
-                placeholder="17–18, 20, 27–29 Okt"
-              />
+
+            {/* Psikotes: date + time */}
+            <Field label="Jadwal Psikotes">
+              <div className="flex gap-2">
+                <input
+                  type="date"
+                  {...register("psikotesDate")}
+                  className={inputCls + " flex-1"}
+                />
+                <input
+                  type="time"
+                  {...register("psikotesTime")}
+                  className={inputCls + " w-28"}
+                />
+              </div>
             </Field>
-            <Field label="Jadwal Tes Tertulis" error={errors.tertulisSchedule?.message}>
-              <input
-                {...register("tertulisSchedule")}
-                className={inputCls}
-                placeholder="21 Oktober"
-              />
+
+            {/* Tertulis: date + time */}
+            <Field label="Jadwal Tes Tertulis">
+              <div className="flex gap-2">
+                <input
+                  type="date"
+                  {...register("tertulisDate")}
+                  className={inputCls + " flex-1"}
+                />
+                <input
+                  type="time"
+                  {...register("tertulisTime")}
+                  className={inputCls + " w-28"}
+                />
+              </div>
             </Field>
-            <Field label="Jadwal Wawancara" error={errors.wawancaraSchedule?.message}>
-              <input
-                {...register("wawancaraSchedule")}
-                className={inputCls}
-                placeholder="20 November"
-              />
+
+            {/* Wawancara: date + time */}
+            <Field label="Jadwal Wawancara">
+              <div className="flex gap-2">
+                <input
+                  type="date"
+                  {...register("wawancaraDate")}
+                  className={inputCls + " flex-1"}
+                />
+                <input
+                  type="time"
+                  {...register("wawancaraTime")}
+                  className={inputCls + " w-28"}
+                />
+              </div>
             </Field>
           </div>
 
@@ -378,10 +455,7 @@ export function AdmissionWaveForm({
           {/* Preview card */}
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-3">
             <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Preview Kartu</h2>
-            <div
-              className="rounded-xl border-2 p-4"
-              style={{ borderColor: watch("color") || "#0A2C74" }}
-            >
+            <div className="rounded-xl border-2 p-4" style={{ borderColor: watch("color") || "#0A2C74" }}>
               <span
                 className="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full inline-block mb-2"
                 style={{
@@ -393,7 +467,9 @@ export function AdmissionWaveForm({
               </span>
               <p className="text-xs text-gray-500 mb-0.5">Batas pendaftaran</p>
               <p className="text-sm font-bold text-gray-900 dark:text-white">
-                {watch("deadline") || "—"}
+                {watch("deadline")
+                  ? new Date(watch("deadline")).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+                  : "—"}
               </p>
             </div>
           </div>

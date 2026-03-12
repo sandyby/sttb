@@ -7,6 +7,27 @@ import { Calendar, Clock, CheckCircle2, Phone, Mail, ArrowRight, FileText, User,
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 import { admisiContact, methodIcons } from "@/data/admisi-data";
 import { useAdmissionWaves } from "@/hooks/useAdmissionWaves";
+
+function formatDeadline(dateStr: string) {
+    if (!dateStr) return "—";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function formatSchedule(str: string | null) {
+    if (!str) return "";
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return str;
+    const dateStr = d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+    // Show time if not midnight
+    if (d.getHours() !== 0 || d.getMinutes() !== 0) {
+        const h = d.getHours().toString().padStart(2, "0");
+        const m = d.getMinutes().toString().padStart(2, "0");
+        return `${dateStr}, ${h}.${m} WIB`;
+    }
+    return dateStr;
+}
 import type { AdmissionWaveStep } from "@/types/admission";
 
 export default function JadwalAdmisiPage() {
@@ -100,16 +121,16 @@ export default function JadwalAdmisiPage() {
                                             )}
                                         </div>
                                         <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">Batas pendaftaran</p>
-                                        <p className="text-gray-900 dark:text-white font-bold">{w.deadline}</p>
+                                        <p className="text-gray-900 dark:text-white font-bold">{formatDeadline(w.deadline)}</p>
                                         <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
                                             {w.psikotesSchedule && (
-                                                <p className="text-gray-500 dark:text-gray-400 text-xs">Psikotes: {w.psikotesSchedule}</p>
+                                                <p className="text-gray-500 dark:text-gray-400 text-xs">Psikotes: {formatSchedule(w.psikotesSchedule)}</p>
                                             )}
                                             {w.tertulisSchedule && (
-                                                <p className="text-gray-500 dark:text-gray-400 text-xs">Tertulis: {w.tertulisSchedule}</p>
+                                                <p className="text-gray-500 dark:text-gray-400 text-xs">Tertulis: {formatSchedule(w.tertulisSchedule)}</p>
                                             )}
                                             {w.wawancaraSchedule && (
-                                                <p className="text-gray-500 dark:text-gray-400 text-xs">Wawancara: {w.wawancaraSchedule}</p>
+                                                <p className="text-gray-500 dark:text-gray-400 text-xs">Wawancara: {formatSchedule(w.wawancaraSchedule)}</p>
                                             )}
                                         </div>
                                     </button>
@@ -163,7 +184,7 @@ export default function JadwalAdmisiPage() {
                                                         <div className="flex flex-wrap gap-3">
                                                             {step.whenText && (
                                                                 <span className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs">
-                                                                    <Clock className="w-3 h-3" /> {step.whenText}
+                                                                    <Clock className="w-3 h-3" /> {formatSchedule(step.whenText)}
                                                                 </span>
                                                             )}
                                                             {step.via && (
