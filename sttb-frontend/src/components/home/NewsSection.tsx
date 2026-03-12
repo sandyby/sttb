@@ -117,7 +117,7 @@ export function NewsSection() {
   const regularNews = allNews.slice(1);
 
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-950">
+    <section className="py-20 bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="flex items-end justify-between mb-10">

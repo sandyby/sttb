@@ -21,8 +21,8 @@ export function EventsSection() {
     .slice(0, 4);
 
   return (
-    <section className="py-20 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="py-20 bg-white dark:bg-gray-900 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 w-full">
         {/* Header */}
         <div className="flex items-end justify-between mb-10">
           <div>

@@ -57,7 +57,7 @@ const statItems = [
 
 export function StatsSection() {
   return (
-    <section className="py-16 bg-white dark:bg-gray-900">
+    <section className="py-16 bg-white dark:bg-gray-900 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-10">
           <p className="text-[#E62129] text-sm font-semibold uppercase tracking-wider mb-2">

@@ -138,8 +138,8 @@ export function HeroSection() {
 
       {/* Main content */}
       <div className="relative z-10 h-full flex flex-col justify-between">
-        <div className="flex-1 flex items-center">
-          <div className="max-w-7xl mx-auto px-6 w-full pt-24">
+        <div className="flex-1 flex items-center w-full">
+          <div className="max-w-7xl mx-auto px-6 w-full pt-28 md:pt-24">
             <AnimatePresence mode="wait">
               <motion.div
                 key={current}
@@ -237,7 +237,7 @@ export function HeroSection() {
         {/* Bottom bar */}
         <div className="relative z-10 pb-4">
           {/* Stats strip */}
-          <div className="max-w-7xl mx-auto px-6 mb-4">
+          <div className="max-w-7xl mx-auto px-6 mb-4 w-full">
             <div className="flex items-center gap-8 md:gap-16 flex-wrap">
               {STATS.map((s, i) => (
                 <Fragment key={s.label}>
@@ -261,7 +261,7 @@ export function HeroSection() {
           </div>
 
           {/* Controls */}
-          <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
             {/* Slide indicators with progress */}
             <div className="flex items-center gap-3">
               {slides.map((_, i) => (
