@@ -34,7 +34,7 @@ const sections = [
         icon: BookOpen,
         title: "Kapel & Forum Pembinaan",
         color: "#0A2C74",
-        img: "https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80",
+        img: "/cathedral-of-our-lady-of-peace_highres_web.jpg",
         content: [
             {
                 heading: "Format Kapel",
@@ -115,7 +115,7 @@ const sections = [
         icon: Briefcase,
         title: "Praktik Pelayanan",
         color: "#0570CD",
-        img: "https://images.unsplash.com/photo-1757143137392-0b1e1a27a7de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80",
+        img: "/pembinaan/header-pembinaan.png",
         content: [
             {
                 heading: "Tujuan",
@@ -146,7 +146,6 @@ export default function PembinaanPage() {
                 title="Pembinaan Mahasiswa"
                 category="Kehidupan Kampus"
                 description="Pembentukan holistik yang melingkupi seluruh kehidupan mahasiswa — akademik, spiritual, karakter, dan pelayanan."
-                image="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
                 breadcrumb={[
                     { label: "Kampus", href: "#" },
                     { label: "Pembinaan", href: "/pembinaan" }

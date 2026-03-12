@@ -38,7 +38,7 @@ public static class DataSeeder
                 Name = "Beasiswa Pastor Scholar",
                 Level = "S1",
                 Color = "#E62129",
-                ImageUrl = "https://images.unsplash.com/photo-1757143137392-0b1e1a27a7de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
+                ImageUrl = "https://images.unsplash.com/photo-1665391222532-9940e1a75660?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 Description = "Beasiswa bergengsi untuk mahasiswa S1 terpilih yang menjadikan STTB sebagai pilihan pertama dan memiliki prestasi akademik menonjol.",
                 Requirements = new List<string>
                 {
