@@ -36,7 +36,11 @@ public class UpdatePageRequestHandler : IRequestHandler<UpdatePageRequest>
             System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
         page.Title = request.Title;
-        page.Body = request.Body;
+        page.Section = request.Section;
+        page.Content = request.Content;
+        page.IsPublished = request.IsPublished;
+        page.MetaDescription = request.MetaDescription;
+        page.MetaKeywords = request.MetaKeywords;
         page.UpdatedBy = userId;
         page.UpdatedAt = DateTime.UtcNow;
 

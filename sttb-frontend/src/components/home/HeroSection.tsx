@@ -175,7 +175,7 @@ export function HeroSection() {
                   {slide.title}
                 </h1>
                 <h1
-                  className="mb-6"
+                  className="mb-2"
                   style={{
                     fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
                     fontWeight: 800,
@@ -192,7 +192,7 @@ export function HeroSection() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.6 }}
-                  className="text-white/70 mb-10 max-w-xl leading-relaxed"
+                  className="text-white/70 mb-4 max-w-xl leading-relaxed"
                   style={{ fontSize: "clamp(0.95rem, 1.5vw, 1.1rem)" }}
                 >
                   {slide.subtitle}
@@ -274,7 +274,8 @@ export function HeroSection() {
                 </button>
               ))}
               <span className="text-white/40 text-xs ml-1">
-                {String(current + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+                {String(current + 1).padStart(2, "0")} /{" "}
+                {String(slides.length).padStart(2, "0")}
               </span>
             </div>
 

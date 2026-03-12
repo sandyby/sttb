@@ -15,24 +15,68 @@ public static class DataSeeder
         await SeedNewsAsync(db, adminUserId, newsCategories);
         await SeedEventsAsync(db, adminUserId, eventCategories);
         await SeedMediaAsync(db, adminUserId, mediaCategories);
+        await SeedPagesAsync(db, adminUserId);
+        await SeedStudyProgramsAsync(db, adminUserId);
     }
 
     // ─── Categories ──────────────────────────────────────────────────────────
 
-    private static async Task<Dictionary<string, NewsCategory>> SeedNewsCategoriesAsync(ApplicationDbContext db)
+    private static async Task<Dictionary<string, NewsCategory>> SeedNewsCategoriesAsync(
+        ApplicationDbContext db
+    )
     {
         if (!await db.NewsCategories.AnyAsync())
         {
             var categories = new List<NewsCategory>
             {
-                new() { Id = Guid.NewGuid(), Name = "Konferensi", Slug = "konferensi" },
-                new() { Id = Guid.NewGuid(), Name = "Akademik", Slug = "akademik" },
-                new() { Id = Guid.NewGuid(), Name = "Beasiswa", Slug = "beasiswa" },
-                new() { Id = Guid.NewGuid(), Name = "Kerjasama", Slug = "kerjasama" },
-                new() { Id = Guid.NewGuid(), Name = "Seminar", Slug = "seminar" },
-                new() { Id = Guid.NewGuid(), Name = "Fasilitas", Slug = "fasilitas" },
-                new() { Id = Guid.NewGuid(), Name = "Admisi", Slug = "admisi" },
-                new() { Id = Guid.NewGuid(), Name = "Prestasi", Slug = "prestasi" },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Konferensi",
+                    Slug = "konferensi",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Akademik",
+                    Slug = "akademik",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Beasiswa",
+                    Slug = "beasiswa",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Kerjasama",
+                    Slug = "kerjasama",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Seminar",
+                    Slug = "seminar",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Fasilitas",
+                    Slug = "fasilitas",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Admisi",
+                    Slug = "admisi",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Prestasi",
+                    Slug = "prestasi",
+                },
             };
             db.NewsCategories.AddRange(categories);
             await db.SaveChangesAsync();
@@ -40,19 +84,56 @@ public static class DataSeeder
         return await db.NewsCategories.ToDictionaryAsync(c => c.Name);
     }
 
-    private static async Task<Dictionary<string, EventCategory>> SeedEventCategoriesAsync(ApplicationDbContext db)
+    private static async Task<Dictionary<string, EventCategory>> SeedEventCategoriesAsync(
+        ApplicationDbContext db
+    )
     {
         if (!await db.EventCategories.AnyAsync())
         {
             var categories = new List<EventCategory>
             {
-                new() { Id = Guid.NewGuid(), Name = "Admisi", Slug = "admisi" },
-                new() { Id = Guid.NewGuid(), Name = "Kerohanian", Slug = "kerohanian" },
-                new() { Id = Guid.NewGuid(), Name = "LEAD", Slug = "lead" },
-                new() { Id = Guid.NewGuid(), Name = "Seminar", Slug = "seminar" },
-                new() { Id = Guid.NewGuid(), Name = "Akademik", Slug = "akademik" },
-                new() { Id = Guid.NewGuid(), Name = "Misi", Slug = "misi" },
-                new() { Id = Guid.NewGuid(), Name = "Pelatihan", Slug = "pelatihan" },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Admisi",
+                    Slug = "admisi",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Kerohanian",
+                    Slug = "kerohanian",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "LEAD",
+                    Slug = "lead",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Seminar",
+                    Slug = "seminar",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Akademik",
+                    Slug = "akademik",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Misi",
+                    Slug = "misi",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Pelatihan",
+                    Slug = "pelatihan",
+                },
             };
             db.EventCategories.AddRange(categories);
             await db.SaveChangesAsync();
@@ -60,20 +141,62 @@ public static class DataSeeder
         return await db.EventCategories.ToDictionaryAsync(c => c.Name);
     }
 
-    private static async Task<Dictionary<string, MediaCategory>> SeedMediaCategoriesAsync(ApplicationDbContext db)
+    private static async Task<Dictionary<string, MediaCategory>> SeedMediaCategoriesAsync(
+        ApplicationDbContext db
+    )
     {
         if (!await db.MediaCategories.AnyAsync())
         {
             var categories = new List<MediaCategory>
             {
-                new() { Id = Guid.NewGuid(), Name = "Misi & Penginjilan", Slug = "misi-penginjilan" },
-                new() { Id = Guid.NewGuid(), Name = "Pelayanan Anak", Slug = "pelayanan-anak" },
-                new() { Id = Guid.NewGuid(), Name = "Pemuridan & Pembinaan", Slug = "pemuridan-pembinaan" },
-                new() { Id = Guid.NewGuid(), Name = "Pendidikan Teologi", Slug = "pendidikan-teologi" },
-                new() { Id = Guid.NewGuid(), Name = "Belajar & Mengajar", Slug = "belajar-mengajar" },
-                new() { Id = Guid.NewGuid(), Name = "Pembelajaran Digital", Slug = "pembelajaran-digital" },
-                new() { Id = Guid.NewGuid(), Name = "Pelayanan Keluarga", Slug = "pelayanan-keluarga" },
-                new() { Id = Guid.NewGuid(), Name = "Pelayanan Dunia Kerja", Slug = "pelayanan-dunia-kerja" },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Misi & Penginjilan",
+                    Slug = "misi-penginjilan",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Pelayanan Anak",
+                    Slug = "pelayanan-anak",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Pemuridan & Pembinaan",
+                    Slug = "pemuridan-pembinaan",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Pendidikan Teologi",
+                    Slug = "pendidikan-teologi",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Belajar & Mengajar",
+                    Slug = "belajar-mengajar",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Pembelajaran Digital",
+                    Slug = "pembelajaran-digital",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Pelayanan Keluarga",
+                    Slug = "pelayanan-keluarga",
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Pelayanan Dunia Kerja",
+                    Slug = "pelayanan-dunia-kerja",
+                },
             };
             db.MediaCategories.AddRange(categories);
             await db.SaveChangesAsync();
@@ -83,9 +206,14 @@ public static class DataSeeder
 
     // ─── News ────────────────────────────────────────────────────────────────
 
-    private static async Task SeedNewsAsync(ApplicationDbContext db, string adminUserId, Dictionary<string, NewsCategory> categories)
+    private static async Task SeedNewsAsync(
+        ApplicationDbContext db,
+        string adminUserId,
+        Dictionary<string, NewsCategory> categories
+    )
     {
-        if (await db.News.AnyAsync()) return;
+        if (await db.News.AnyAsync())
+            return;
 
         var now = DateTime.UtcNow;
 
@@ -96,8 +224,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "STTB Mengadakan Konferensi Teologi Transformasi 2025",
                 Slug = "konferensi-teologi-transformasi-2025",
-                Excerpt = "Sekolah Tinggi Teologi Bandung menyelenggarakan konferensi teologi internasional bertema 'Transformasi Gereja di Era Digital' yang dihadiri lebih dari 500 peserta.",
-                Content = "<p>Sekolah Tinggi Teologi Bandung (STTB) sukses menyelenggarakan Konferensi Teologi Transformasi 2025 pada tanggal 15-17 Maret 2025 di Gedung Serbaguna STTB.</p><p>Konferensi yang bertema \"Transformasi Gereja di Era Digital\" ini dihadiri oleh lebih dari 500 peserta dari berbagai denominasi gereja di seluruh Indonesia, termasuk para pendeta, penatua, mahasiswa teologi, dan aktivis Kristen.</p><p>Pembicara utama dalam konferensi ini antara lain Dr. Samuel Gunawan, Pdt. Prof. Benyamin Intan, Ph.D., dan Dr. Lena Purbawaseso.</p>",
+                Excerpt =
+                    "Sekolah Tinggi Teologi Bandung menyelenggarakan konferensi teologi internasional bertema 'Transformasi Gereja di Era Digital' yang dihadiri lebih dari 500 peserta.",
+                Content =
+                    "<p>Sekolah Tinggi Teologi Bandung (STTB) sukses menyelenggarakan Konferensi Teologi Transformasi 2025 pada tanggal 15-17 Maret 2025 di Gedung Serbaguna STTB.</p><p>Konferensi yang bertema \"Transformasi Gereja di Era Digital\" ini dihadiri oleh lebih dari 500 peserta dari berbagai denominasi gereja di seluruh Indonesia, termasuk para pendeta, penatua, mahasiswa teologi, dan aktivis Kristen.</p><p>Pembicara utama dalam konferensi ini antara lain Dr. Samuel Gunawan, Pdt. Prof. Benyamin Intan, Ph.D., dan Dr. Lena Purbawaseso.</p>",
                 CategoryId = categories["Konferensi"].Id,
                 ThumbnailUrl = "/uploads/news/news-1.jpg",
                 IsFeatured = true,
@@ -111,8 +241,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "Wisuda STTB Angkatan ke-45: 120 Lulusan Siap Melayani",
                 Slug = "wisuda-sttb-angkatan-45",
-                Excerpt = "STTB dengan bangga meluluskan 120 mahasiswa terbaik dalam upacara wisuda yang khidmat dan penuh sukacita.",
-                Content = "<p>Sekolah Tinggi Teologi Bandung kembali meluluskan generasi pelayan Tuhan yang baru. Pada tanggal 20 Februari 2025, STTB menyelenggarakan Upacara Wisuda Angkatan ke-45 di Kampus STTB Bandung.</p><p>Sebanyak 120 mahasiswa diwisuda dalam upacara yang dihadiri oleh keluarga, dosen, dan tamu undangan. Para wisudawan terdiri dari 65 lulusan program Sarjana Teologi, 28 lulusan Sarjana Pendidikan Kristen, dan 27 lulusan dari berbagai program Magister.</p>",
+                Excerpt =
+                    "STTB dengan bangga meluluskan 120 mahasiswa terbaik dalam upacara wisuda yang khidmat dan penuh sukacita.",
+                Content =
+                    "<p>Sekolah Tinggi Teologi Bandung kembali meluluskan generasi pelayan Tuhan yang baru. Pada tanggal 20 Februari 2025, STTB menyelenggarakan Upacara Wisuda Angkatan ke-45 di Kampus STTB Bandung.</p><p>Sebanyak 120 mahasiswa diwisuda dalam upacara yang dihadiri oleh keluarga, dosen, dan tamu undangan. Para wisudawan terdiri dari 65 lulusan program Sarjana Teologi, 28 lulusan Sarjana Pendidikan Kristen, dan 27 lulusan dari berbagai program Magister.</p>",
                 CategoryId = categories["Akademik"].Id,
                 ThumbnailUrl = "/uploads/news/news-2.jpg",
                 IsFeatured = true,
@@ -126,8 +258,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "Program Beasiswa STTB 2025: Membuka Peluang bagi Calon Hamba Tuhan",
                 Slug = "beasiswa-sttb-2025",
-                Excerpt = "STTB membuka pendaftaran beasiswa penuh dan parsial untuk tahun akademik 2025/2026 bagi calon mahasiswa berprestasi.",
-                Content = "<p>Sekolah Tinggi Teologi Bandung kembali membuka program beasiswa untuk tahun akademik 2025/2026. Tersedia beasiswa penuh (full scholarship) dan beasiswa parsial bagi calon mahasiswa yang memenuhi kriteria.</p><p>Pendaftaran beasiswa dibuka mulai 1 Januari hingga 31 Maret 2025. Calon penerima beasiswa akan melalui seleksi akademik, wawancara, dan penilaian karakter pelayanan.</p>",
+                Excerpt =
+                    "STTB membuka pendaftaran beasiswa penuh dan parsial untuk tahun akademik 2025/2026 bagi calon mahasiswa berprestasi.",
+                Content =
+                    "<p>Sekolah Tinggi Teologi Bandung kembali membuka program beasiswa untuk tahun akademik 2025/2026. Tersedia beasiswa penuh (full scholarship) dan beasiswa parsial bagi calon mahasiswa yang memenuhi kriteria.</p><p>Pendaftaran beasiswa dibuka mulai 1 Januari hingga 31 Maret 2025. Calon penerima beasiswa akan melalui seleksi akademik, wawancara, dan penilaian karakter pelayanan.</p>",
                 CategoryId = categories["Beasiswa"].Id,
                 ThumbnailUrl = "/uploads/news/news-3.jpg",
                 IsFeatured = false,
@@ -141,8 +275,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "STTB Jalin Kerjasama Akademik dengan Universitas Teologi Amerika",
                 Slug = "kerjasama-akademik-internasional",
-                Excerpt = "STTB menandatangani MoU dengan Gordon-Conwell Theological Seminary dan Calvin Theological Seminary untuk program pertukaran mahasiswa.",
-                Content = "<p>Dalam upaya memperluas wawasan dan meningkatkan kualitas pendidikan teologi, STTB telah menandatangani Memorandum of Understanding (MoU) dengan dua institusi teologi terkemuka di Amerika Serikat.</p><p>Kerjasama ini mencakup program pertukaran mahasiswa, penelitian bersama, dan pengembangan kurikulum yang relevan dengan konteks Asia Tenggara.</p>",
+                Excerpt =
+                    "STTB menandatangani MoU dengan Gordon-Conwell Theological Seminary dan Calvin Theological Seminary untuk program pertukaran mahasiswa.",
+                Content =
+                    "<p>Dalam upaya memperluas wawasan dan meningkatkan kualitas pendidikan teologi, STTB telah menandatangani Memorandum of Understanding (MoU) dengan dua institusi teologi terkemuka di Amerika Serikat.</p><p>Kerjasama ini mencakup program pertukaran mahasiswa, penelitian bersama, dan pengembangan kurikulum yang relevan dengan konteks Asia Tenggara.</p>",
                 CategoryId = categories["Kerjasama"].Id,
                 ThumbnailUrl = "/uploads/news/news-4.jpg",
                 IsFeatured = false,
@@ -156,8 +292,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "Seminar Pastoral: Pemimpin Gereja dan Isu Kesehatan Mental",
                 Slug = "seminar-pastoral-kesehatan-mental",
-                Excerpt = "STTB mengadakan seminar pastoral intensif tentang pendekatan Alkitabiah terhadap kesehatan mental dan konseling pastoral.",
-                Content = "<p>Tantangan kesehatan mental semakin nyata di era post-pandemi. STTB menjawab kebutuhan ini dengan menyelenggarakan Seminar Pastoral intensif berjudul 'Pemimpin Gereja dan Isu Kesehatan Mental'.</p><p>Seminar ini menghadirkan pakar konseling pastoral dan psikologi Kristen untuk membekali para pemimpin gereja dalam menghadapi isu-isu kesehatan mental di jemaat mereka.</p>",
+                Excerpt =
+                    "STTB mengadakan seminar pastoral intensif tentang pendekatan Alkitabiah terhadap kesehatan mental dan konseling pastoral.",
+                Content =
+                    "<p>Tantangan kesehatan mental semakin nyata di era post-pandemi. STTB menjawab kebutuhan ini dengan menyelenggarakan Seminar Pastoral intensif berjudul 'Pemimpin Gereja dan Isu Kesehatan Mental'.</p><p>Seminar ini menghadirkan pakar konseling pastoral dan psikologi Kristen untuk membekali para pemimpin gereja dalam menghadapi isu-isu kesehatan mental di jemaat mereka.</p>",
                 CategoryId = categories["Seminar"].Id,
                 ThumbnailUrl = "/uploads/news/news-5.jpg",
                 IsFeatured = false,
@@ -171,8 +309,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "Perpustakaan STTB Kini Dilengkapi dengan Koleksi Digital Internasional",
                 Slug = "perpustakaan-digital-internasional",
-                Excerpt = "Perpustakaan STTB kini menyediakan akses ke lebih dari 50.000 judul buku digital dan jurnal akademik teologi internasional.",
-                Content = "<p>Perpustakaan Sekolah Tinggi Teologi Bandung terus berkembang untuk mendukung kebutuhan akademik mahasiswa dan dosen. Mulai tahun 2025, perpustakaan STTB menyediakan akses penuh ke ATLA Religion Database, repositori jurnal teologi terbesar di dunia.</p>",
+                Excerpt =
+                    "Perpustakaan STTB kini menyediakan akses ke lebih dari 50.000 judul buku digital dan jurnal akademik teologi internasional.",
+                Content =
+                    "<p>Perpustakaan Sekolah Tinggi Teologi Bandung terus berkembang untuk mendukung kebutuhan akademik mahasiswa dan dosen. Mulai tahun 2025, perpustakaan STTB menyediakan akses penuh ke ATLA Religion Database, repositori jurnal teologi terbesar di dunia.</p>",
                 CategoryId = categories["Fasilitas"].Id,
                 ThumbnailUrl = "/uploads/news/news-6.jpg",
                 IsFeatured = false,
@@ -186,8 +326,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "Penerimaan Mahasiswa Baru STTB 2025/2026 Resmi Dibuka",
                 Slug = "penerimaan-mahasiswa-baru-2025-2026",
-                Excerpt = "STTB membuka pendaftaran mahasiswa baru untuk program S1 Teologi, S1 Pendidikan Kristen, dan berbagai program Magister.",
-                Content = "<p>Sekolah Tinggi Teologi Bandung dengan bangga mengumumkan pembukaan penerimaan mahasiswa baru untuk tahun akademik 2025/2026. Tersedia program Sarjana dan Pascasarjana di bidang teologi dan pendidikan Kristen.</p><p>Pendaftaran dapat dilakukan secara online melalui website resmi STTB atau langsung ke kampus di Bandung.</p>",
+                Excerpt =
+                    "STTB membuka pendaftaran mahasiswa baru untuk program S1 Teologi, S1 Pendidikan Kristen, dan berbagai program Magister.",
+                Content =
+                    "<p>Sekolah Tinggi Teologi Bandung dengan bangga mengumumkan pembukaan penerimaan mahasiswa baru untuk tahun akademik 2025/2026. Tersedia program Sarjana dan Pascasarjana di bidang teologi dan pendidikan Kristen.</p><p>Pendaftaran dapat dilakukan secara online melalui website resmi STTB atau langsung ke kampus di Bandung.</p>",
                 CategoryId = categories["Admisi"].Id,
                 ThumbnailUrl = "/uploads/news/news-7.jpg",
                 IsFeatured = true,
@@ -201,8 +343,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "Dosen STTB Raih Penghargaan Penelitian Teologi Nasional",
                 Slug = "dosen-sttb-raih-penghargaan-penelitian",
-                Excerpt = "Dr. Grace Liem dari STTB meraih penghargaan penelitian terbaik dari Asosiasi Sekolah Teologi Indonesia atas karyanya tentang Teologi Hikmat.",
-                Content = "<p>Kebanggaan besar datang bagi keluarga besar STTB. Dr. Grace Liem, dosen Studi Perjanjian Lama di STTB, berhasil meraih penghargaan Penelitian Teologi Terbaik dari Asosiasi Sekolah Teologi Indonesia (ASTI) 2024.</p><p>Penelitian beliau berjudul \"Relevansi Teologi Hikmat Perjanjian Lama bagi Spiritualitas Urban Indonesia\" dinilai memberikan kontribusi signifikan bagi pengembangan teologi kontekstual Indonesia.</p>",
+                Excerpt =
+                    "Dr. Grace Liem dari STTB meraih penghargaan penelitian terbaik dari Asosiasi Sekolah Teologi Indonesia atas karyanya tentang Teologi Hikmat.",
+                Content =
+                    "<p>Kebanggaan besar datang bagi keluarga besar STTB. Dr. Grace Liem, dosen Studi Perjanjian Lama di STTB, berhasil meraih penghargaan Penelitian Teologi Terbaik dari Asosiasi Sekolah Teologi Indonesia (ASTI) 2024.</p><p>Penelitian beliau berjudul \"Relevansi Teologi Hikmat Perjanjian Lama bagi Spiritualitas Urban Indonesia\" dinilai memberikan kontribusi signifikan bagi pengembangan teologi kontekstual Indonesia.</p>",
                 CategoryId = categories["Prestasi"].Id,
                 ThumbnailUrl = "/uploads/news/news-8.jpg",
                 IsFeatured = false,
@@ -216,8 +360,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "STTB Luncurkan Program Studi Online untuk Pelayan Gereja",
                 Slug = "program-studi-online-pelayan-gereja",
-                Excerpt = "Menjawab kebutuhan jemaat di daerah terpencil, STTB meluncurkan program pendidikan teologi jarak jauh yang fleksibel dan terjangkau.",
-                Content = "<p>Sekolah Tinggi Teologi Bandung meluncurkan program pendidikan teologi berbasis online yang dirancang khusus untuk para pelayan gereja di seluruh Indonesia yang tidak dapat hadir secara fisik ke kampus.</p><p>Program ini mencakup modul video pembelajaran, sesi mentoring online dengan dosen, dan ujian komprehensif yang dapat diakses dari mana saja.</p>",
+                Excerpt =
+                    "Menjawab kebutuhan jemaat di daerah terpencil, STTB meluncurkan program pendidikan teologi jarak jauh yang fleksibel dan terjangkau.",
+                Content =
+                    "<p>Sekolah Tinggi Teologi Bandung meluncurkan program pendidikan teologi berbasis online yang dirancang khusus untuk para pelayan gereja di seluruh Indonesia yang tidak dapat hadir secara fisik ke kampus.</p><p>Program ini mencakup modul video pembelajaran, sesi mentoring online dengan dosen, dan ujian komprehensif yang dapat diakses dari mana saja.</p>",
                 CategoryId = categories["Akademik"].Id,
                 ThumbnailUrl = "/uploads/news/news-9.jpg",
                 IsFeatured = false,
@@ -231,8 +377,10 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = "Kampus STTB Selesai Renovasi Gedung Kuliah Utama",
                 Slug = "renovasi-gedung-kuliah-utama",
-                Excerpt = "Gedung kuliah utama STTB telah selesai direnovasi dengan fasilitas modern untuk mendukung proses belajar mengajar yang lebih efektif.",
-                Content = "<p>Setelah delapan bulan proses renovasi, gedung kuliah utama Sekolah Tinggi Teologi Bandung kini hadir dengan wajah baru yang lebih modern dan representatif.</p><p>Renovasi mencakup ruang kuliah berkapasitas besar, laboratorium bahasa, ruang seminar, dan fasilitas multimedia canggih yang akan mendukung pengalaman belajar mahasiswa secara optimal.</p>",
+                Excerpt =
+                    "Gedung kuliah utama STTB telah selesai direnovasi dengan fasilitas modern untuk mendukung proses belajar mengajar yang lebih efektif.",
+                Content =
+                    "<p>Setelah delapan bulan proses renovasi, gedung kuliah utama Sekolah Tinggi Teologi Bandung kini hadir dengan wajah baru yang lebih modern dan representatif.</p><p>Renovasi mencakup ruang kuliah berkapasitas besar, laboratorium bahasa, ruang seminar, dan fasilitas multimedia canggih yang akan mendukung pengalaman belajar mahasiswa secara optimal.</p>",
                 CategoryId = categories["Fasilitas"].Id,
                 ThumbnailUrl = "/uploads/news/news-10.jpg",
                 IsFeatured = false,
@@ -249,9 +397,14 @@ public static class DataSeeder
 
     // ─── Events ──────────────────────────────────────────────────────────────
 
-    private static async Task SeedEventsAsync(ApplicationDbContext db, string adminUserId, Dictionary<string, EventCategory> categories)
+    private static async Task SeedEventsAsync(
+        ApplicationDbContext db,
+        string adminUserId,
+        Dictionary<string, EventCategory> categories
+    )
     {
-        if (await db.Events.AnyAsync()) return;
+        if (await db.Events.AnyAsync())
+            return;
 
         var now = DateTime.UtcNow;
 
@@ -261,7 +414,8 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Penerimaan Mahasiswa Baru 2025/2026",
-                Description = "Daftarkan diri Anda untuk menjadi bagian dari keluarga besar STTB. Tersedia program S1 dan S2 Teologi. Pendaftaran dibuka secara online dan offline.",
+                Description =
+                    "Daftarkan diri Anda untuk menjadi bagian dari keluarga besar STTB. Tersedia program S1 dan S2 Teologi. Pendaftaran dibuka secara online dan offline.",
                 StartDate = now.AddDays(20),
                 EndDate = now.AddDays(110),
                 Location = "STTB Bandung & Online",
@@ -276,7 +430,8 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Retreat Rohani Mahasiswa STTB 2025",
-                Description = "Retreat tahunan mahasiswa STTB yang akan diadakan di Lembang, Bandung. Tema: 'Dipanggil untuk Melayani dalam Kekudusan'.",
+                Description =
+                    "Retreat tahunan mahasiswa STTB yang akan diadakan di Lembang, Bandung. Tema: 'Dipanggil untuk Melayani dalam Kekudusan'.",
                 StartDate = now.AddDays(35),
                 EndDate = now.AddDays(37),
                 Location = "Lembang, Bandung Barat",
@@ -291,13 +446,15 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Konferensi LEAD: Kepemimpinan Kristen dalam Bisnis",
-                Description = "LEAD Center STTB mengadakan konferensi kepemimpinan untuk para profesional Kristen tentang integrasi iman dan dunia bisnis.",
+                Description =
+                    "LEAD Center STTB mengadakan konferensi kepemimpinan untuk para profesional Kristen tentang integrasi iman dan dunia bisnis.",
                 StartDate = now.AddDays(70),
                 EndDate = now.AddDays(71),
                 Location = "Aula Utama STTB Bandung",
                 ImageUrl = "/uploads/events/event-3.jpg",
                 CategoryId = categories["LEAD"].Id,
-                RegistrationUrl = "https://www.eventbrite.com/e/fire-conference-a-christian-business-conference-tickets-1972725946410",
+                RegistrationUrl =
+                    "https://www.eventbrite.com/e/fire-conference-a-christian-business-conference-tickets-1972725946410",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-3),
@@ -306,7 +463,8 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Kuliah Umum: Teologi dan Artificial Intelligence",
-                Description = "Pembicara tamu dari Singapore Bible College akan membahas perspektif Alkitabiah tentang kecerdasan buatan dan masa depan manusia.",
+                Description =
+                    "Pembicara tamu dari Singapore Bible College akan membahas perspektif Alkitabiah tentang kecerdasan buatan dan masa depan manusia.",
                 StartDate = now.AddDays(45),
                 EndDate = null,
                 Location = "Auditorium STTB Bandung",
@@ -321,13 +479,15 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Workshop Penulisan Teologi untuk Mahasiswa S2",
-                Description = "Workshop intensif penulisan karya ilmiah teologi bagi mahasiswa program pascasarjana STTB. Dipandu oleh editor jurnal teologi nasional.",
+                Description =
+                    "Workshop intensif penulisan karya ilmiah teologi bagi mahasiswa program pascasarjana STTB. Dipandu oleh editor jurnal teologi nasional.",
                 StartDate = now.AddDays(14),
                 EndDate = now.AddDays(14),
                 Location = "Ruang Seminar Lt. 3, STTB Bandung",
                 ImageUrl = "/uploads/events/event-5.jpg",
                 CategoryId = categories["Akademik"].Id,
-                RegistrationUrl = "https://www.eventbrite.com/e/academic-writing-workshop-tickets-1981778103656",
+                RegistrationUrl =
+                    "https://www.eventbrite.com/e/academic-writing-workshop-tickets-1981778103656",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-2),
@@ -336,7 +496,8 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Ibadah Pembukaan Tahun Akademik 2025/2026",
-                Description = "Ibadah syukur dan pembukaan resmi tahun akademik baru STTB. Seluruh civitas akademika diundang untuk hadir.",
+                Description =
+                    "Ibadah syukur dan pembukaan resmi tahun akademik baru STTB. Seluruh civitas akademika diundang untuk hadir.",
                 StartDate = now.AddDays(7),
                 EndDate = null,
                 Location = "Kapel STTB Bandung",
@@ -351,7 +512,8 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Seminar Misi: Pelayanan di Daerah Terpencil Indonesia",
-                Description = "Seminar tentang tantangan dan strategi pelayanan misi di daerah 3T (Tertinggal, Terdepan, Terluar) Indonesia bersama praktisi misi lapangan.",
+                Description =
+                    "Seminar tentang tantangan dan strategi pelayanan misi di daerah 3T (Tertinggal, Terdepan, Terluar) Indonesia bersama praktisi misi lapangan.",
                 StartDate = now.AddDays(55),
                 EndDate = now.AddDays(56),
                 Location = "Aula STTB Bandung",
@@ -366,13 +528,15 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Wisuda STTB Angkatan ke-46",
-                Description = "Upacara wisuda Angkatan ke-46 Sekolah Tinggi Teologi Bandung. Keluarga wisudawan diwajibkan mendaftar undangan terlebih dahulu.",
+                Description =
+                    "Upacara wisuda Angkatan ke-46 Sekolah Tinggi Teologi Bandung. Keluarga wisudawan diwajibkan mendaftar undangan terlebih dahulu.",
                 StartDate = now.AddDays(90),
                 EndDate = null,
                 Location = "Gedung Serbaguna STTB Bandung",
                 ImageUrl = "/uploads/events/event-8.jpg",
                 CategoryId = categories["Akademik"].Id,
-                RegistrationUrl = "https://www.waikato.ac.nz/students/graduation/graduand-and-guest-tickets/",
+                RegistrationUrl =
+                    "https://www.waikato.ac.nz/students/graduation/graduand-and-guest-tickets/",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-6),
@@ -381,13 +545,15 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Open House STTB untuk Calon Mahasiswa",
-                Description = "Kesempatan bagi calon mahasiswa dan orang tua untuk mengenal lebih dekat program studi, fasilitas, dan kehidupan kampus STTB.",
+                Description =
+                    "Kesempatan bagi calon mahasiswa dan orang tua untuk mengenal lebih dekat program studi, fasilitas, dan kehidupan kampus STTB.",
                 StartDate = now.AddDays(25),
                 EndDate = null,
                 Location = "Kampus STTB Bandung",
                 ImageUrl = "/uploads/events/event-9.jpg",
                 CategoryId = categories["Admisi"].Id,
-                RegistrationUrl = "https://www.eventbrite.sg/e/nus-college-open-house-2026-tickets-1979704932746",
+                RegistrationUrl =
+                    "https://www.eventbrite.sg/e/nus-college-open-house-2026-tickets-1979704932746",
                 IsPublished = true,
                 CreatedBy = adminUserId,
                 CreatedAt = now.AddDays(-8),
@@ -396,7 +562,8 @@ public static class DataSeeder
             {
                 Id = Guid.NewGuid(),
                 Title = "Pelatihan Konseling Pastoral Tingkat Lanjut",
-                Description = "Pelatihan intensif konseling pastoral selama tiga hari untuk para pendeta dan pemimpin gereja. Sertifikat kompetensi diberikan bagi peserta yang lulus.",
+                Description =
+                    "Pelatihan intensif konseling pastoral selama tiga hari untuk para pendeta dan pemimpin gereja. Sertifikat kompetensi diberikan bagi peserta yang lulus.",
                 StartDate = now.AddDays(60),
                 EndDate = now.AddDays(62),
                 Location = "Pusat Konseling STTB Bandung",
@@ -415,9 +582,14 @@ public static class DataSeeder
 
     // ─── Media ───────────────────────────────────────────────────────────────
 
-    private static async Task SeedMediaAsync(ApplicationDbContext db, string adminUserId, Dictionary<string, MediaCategory> categories)
+    private static async Task SeedMediaAsync(
+        ApplicationDbContext db,
+        string adminUserId,
+        Dictionary<string, MediaCategory> categories
+    )
     {
-        if (await db.Media.AnyAsync()) return;
+        if (await db.Media.AnyAsync())
+            return;
 
         var now = DateTime.UtcNow;
 
@@ -486,7 +658,8 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Title = "Pendidikan Kristen Berbasis Alkitabiah: Membangun Fondasi Iman dan Spiritualitas Generasi Era Digital",
+                Title =
+                    "Pendidikan Kristen Berbasis Alkitabiah: Membangun Fondasi Iman dan Spiritualitas Generasi Era Digital",
                 Url = "https://jurnal.sttkn.ac.id/index.php/Veritas/article/view/281",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-6.jpg",
@@ -498,7 +671,8 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Title = "Pendidikan Agama Kristen: Mengintegrasikan Nilai-Nilai Spiritual dalam Era Globalisasi",
+                Title =
+                    "Pendidikan Agama Kristen: Mengintegrasikan Nilai-Nilai Spiritual dalam Era Globalisasi",
                 Url = "https://prin.or.id/index.php/JURRAFI/article/view/7676",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-7.jpg",
@@ -522,7 +696,8 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.NewGuid(),
-                Title = "Pendidikan Agama Kristen dalam Keluarga di Era Digital: Membangun Remaja Bijak Menggunakan Media Sosial",
+                Title =
+                    "Pendidikan Agama Kristen dalam Keluarga di Era Digital: Membangun Remaja Bijak Menggunakan Media Sosial",
                 Url = "https://jurnal.sttkn.ac.id/index.php/Veritas/article/view/157",
                 Type = "article",
                 ThumbnailUrl = "/uploads/media/media-9.jpg",
@@ -546,6 +721,685 @@ public static class DataSeeder
         };
 
         db.Media.AddRange(mediaItems);
+        await db.SaveChangesAsync();
+    }
+
+    // ─── Pages ───────────────────────────────────────────────────────────────
+
+    private static async Task SeedPagesAsync(ApplicationDbContext db, string adminUserId)
+    {
+        if (await db.Pages.AnyAsync())
+            return;
+
+        var pages = new List<Page>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Beranda",
+                Slug = "/",
+                Section = "Publik",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-08"),
+                Content = "<h1>Selamat Datang di STTB</h1>",
+                MetaDescription = "Halaman resmi Sekolah Tinggi Teologi Bandung.",
+                MetaKeywords = "sttb, teologi, bandung",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Visi & Misi",
+                Slug = "/visi-misi",
+                Section = "Tentang",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-05"),
+                Content =
+                    "<h2>Visi</h2><p>Menjadi institusi teologi yang unggul...</p><h2>Misi</h2><ul><li>Misi 1</li></ul>",
+                MetaDescription = "Visi dan Misi Sekolah Tinggi Teologi Bandung.",
+                MetaKeywords = "visi, misi, sttb",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Sejarah STTB",
+                Slug = "/sejarah",
+                Section = "Tentang",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-01"),
+                Content = "<p>Sejarah panjang berdirinya STTB...</p>",
+                MetaDescription = "Sejarah pendirian Sekolah Tinggi Teologi Bandung.",
+                MetaKeywords = "sejarah, sttb, sejarah sttb",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-20"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Pengakuan Iman",
+                Slug = "/pengakuan-iman",
+                Section = "Tentang",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-02-28"),
+                Content = "<p>Dasar pengakuan iman STTB...</p>",
+                MetaDescription = "Pengakuan Iman STTB.",
+                MetaKeywords = "pengakuan iman, iman, sttb",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-20"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Pengurus Yayasan",
+                Slug = "/pengurus-yayasan",
+                Section = "Tentang",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-02-20"),
+                Content = "<p>Struktur pengurus yayasan STTB...</p>",
+                MetaDescription = "Daftar Pengurus Yayasan STTB.",
+                MetaKeywords = "pengurus, yayasan, sttb",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-10"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Dewan Pengajar Dosen STTB",
+                Slug = "/dewan-dosen",
+                Section = "Tentang",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-02-20"),
+                Content = "<p>Dewan Pengajar Dosen STTB...</p>",
+                MetaDescription = "Daftar Dewan Pengajar Dosen STTB.",
+                MetaKeywords = "dewan, dosen, pengajar, sttb",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-10"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Mars STTB",
+                Slug = "/mars-sttb",
+                Section = "Tentang",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-02-15"),
+                Content = "<p>Lirik dan notasi Mars STTB...</p>",
+                MetaDescription = "Lirik Mars STTB.",
+                MetaKeywords = "mars, lagu, sttb",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-10"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Sarjana Teologi",
+                Slug = "/sarjana-teologi",
+                Section = "Program Studi",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-02-10"),
+                Content = "<p>Program Studi Sarjana Teologi (S1)...</p>",
+                MetaDescription = "Program Studi Sarjana Teologi di STTB.",
+                MetaKeywords = "sarjana teologi, s1 teologi, prodi",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Sarjana Pendidikan Kristen",
+                Slug = "/sarjana-pendidikan-kristen",
+                Section = "Program Studi",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-02-10"),
+                Content = "<p>Program Studi Sarjana Pendidikan Kristen (S1)...</p>",
+                MetaDescription = "Program Studi Sarjana Pendidikan Kristen di STTB.",
+                MetaKeywords = "pendidikan kristen, s1 pendidikan, prodi",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Jadwal Admisi",
+                Slug = "/jadwal-admisi",
+                Section = "Admisi",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-07"),
+                Content = "<p>Jadwal pendaftaran mahasiswa baru...</p>",
+                MetaDescription = "Jadwal Admisi dan Pendaftaran STTB.",
+                MetaKeywords = "jadwal, admisi, pendaftaran",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Prosedur Admisi",
+                Slug = "/prosedur-admisi",
+                Section = "Admisi",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-07"),
+                Content = "<p>Prosedur admisi mahasiswa baru...</p>",
+                MetaDescription = "Prosedur Admisi",
+                MetaKeywords = "prosedur, admisi, pendaftaran",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Info Persyaratan",
+                Slug = "/informasi-persyaratan",
+                Section = "Admisi",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-07"),
+                Content = "<p>Persyaratan pendaftaran mahasiswa baru...</p>",
+                MetaDescription = "Informasi Persyaratan Pendaftaran STTB.",
+                MetaKeywords = "persyaratan, dokumen, pendaftaran",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Beasiswa",
+                Slug = "/beasiswa",
+                Section = "Admisi",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-06"),
+                Content = "<p>Informasi program beasiswa STTB...</p>",
+                MetaDescription = "Program Beasiswa STTB.",
+                MetaKeywords = "beasiswa, diskon, biaya",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "FAQ Admisi",
+                Slug = "/faq",
+                Section = "Admisi",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-05"),
+                Content = "<p>Pertanyaan yang sering diajukan...</p>",
+                MetaDescription = "FAQ Pendaftaran STTB.",
+                MetaKeywords = "faq, pertanyaan, bantuan",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Pembinaan Mahasiswa",
+                Slug = "/pembinaan",
+                Section = "Kehidupan Kampus",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-04"),
+                Content = "<p>Program pembinaan spiritual dan akademik...</p>",
+                MetaDescription = "Pembinaan Mahasiswa STTB.",
+                MetaKeywords = "pembinaan, rohani, mahasiswa",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Senat Mahasiswa",
+                Slug = "/senat",
+                Section = "Kehidupan Kampus",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-03"),
+                Content = "<p>Struktur dan kegiatan Senat Mahasiswa...</p>",
+                MetaDescription = "Senat Mahasiswa STTB.",
+                MetaKeywords = "senat, bem, mahasiswa",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Fasilitas",
+                Slug = "/fasilitas",
+                Section = "Kehidupan Kampus",
+                IsPublished = false,
+                UpdatedAt = DateTime.Parse("2026-03-02"), // Status: Draft
+                Content = "<p>Daftar fasilitas kampus...</p>",
+                MetaDescription = "Fasilitas Kampus STTB.",
+                MetaKeywords = "fasilitas, kampus, gedung",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-03-01"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Biaya Studi",
+                Slug = "/biaya-studi",
+                Section = "Keuangan",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-03-01"),
+                Content = "<p>Rincian biaya studi dan SPP...</p>",
+                MetaDescription = "Informasi Biaya Studi STTB.",
+                MetaKeywords = "biaya, spp, uang kuliah",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-20"),
+                UpdatedBy = adminUserId,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Kontak Kami",
+                Slug = "/kontak-kami",
+                Section = "Publik",
+                IsPublished = true,
+                UpdatedAt = DateTime.Parse("2026-02-28"),
+                Content = "<p>Alamat, Email, dan Telepon STTB...</p>",
+                MetaDescription = "Kontak dan Lokasi STTB.",
+                MetaKeywords = "kontak, alamat, telepon, email",
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Parse("2026-02-20"),
+                UpdatedBy = adminUserId,
+            },
+        };
+
+        db.Pages.AddRange(pages);
+        await db.SaveChangesAsync();
+    }
+
+    // ─── Study Programs ──────────────────────────────────────────────────────
+
+    private static async Task SeedStudyProgramsAsync(ApplicationDbContext db, string adminUserId)
+    {
+        if (await db.StudyPrograms.AnyAsync())
+            return;
+
+        var programs = new List<StudyProgram>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Sarjana Teologi",
+                Slug = "sarjana-teologi",
+                Level = "S1",
+                Degree = "S.Th.",
+                Accreditation = "A",
+                Tagline = "Membangun fondasi teologis yang kokoh untuk pelayanan gereja.",
+                Description =
+                    "Program studi empat tahun yang membekali mahasiswa dengan fondasi teologis yang kokoh, pemahaman Alkitab yang mendalam, dan keterampilan pastoral untuk melayani gereja dan masyarakat.",
+                Duration = "4 tahun (8 semester)",
+                Credits = 148,
+                Vision =
+                    "Menjadi program studi teologi yang unggul dalam integritas ilmiah dan kerohanian di Indonesia.",
+                Mission =
+                    "Menyelenggarakan pendidikan teologi yang berpusat pada Kristus, berorientasi pada gereja dan konteks budaya masa kini.",
+                Objectives = new List<string>
+                {
+                    "Menguasai disiplin ilmu teologi biblika, sistematis, dan praktis.",
+                    "Mampu melakukan penelitian teologis dasar secara mandiri.",
+                    "Menunjukkan karakter kristiani dan integritas dalam pelayanan.",
+                },
+                Courses = new List<string>
+                {
+                    "Hermeneutika Alkitab",
+                    "Teologi Sistematis I",
+                    "Bahasa Ibrani Dasar",
+                    "Sejarah Gereja",
+                    "Homiletika",
+                    "Pelayanan Pastoral",
+                },
+                Careers = new List<string>
+                {
+                    "Pendeta",
+                    "Penginjil",
+                    "Pekerja Lembaga Mis",
+                    "Penatua/Guru Mandiri",
+                },
+                Tags = new List<string> { "Hermeneutika", "Homiletika", "Pastoral" },
+                CoverImageUrl = "/images/covers/s1-teologi.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Sarjana Pendidikan Kristen",
+                Slug = "sarjana-pendidikan-kristen",
+                Level = "S1",
+                Degree = "S.Pd.K.",
+                Accreditation = "A",
+                Tagline =
+                    "Mendidik generasi penerus dalam nilai-nilai Kristiani yang transformatif.",
+                Description =
+                    "Program yang mempersiapkan guru agama Kristen, pembina anak dan remaja, serta pemimpin pendidikan gerejawi yang kompeten dan berkarakter Kristiani.",
+                Duration = "4 tahun (8 semester)",
+                Credits = 144,
+                Vision =
+                    "Menjadi pusat pengembangan pendidikan Kristen yang menghasilkan pendidik berkualitas.",
+                Mission =
+                    "Mempersiapkan pendidik Kristen profesional yang memiliki integritas karakter, pedagogik, dan spiritual.",
+                Objectives = new List<string>
+                {
+                    "Menguasai teori dan praktik pendidikan Kristen.",
+                    "Mampu mengembangkan kurikulum PAK yang kontekstual.",
+                    "Memiliki keterampilan mengajar yang efektif dan kreatif.",
+                },
+                Courses = new List<string>
+                {
+                    "Dasar-dasar Pendidikan Kristen",
+                    "Psikologi Perkembangan",
+                    "Metode Pengajaran PAK",
+                    "Kurikulum PAK",
+                    "Pembinaan Remaja",
+                },
+                Careers = new List<string>
+                {
+                    "Guru Agama Kristen",
+                    "Pembina Anak/Remaja",
+                    "Kepala Sekolah Kristen",
+                    "Konselor Pendidikan",
+                },
+                Tags = new List<string> { "PAK", "Kurikulum", "Pedagogi" },
+                CoverImageUrl = "/images/covers/s1-pak.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Magister Teologi – Pelayanan Pastoral Gereja Urban",
+                Slug = "magister-teologi-pelayanan-pastoral-gereja-urban",
+                Level = "S2",
+                Degree = "M.Th.",
+                Accreditation = "Unggul",
+                Tagline = "Melayani secara efektif dalam kompleksitas konteks perkotaan.",
+                Description =
+                    "Program pascasarjana yang mempersiapkan gembala sidang dan pemimpin gereja untuk melayani secara efektif dalam konteks perkotaan yang kompleks dan dinamis.",
+                Duration = "2 tahun (4 semester)",
+                Credits = 72,
+                Vision =
+                    "Menjadi program studi terdepan dalam teologi pastoral konteks urban di Asia Tenggara.",
+                Mission =
+                    "Memberdayakan pemimpin gereja dengan wawasan teologis dan praktis untuk transformasi kota.",
+                Objectives = new List<string>
+                {
+                    "Menganalisis dinamika sosial budaya perkotaan.",
+                    "Mengembangkan model pelayanan pastoral yang relevan.",
+                    "Menerapkan kepemimpinan servant leadership di konteks urban.",
+                },
+                Courses = new List<string>
+                {
+                    "Teologi Urban",
+                    "Sosiologi Perkotaan",
+                    "Pastoral Care Kontemporer",
+                    "Kepemimpinan Gereja Kota",
+                },
+                Careers = new List<string>
+                {
+                    "Gembala Gereja Kota",
+                    "Konselor Kristen",
+                    "Kapelen",
+                    "Pemimpin LSM Urban",
+                },
+                Tags = new List<string> { "Urban Ministry", "Pastoral", "Leadership" },
+                CoverImageUrl = "/images/covers/s2-urban.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Magister Teologi – Transformasi Budaya & Masyarakat",
+                Slug = "magister-teologi-transformasi-budaya-masyarakat",
+                Level = "S2",
+                Degree = "M.Th.",
+                Accreditation = "B",
+                Tagline = "Agen transformasi Kerajaan Allah di tengah masyarakat.",
+                Description =
+                    "Program yang mempersiapkan pemimpin gereja dan aktivis sosial untuk menghadirkan transformasi Kerajaan Allah dalam berbagai lapisan budaya dan struktur masyarakat.",
+                Duration = "2 tahun (4 semester)",
+                Credits = 72,
+                Vision =
+                    "Menghadirkan transformasi holistik melalui pendidikan teologi kontekstual.",
+                Mission =
+                    "Membekali mahasiswa dengan kerangka teologis untuk perubahan sosial dan budaya.",
+                Objectives = new List<string>
+                {
+                    "Memahami teologi transformasi dan misiologi kontekstual.",
+                    "Menganalisis isu-isu keadilan sosial perspektif Alkitab.",
+                    "Merancang program intervensi sosial berbasis iman.",
+                },
+                Courses = new List<string>
+                {
+                    "Teologi Transformasi",
+                    "Antropologi Budaya",
+                    "Misiologi Kontemporer",
+                    "Etika Sosial",
+                },
+                Careers = new List<string>
+                {
+                    "Aktivis Sosial",
+                    "Praktisi Pengembangan Masyarakat",
+                    "Konsultan Kebijakan",
+                    "Peneliti Sosial",
+                },
+                Tags = new List<string> { "Transformasi", "Budaya", "Misiologi" },
+                CoverImageUrl = "/images/covers/s2-transformasi.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Magister Pendidikan Kristen",
+                Slug = "magister-pendidikan-kristen",
+                Level = "S2",
+                Degree = "M.Pd.K.",
+                Accreditation = "Unggul",
+                Tagline = "Memimpin reformasi pendidikan berbasis iman dan riset.",
+                Description =
+                    "Program lanjutan untuk para pendidik Kristen yang ingin mengembangkan keahlian pedagogis, kurikulum, dan kepemimpinan pendidikan berbasis iman.",
+                Duration = "2 tahun (4 semester)",
+                Credits = 68,
+                Vision =
+                    "Menjadi program studi terdepan dalam riset dan inovasi pendidikan Kristen.",
+                Mission =
+                    "Mengembangkan keilmuan dan praktik pendidikan Kristen yang berkualitas bagi generasi mendatang.",
+                Objectives = new List<string>
+                {
+                    "Melakukan riset pendidikan Kristen yang inovatif.",
+                    "Mengembangkan kurikulum berbasis teologi Kristen.",
+                    "Menerapkan kepemimpinan pendidikan yang transformatif.",
+                },
+                Courses = new List<string>
+                {
+                    "Filsafat Pendidikan Kristen",
+                    "Metodologi Penelitian Pendidikan",
+                    "Kurikulum & Pembelajaran",
+                    "Kepemimpinan Pendidikan",
+                },
+                Careers = new List<string>
+                {
+                    "Dosen PAK",
+                    "Kepala Sekolah",
+                    "Kurikulum Developer",
+                    "Peneliti Pendidikan",
+                },
+                Tags = new List<string> { "Pendidikan", "Riset", "Kepemimpinan" },
+                CoverImageUrl = "/images/covers/s2-pak.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Magister Ministri – Marketplace",
+                Slug = "magister-ministri-marketplace",
+                Level = "S2",
+                Degree = "M.Min.",
+                Accreditation = "B",
+                Tagline = "Mengintegrasikan iman dalam dunia kerja profesional.",
+                Description =
+                    "Program inovatif yang membekali profesional bisnis, entrepreneur, dan pekerja Kristen untuk mengintegrasikan iman dengan pekerjaan secara transformatif.",
+                Duration = "2 tahun (4 semester)",
+                Credits = 68,
+                Vision =
+                    "Memberdayakan profesional Kristen untuk menjadi garam dan terang di tempat kerja.",
+                Mission =
+                    "Memperlengkapi mahasiswa dengan teologi kerja dan etika bisnis yang berlandaskan iman.",
+                Objectives = new List<string>
+                {
+                    "Mengintegrasikan nilai-nilai Kerajaan dalam strategi bisnis.",
+                    "Memahami etika bisnis Kristen secara mendalam.",
+                    "Mengembangkan visi kerja sebagai panggilan (calling).",
+                },
+                Courses = new List<string>
+                {
+                    "Teologi Kerja dan Bisnis",
+                    "Etika Bisnis Kristen",
+                    "Kewirausahaan Kristiani",
+                    "Kepemimpinan Profesional",
+                },
+                Careers = new List<string>
+                {
+                    "Entrepreneur Kristen",
+                    "Manajer Korporat",
+                    "Konsultan Bisnis",
+                    "Pemimpin Organisasi",
+                },
+                Tags = new List<string> { "Bisnis", "Integrasi Iman", "Profesional" },
+                CoverImageUrl = "/images/covers/s2-marketplace.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Magister Ministri – Kepemimpinan Pastoral",
+                Slug = "magister-ministri-kepemimpinan-pastoral",
+                Level = "S2",
+                Degree = "M.Min.",
+                Accreditation = "A",
+                Tagline = "Membentuk pemimpin rohani yang berkarakter dan efektif.",
+                Description =
+                    "Program yang mengembangkan kapasitas kepemimpinan rohani, manajemen gereja, dan pembinaan jemaat bagi para pemimpin gereja masa kini.",
+                Duration = "2 tahun (4 semester)",
+                Credits = 68,
+                Vision = "Mencetak pemimpin gembala yang berintegritas, arif, dan berkualitas.",
+                Mission =
+                    "Meningkatkan kapasitas kepemimpinan dan manajemen pelayanan jemaat secara profesional.",
+                Objectives = new List<string>
+                {
+                    "Menguasai prinsip-prinsip kepemimpinan rohani.",
+                    "Mengelola administrasi dan manajemen gereja secara efektif.",
+                    "Membina jemaat secara holistik dan dinamis.",
+                },
+                Courses = new List<string>
+                {
+                    "Kepemimpinan Rohani",
+                    "Manajemen Gereja",
+                    "Pembinaan Jemaat",
+                    "Teologi Pastoral Lanjutan",
+                },
+                Careers = new List<string>
+                {
+                    "Gembala Senior",
+                    "Penginjil",
+                    "Pembina Rohani",
+                    "Konselor Pastoral",
+                },
+                Tags = new List<string> { "Manajemen Gereja", "Kepemimpinan", "Pembinaan" },
+                CoverImageUrl = "/images/covers/s2-pastoral.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Magister Ministri – Teologi Pelayanan Gerejawi",
+                Slug = "magister-ministri-teologi-pelayanan-gerejawi",
+                Level = "S2",
+                Degree = "M.Min.",
+                Accreditation = "A",
+                Tagline = "Memadukan teologi biblika dengan praktik pelayanan gerejawi.",
+                Description =
+                    "Program yang mengintegrasikan teologi biblika dengan praktik pelayanan gerejawi yang kontekstual dan efektif untuk berbagai denominasi.",
+                Duration = "2 tahun (4 semester)",
+                Credits = 68,
+                Vision =
+                    "Menjadi program studi yang menjembatani teologi akademis dan praktik pelayanan gereja lokal.",
+                Mission =
+                    "Membekali hamba Tuhan dengan landasan teologis yang kuat untuk pelayanan praktis yang sehat.",
+                Objectives = new List<string>
+                {
+                    "Memahami teologi biblika secara mendalam.",
+                    "Menerapkan prinsip teologis dalam liturgi dan sakramen.",
+                    "Melayani lintas denominasi dengan hikmat dan peka budaya.",
+                },
+                Courses = new List<string>
+                {
+                    "Teologi Biblika",
+                    "Liturgi dan Ibadah",
+                    "Praktik Pelayanan Gerejawi",
+                    "Teologi Kontekstual",
+                },
+                Careers = new List<string>
+                {
+                    "Pendeta",
+                    "Pelayan Altar",
+                    "Pengajar Katekisasi",
+                    "Pemimpin Ibadah",
+                },
+                Tags = new List<string> { "Pelayanan", "Teologi Praktis", "Denominasi" },
+                CoverImageUrl = "/images/covers/s2-gerejawi.jpg",
+                IsPublished = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.Now,
+                UpdatedBy = adminUserId,
+                UpdatedAt = DateTime.Now,
+            },
+        };
+
+        db.StudyPrograms.AddRange(programs);
         await db.SaveChangesAsync();
     }
 }

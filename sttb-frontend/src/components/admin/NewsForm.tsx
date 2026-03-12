@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  ArrowLeft, Bold, Italic, Underline, List, ListOrdered, Link2, Eye, EyeOff, Upload, X, AlertCircle,
+  ArrowLeft, Bold, Italic, Underline, List, ListOrdered, Link2, Eye, EyeOff, Upload, X, AlertCircle, Image as ImageIcon,
   CheckCircle, Heading1, Heading2, Quote, Save, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import Image from "next/image";
 import { newsFormSchema, type NewsFormValues } from "@/libs/schemas/news-schema";
 import type { CategoryResponse } from "@/types/shared";
 import { getImageUrl } from "@/lib/api";
+import { useUploadImage } from "@/hooks/useUpload";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
@@ -23,13 +24,12 @@ interface NewsFormProps {
   initialData?: Partial<NewsFormValues & { id?: string }>;
   onSave: (data: NewsFormValues, status: "draft" | "published") => Promise<void>;
   backHref?: string;
-  isSaving?: boolean;
 }
 
 const TAG_SUGGESTIONS = ["STTB", "Teologi", "Reformed", "Akademik", "Pelayanan", "Misi", "Mahasiswa", "Alumni"];
 
 export function slugify(text: string) {
-  return text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+  return text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").slice(0, 80);
 }
 
 /* ─── Rich Text Editor ───────────────────────────────────── */
@@ -44,7 +44,7 @@ const TOOLBAR = [
   { icon: List, label: "List", action: "\n- ", wrap: false },
   { icon: ListOrdered, label: "Numbered", action: "\n1. ", wrap: false },
   { icon: Link2, label: "Link", action: "[Link](url)", wrap: false },
-  { icon: Image, label: "Image", action: "![Alt](url)", wrap: false },
+  { icon: ImageIcon, label: "Image", action: "![Alt](url)", wrap: false },
 ];
 
 function RichTextEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
@@ -73,33 +73,61 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (v: stri
       .replace(/\n/g, "<br/>");
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden focus-within:border-[#0A2C74] transition-colors">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
       <div className="flex items-center gap-0.5 p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex-wrap">
         {TOOLBAR.map((btn) => {
           const Icon = btn.icon;
           return (
             <button key={btn.label} type="button" title={btn.label} onClick={() => apply(btn.action, btn.wrap)}
               className="px-2 py-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors">
-              <Icon className="w-3.5 h-3.5" src={""} alt={""} />
+              <Icon className="w-3.5 h-3.5" />
             </button>
           );
         })}
         <div className="flex-1" />
         <button type="button" onClick={() => setPreview(p => !p)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${preview ? "bg-[#0A2C74] text-white" : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"}`}>
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${preview ? "bg-[#0A2C74] text-white" : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100"}`}>
           {preview ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
           {preview ? "Edit" : "Preview"}
         </button>
       </div>
       {preview
-        ? <div className="min-h-[280px] p-5 text-sm text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900 prose prose-sm max-w-none break-words"
+        ? <div className="min-h-[280px] p-5 text-sm text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900 prose prose-sm max-w-none"
           dangerouslySetInnerHTML={{ __html: html(value) || "<p class='text-gray-400 italic'>Belum ada konten...</p>" }} />
         : <textarea ref={ref} value={value} onChange={e => onChange(e.target.value)} rows={12}
           placeholder="Tulis konten berita... Gunakan toolbar di atas untuk format teks."
           className="w-full p-4 bg-white dark:bg-gray-900 text-sm text-gray-800 dark:text-gray-200 focus:outline-none resize-none font-mono leading-relaxed placeholder-gray-400" />
       }
-      <div className="px-4 py-1.5 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 flex justify-between">
-        <span>{value.length} karakter · {value.split(/\s+/).filter(Boolean).length} kata</span>
+      <div className="px-4 py-1.5 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400">
+        {value.length} karakter · {value.split(/\s+/).filter(Boolean).length} kata
+      </div>
+    </div>
+  );
+}
+
+/* ─── Tag Input ──────────────────────────────────────────── */
+
+function TagInput({ tags, onChange }: { tags: string[]; onChange: (t: string[]) => void }) {
+  const [input, setInput] = useState("");
+  const add = (t: string) => { const v = t.trim(); if (v && !tags.includes(v) && tags.length < 8) { onChange([...tags, v]); setInput(""); } };
+  const remove = (t: string) => onChange(tags.filter(x => x !== t));
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-1.5 min-h-[28px]">
+        {tags.map(t => (
+          <span key={t} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#0A2C74]/10 text-[#0A2C74] dark:bg-blue-900/30 dark:text-blue-300">
+            #{t}<button type="button" onClick={() => remove(t)} className="hover:text-[#E62129] ml-0.5"><X className="w-2.5 h-2.5" /></button>
+          </span>
+        ))}
+        <input value={input} onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(input); } else if (e.key === "Backspace" && !input && tags.length) remove(tags[tags.length - 1]); }}
+          placeholder="Tambah tag, Enter" className="flex-1 min-w-20 text-sm bg-transparent text-gray-700 dark:text-gray-300 focus:outline-none placeholder-gray-400" />
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {TAG_SUGGESTIONS.filter(t => !tags.includes(t)).map(t => (
+          <button key={t} type="button" onClick={() => add(t)}
+            className="px-2 py-0.5 rounded text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-[#E62129]/10 hover:text-[#E62129] transition-colors">+{t}</button>
+        ))}
       </div>
     </div>
   );
@@ -112,6 +140,8 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
   const isEdit = !!initialData?.id;
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const isFirstRender = useRef(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage();
 
   const {
     register,
@@ -162,6 +192,21 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
     )();
   };
 
+  const handleImageUpload = async (file: File) => {
+    try {
+      if (!file.type.startsWith("image/")) {
+        toast.error("File harus berupa gambar");
+        return;
+      }
+      const res = await uploadImage({ file, uploadType: "news" });
+      setValue("coverImageUrl", res.url, { shouldValidate: true });
+      toast.success("Gambar berhasil diupload");
+    } catch (error) {
+      toast.error("Gagal mengupload gambar");
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header bar */}
@@ -175,22 +220,16 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
             <p className="text-gray-500 dark:text-gray-400 text-sm">{isEdit ? `Mengedit: ${titleValue || "—"}` : "Buat dan terbitkan artikel berita STTB"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={form.handleSubmit((d) => onSubmit(d, false))}
-            disabled={isSaving || isUploadingImage}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
-          >
-            {isSaving && !isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+        <div className="flex items-center gap-2">
+          <button onClick={() => handleSave("draft")} disabled={!!saving}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
+            {saving === "draft" ? <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
             Simpan Draft
           </button>
-          <button
-            onClick={form.handleSubmit((d) => onSubmit(d, true))}
-            disabled={isSaving || isUploadingImage}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0A2C74] hover:bg-[#072054] text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
-          >
-            {isSaving && isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-            {isEdit ? "Perbarui & Terbitkan" : "Terbitkan"}
+          <button onClick={() => handleSave("published")} disabled={!!saving}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
+            {saving === "publish" ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+            {isEdit ? "Perbarui" : "Terbitkan"}
           </button>
         </div>
       </div>
@@ -230,7 +269,7 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
           </div>
 
           {/* Content */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
               Konten <span className="text-[#E62129]">*</span>
             </label>
@@ -241,9 +280,9 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
           </div>
 
           {/* Excerpt */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Ringkasan / Excerpt <span className="text-gray-400 font-normal text-xs ml-1">(Bila dikosongkan akan diambil dari konten)</span>
+              Ringkasan / Excerpt <span className="text-[#E62129]">*</span>
             </label>
             <textarea {...register("excerpt")} rows={3} maxLength={280}
               placeholder="Ringkasan singkat yang muncul di daftar berita (maks. 280 karakter)..."
@@ -287,9 +326,9 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
           </div>
 
           {/* Category */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Klasifikasi</h3>
-            <div className="space-y-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Klasifikasi</h3>
+            <div className="space-y-3">
               <div>
                 <label className="block text-xs text-gray-400 mb-1.5">Kategori <span className="text-[#E62129]">*</span></label>
                 <select {...register("categoryId")}
@@ -321,17 +360,26 @@ export function NewsForm({ categories = [], initialData, onSave, backHref = "/ad
             {coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
                 <Image src={getImageUrl(coverImageUrl) ?? coverImageUrl} alt="Cover" height={128} width={400} className="w-full h-32 object-cover" />
-                <button type="button" onClick={() => setValue("coverImageUrl", "")} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors">
+                <button type="button" onClick={() => setValue("coverImageUrl", "")} disabled={!!saving || isUploading} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors">
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
-              : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-5 text-center mb-3">
-                <Upload className="w-6 h-6 text-gray-300 mx-auto mb-1" />
-                <p className="text-xs text-gray-400">Masukkan URL gambar</p>
+              : <div onClick={() => !isUploading && fileInputRef.current?.click()} className={`rounded-xl border-2 border-dashed p-5 text-center cursor-pointer transition-colors ${isUploading ? "border-blue-300 bg-blue-50/50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-700 hover:border-[#E62129]"}`}>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-6 h-6 text-blue-500 mx-auto mb-1 animate-spin" />
+                    <p className="text-xs text-blue-500 font-medium">Mengupload...</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-6 h-6 text-gray-300 hover:text-[#E62129] mx-auto mb-1 transition-colors" />
+                    <p className="text-xs text-gray-500 font-medium">Klik untuk upload gambar sampul</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Mendukung JPG, PNG (Max 10MB)</p>
+                  </>
+                )}
               </div>
             }
-            <input type="url" {...register("coverImageUrl")} placeholder="https://images.unsplash.com/..."
-              className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:border-[#0A2C74]" />
+            <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
           </div>
 
           {/* Checklist */}

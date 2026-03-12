@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload, X, ImageIcon, Film, Loader2 } from "lucide-react";
@@ -35,10 +35,21 @@ export function UploadMediaDialog({ isOpen, onClose }: UploadMediaDialogProps) {
             title: "",
             url: "",
             type: "video",
-            categoryId: "", // Default empty string
+            categoryId: "",
             tag: "",
         },
     });
+
+    useEffect(() => {
+        const handleEscClose = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                handleClose();
+            }
+        }
+
+        window.addEventListener("keydown", handleEscClose);
+        return () => window.removeEventListener("keydown", handleEscClose);
+    }, [])
 
     const { data: categories } = useMediaCategories();
 

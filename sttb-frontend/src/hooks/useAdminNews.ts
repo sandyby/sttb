@@ -30,6 +30,7 @@ export function useCreateNews() {
     mutationFn: (payload: CreateNewsPayload) => adminCreateNews(token, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "news"] });
+      queryClient.invalidateQueries({ queryKey: ["news", "detail"] }); // Ensure detail cache is fresh
     },
   });
 }
@@ -43,6 +44,7 @@ export function useDeleteNews() {
     mutationFn: (id: string) => adminDeleteNews(token, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "news"] });
+      queryClient.invalidateQueries({ queryKey: ["news", "detail"] });
     },
   });
 }
@@ -57,6 +59,7 @@ export function useUpdateNews() {
       adminUpdateNews(token, id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "news"] });
+      queryClient.invalidateQueries({ queryKey: ["news", "detail"] });
     },
   });
 }

@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calendar, Tag, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
-import { useGetNews, NewsListItem } from "@/hooks/useNews";
+import { useGetNews } from "@/hooks/useNews";
+import { NewsListItem } from "@/types/news";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/lib/api";
 
@@ -166,7 +167,7 @@ export function NewsSection() {
                         <Tag className="w-3 h-3" />
                         {featuredNews.category || "Berita"}
                       </span>
-                      <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-red-200 transition-colors">
+                      <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-[#E62129] transition-colors">
                         {featuredNews.title}
                       </h3>
                       <div className="flex items-center gap-2 text-white/70 text-xs mt-1.5">

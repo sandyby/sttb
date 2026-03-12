@@ -4,13 +4,14 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft, Calendar, MapPin, Users, X, Upload,
-  AlertCircle, CheckCircle, Link2, Tag, Save, Loader2
+  AlertCircle, CheckCircle, Link2, Tag, Eye, Save, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { eventFormSchema, type EventFormValues } from "@/libs/schemas/event-schema";
 import { useEventCategories } from "@/hooks/useEvents";
 import { getImageUrl } from "@/lib/api";
+import { useUploadImage } from "@/hooks/useUpload";
 
 /* ─── Types ──────────────────────────────────────────────── */
 
@@ -20,7 +21,6 @@ interface EventFormProps {
   initialData?: Partial<EventFormValues & { id?: string }>;
   onSave: (data: EventFormValues, status: "draft" | "published") => Promise<void>;
   backHref?: string;
-  isSaving?: boolean;
 }
 
 /* ─── Constants ──────────────────────────────────────────── */
@@ -74,12 +74,14 @@ const inputCls = (error?: string) =>
 
 /* ─── Main Form ──────────────────────────────────────────── */
 
-export function EventForm({ initialData, onSave, backHref = "/admin/events", isSaving = false }: EventFormProps) {
+export function EventForm({ initialData, onSave, backHref = "/admin/events" }: EventFormProps) {
   const router = useRouter();
   const isEdit = !!initialData?.id;
   const { data: categoriesData } = useEventCategories();
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [tab, setTab] = useState<"basic" | "registration" | "details">("basic");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage();
 
   const {
     register,
@@ -142,33 +144,26 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events", isS
     )();
   };
 
+  const handleImageUpload = async (file: File) => {
+    try {
+      if (!file.type.startsWith("image/")) {
+        toast.error("File harus berupa gambar");
+        return;
+      }
+      const res = await uploadImage({ file, uploadType: "events" });
+      setValue("coverImageUrl", res.url, { shouldValidate: true });
+      toast.success("Gambar berhasil diupload");
+    } catch (error) {
+      toast.error("Gagal mengupload gambar");
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const TABS = [
     { id: "basic" as const, label: "Informasi Dasar", icon: Calendar },
     { id: "registration" as const, label: "Pendaftaran", icon: Users },
     { id: "details" as const, label: "Detail & Media", icon: Tag },
   ];
-
-  const imageUrl = form.watch("imageUrl");
-  const isPublished = form.watch("isPublished");
-  const watchStartDate = form.watch("startDate");
-  const watchLocation = form.watch("location");
-  const watchCategory = form.watch("category");
-
-  // Helper renderer
-  const Field = ({ label, required, error, hint, children }: { label: string; required?: boolean; error?: string; hint?: string; children: ReactNode }) => (
-    <div>
-      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">
-        {label} {required && <span className="text-[#E62129]">*</span>}
-      </label>
-      {children}
-      {error && <p className="flex items-center gap-1 text-[#E62129] text-xs mt-1.5"><AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />{error}</p>}
-      {hint && !error && <p className="text-gray-400 text-xs mt-1">{hint}</p>}
-    </div>
-  );
-
-  const inputCls = (error?: string) =>
-    `w-full px-4 py-3 rounded-xl border text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 focus:outline-none transition-all ${error ? "border-[#E62129] focus:ring-1 focus:ring-[#E62129]" : "border-gray-200 dark:border-gray-700 focus:border-[#0A2C74] focus:ring-1 focus:ring-[#0A2C74]"}`;
-
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -183,21 +178,15 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events", isS
             <p className="text-gray-500 dark:text-gray-400 text-sm">{isEdit ? `Mengedit: ${titleValue || "—"}` : "Buat event dan kegiatan kampus STTB"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={form.handleSubmit((d) => onSubmit(d, false))}
-            disabled={isSaving || isUploadingImage}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
-          >
-            {isSaving && !isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Simpan Draft
+        <div className="flex items-center gap-2">
+          <button onClick={() => handleSave("draft")} disabled={!!saving}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
+            {saving === "draft" ? <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
+            Draft
           </button>
-          <button
-            onClick={form.handleSubmit((d) => onSubmit(d, true))}
-            disabled={isSaving || isUploadingImage}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50"
-          >
-            {isSaving && isPublished ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+          <button onClick={() => handleSave("published")} disabled={!!saving}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium transition-colors disabled:opacity-50">
+            {saving === "publish" ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <CheckCircle className="w-4 h-4" />}
             {isEdit ? "Perbarui" : "Terbitkan"}
           </button>
         </div>
@@ -228,16 +217,16 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events", isS
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1.5 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-2xl">
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl">
         {TABS.map(t => {
           const Icon = t.icon;
           const hasError = t.id === "basic" && (errors.title || errors.date || errors.location || errors.description || errors.category);
           return (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative ${tab === t.id ? "bg-white dark:bg-gray-900 text-[#0A2C74] dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative ${tab === t.id ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>
               <Icon className="w-4 h-4" />
               <span className="hidden sm:inline">{t.label}</span>
-              {hasError && <span className="absolute top-2 right-2 w-2 h-2 bg-[#E62129] rounded-full" />}
+              {hasError && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#E62129] rounded-full" />}
             </button>
           );
         })}
@@ -380,15 +369,24 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events", isS
             {coverImageUrl
               ? <div className="relative rounded-xl overflow-hidden mb-3">
                 <Image src={getImageUrl(coverImageUrl) ?? coverImageUrl} alt="" height={176} width={400} className="w-full h-44 object-cover" />
-                <button type="button" onClick={() => setValue("coverImageUrl", "")} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"><X className="w-4 h-4" /></button>
+                <button type="button" onClick={() => setValue("coverImageUrl", "")} disabled={!!saving || isUploading} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"><X className="w-4 h-4" /></button>
               </div>
-              : <div className="rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-8 text-center mb-3">
-                <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-400">Masukkan URL gambar di bawah ini</p>
-                <p className="text-xs text-gray-300 mt-1">Rekomendasi: 1200×630px</p>
+              : <div onClick={() => !isUploading && fileInputRef.current?.click()} className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${isUploading ? "border-blue-300 bg-blue-50/50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-700 hover:border-[#E62129]"}`}>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-8 h-8 text-blue-500 mx-auto mb-2 animate-spin" />
+                    <p className="text-sm text-blue-500 font-medium">Mengupload...</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-8 h-8 text-gray-300 hover:text-[#E62129] mx-auto mb-2 transition-colors" />
+                    <p className="text-sm text-gray-500 font-medium">Klik untuk upload gambar sampul</p>
+                    <p className="text-xs text-gray-400 mt-1">Rekomendasi: 1200×630px, Mendukung JPG/PNG</p>
+                  </>
+                )}
               </div>
             }
-            <input type="url" {...register("coverImageUrl")} placeholder="https://images.unsplash.com/..." className={inputCls()} />
+            <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
           </Field>
           <Field label="Tags">
             <div className="p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
@@ -421,17 +419,17 @@ export function EventForm({ initialData, onSave, backHref = "/admin/events", isS
       )}
 
       {/* Wizard nav */}
-      <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 shadow-sm">
+      <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
         <div className="flex gap-1.5">
           {TABS.map(t => (
             <button key={t.id} type="button" onClick={() => setTab(t.id)}
-              className="rounded-full transition-all" style={{ width: tab === t.id ? 20 : 8, height: 8, backgroundColor: tab === t.id ? "#0A2C74" : "#D1D5DB" }} />
+              className="rounded-full transition-all" style={{ width: tab === t.id ? 20 : 8, height: 8, backgroundColor: tab === t.id ? "#E62129" : "#D1D5DB" }} />
           ))}
         </div>
         <div className="flex items-center gap-2">
           {tab !== "basic" && (
             <button type="button" onClick={() => setTab(tab === "details" ? "registration" : "basic")}
-              className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">← Sebelumnya</button>
+              className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm hover:bg-gray-50 transition-colors">← Sebelumnya</button>
           )}
           {tab !== "details"
             ? <button type="button" onClick={() => setTab(tab === "basic" ? "registration" : "details")}

@@ -19,30 +19,27 @@ public class GlobalExceptionHandler : IExceptionHandler
     public async ValueTask<bool> TryHandleAsync(
         HttpContext context,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         _logger.LogError(exception, "Unhandled exception: {Message}", exception.Message);
 
         var (statusCode, title) = exception switch
         {
             NotFoundException => (StatusCodes.Status404NotFound, exception.Message),
-            UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized."),
-            ValidationException => (StatusCodes.Status400BadRequest, "Validation failed."),
+            UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, exception.Message),
+            ValidationException => (StatusCodes.Status400BadRequest, "Validation failed!"),
             InvalidOperationException => (StatusCodes.Status400BadRequest, exception.Message),
-            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
+            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred."),
         };
 
         // NEVER expose stack traces or inner exceptions
-        var problemDetails = new ProblemDetails
-        {
-            Status = statusCode,
-            Title = title,
-        };
+        var problemDetails = new ProblemDetails { Status = statusCode, Title = title };
 
         if (exception is ValidationException validationException)
         {
-            problemDetails.Extensions["errors"] = validationException.Errors
-                .Select(e => new { e.PropertyName, e.ErrorMessage })
+            problemDetails.Extensions["errors"] = validationException
+                .Errors.Select(e => new { e.PropertyName, e.ErrorMessage })
                 .ToList();
         }
 
