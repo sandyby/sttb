@@ -22,6 +22,7 @@ export interface AdmissionWave {
 
 export interface GetAdmissionWaveListResponse {
   items: AdmissionWave[];
+  totalCount: number;
 }
 
 export interface CreateAdmissionWavePayload {

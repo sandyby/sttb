@@ -25,12 +25,22 @@ public class GetAdmissionWaveListRequestHandler
         if (request.IsActive.HasValue)
             query = query.Where(w => w.IsActive == request.IsActive.Value);
 
+        // Sort by Deadline DESC (recent to oldest), then by CreatedAt DESC
+        query = query.OrderByDescending(w => w.Deadline)
+                     .ThenByDescending(w => w.CreatedAt);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        // Apply pagination
+        if (request.Page.HasValue && request.PageSize.HasValue)
+        {
+            query = query.Skip((request.Page.Value - 1) * request.PageSize.Value)
+                         .Take(request.PageSize.Value);
+        }
+
         // ToListAsync first — Steps is a JSON-mapped collection that cannot be
         // projected inside a SQL SELECT; the mapping happens in-memory after load.
-        var waves = await query
-            .OrderBy(w => w.DisplayOrder)
-            .ThenBy(w => w.WaveNumber)
-            .ToListAsync(cancellationToken);
+        var waves = await query.ToListAsync(cancellationToken);
 
         var items = waves.Select(w => new AdmissionWaveListItem
         {
@@ -54,6 +64,6 @@ public class GetAdmissionWaveListRequestHandler
             IsActive = w.IsActive,
         }).ToList();
 
-        return new GetAdmissionWaveListResponse { Items = items };
+        return new GetAdmissionWaveListResponse { Items = items, TotalCount = totalCount };
     }
 }

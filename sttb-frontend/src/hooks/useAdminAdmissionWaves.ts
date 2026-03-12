@@ -8,7 +8,7 @@ import {
 } from "@/libs/admin-api";
 import type { CreateAdmissionWavePayload } from "@/types/admission";
 
-export function useAdminAdmissionWaveList(params: { isActive?: boolean } = {}) {
+export function useAdminAdmissionWaveList(params: { isActive?: boolean; page?: number; pageSize?: number } = {}) {
   const { data: session } = useSession();
   const token = session?.accessToken ?? "";
 

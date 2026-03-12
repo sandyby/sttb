@@ -433,12 +433,14 @@ export async function adminDeleteFoundationMember(
 
 export async function adminGetAdmissionWaveList(
   token: string,
-  params: { isActive?: boolean } = {},
+  params: { isActive?: boolean; page?: number; pageSize?: number } = {},
 ): Promise<GetAdmissionWaveListResponse> {
   const { data } = await apiClient.get<GetAdmissionWaveListResponse>("/api/admission-waves/list", {
     headers: authHeader(token),
     params: {
       ...(params.isActive !== undefined && { isActive: params.isActive }),
+      ...(params.page && { page: params.page }),
+      ...(params.pageSize && { pageSize: params.pageSize }),
     },
   });
   return data;
