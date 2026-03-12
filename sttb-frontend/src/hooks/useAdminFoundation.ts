@@ -5,7 +5,7 @@ import {
   adminCreateFoundationMember,
   adminUpdateFoundationMember,
   adminDeleteFoundationMember,
-} from "@/lib/admin-api";
+} from "@/libs/admin-api";
 import type { CreateFoundationMemberPayload, FoundationMemberListParams } from "@/types/foundation";
 
 export function useAdminFoundationList(params: FoundationMemberListParams = {}) {

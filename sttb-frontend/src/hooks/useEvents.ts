@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api";
-import { getEventList, getEventCategories } from "@/lib/api";
-import { adminCreateEventCategory } from "@/lib/admin-api";
+import apiClient from "@/libs/axios";
+import { getEventList, getEventCategories } from "@/libs/api";
+import { adminCreateEventCategory } from "@/libs/admin-api";
 import { useSession } from "next-auth/react";
 import type {
   EventListItem,

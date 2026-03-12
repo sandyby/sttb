@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { Shield, Star, Users, ChevronDown, Loader2 } from "lucide-react";
 import { useFoundationMembers } from "@/hooks/useFoundation";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 
 /* ─── PEMBINA CARD ───────────────────────────────────────── */
 

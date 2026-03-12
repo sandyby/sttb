@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminLecturerList, useAdminDeleteLecturer } from "@/hooks/useAdminLecturers";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 
 const PAGE_SIZE = 10;
 

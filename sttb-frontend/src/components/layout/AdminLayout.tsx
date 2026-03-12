@@ -119,6 +119,15 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Jadwal Admisi",
+    href: "/admin/admission-waves",
+    icon: Calendar,
+    children: [
+      { label: "Semua Gelombang", href: "/admin/admission-waves", icon: Calendar },
+      { label: "Tambah Baru", href: "/admin/admission-waves/create", icon: Plus },
+    ],
+  },
+  {
     label: "Pengguna",
     href: "/admin/users",
     icon: Users,
@@ -219,33 +228,19 @@ function SidebarItem({
 /* ─── Breadcrumb helper ──────────────────────────────────── */
 
 function getBreadcrumb(pathname: string): { parent?: string; current: string } {
-  if (pathname.includes("/news/create"))
-    return { parent: "Berita", current: "Tambah Baru" };
-  if (pathname.match(/\/news\/[\w-]+\/edit/))
-    return { parent: "Berita", current: "Edit Berita" };
-  if (pathname.includes("/events/create"))
-    return { parent: "Kegiatan", current: "Tambah Baru" };
-  if (pathname.match(/\/events\/[\w-]+\/edit/))
-    return { parent: "Kegiatan", current: "Edit Kegiatan" };
-  if (pathname.includes("/study-programs/new"))
-    return { parent: "Program Studi", current: "Tambah Baru" };
-  if (pathname.match(/\/study-programs\/[\w-]+\/edit/))
-    return { parent: "Program Studi", current: "Edit Program" };
-  if (pathname.includes("/lecturers/create"))
-    return { parent: "Dewan Dosen", current: "Tambah Dosen" };
-  if (pathname.match(/\/lecturers\/\w+\/edit/))
-    return { parent: "Dewan Dosen", current: "Edit Dosen" };
-  if (pathname.includes("/foundation/create"))
-    return { parent: "Yayasan", current: "Tambah Baru" };
-  if (pathname.match(/\/foundation\/\w+\/edit/))
-    return { parent: "Yayasan", current: "Edit Anggota" };
+  if (pathname.includes("/news/create")) return { parent: "Berita", current: "Tambah Baru" };
+  if (pathname.match(/\/news\/\w+\/edit/)) return { parent: "Berita", current: "Edit Berita" };
+  if (pathname.includes("/events/create")) return { parent: "Kegiatan", current: "Tambah Baru" };
+  if (pathname.match(/\/events\/\w+\/edit/)) return { parent: "Kegiatan", current: "Edit Kegiatan" };
+  if (pathname.includes("/study-programs/new")) return { parent: "Program Studi", current: "Tambah Baru" };
+  if (pathname.match(/\/study-programs\/[\w-]+\/edit/)) return { parent: "Program Studi", current: "Edit Program" };
+  if (pathname.includes("/lecturers/create")) return { parent: "Dewan Dosen", current: "Tambah Dosen" };
+  if (pathname.match(/\/lecturers\/\w+\/edit/)) return { parent: "Dewan Dosen", current: "Edit Dosen" };
+  if (pathname.includes("/foundation/create")) return { parent: "Yayasan", current: "Tambah Baru" };
+  if (pathname.match(/\/foundation\/\w+\/edit/)) return { parent: "Yayasan", current: "Edit Anggota" };
   if (pathname.includes("/admission-waves/create")) return { parent: "Jadwal Admisi", current: "Tambah Gelombang" };
   if (pathname.match(/\/admission-waves\/[\w-]+\/edit/)) return { parent: "Jadwal Admisi", current: "Edit Gelombang" };
-  if (pathname.includes("/study-programs/new"))
-    return { parent: "Program Studi", current: "Tambah Baru" };
-  if (pathname.match(/\/study-programs\/[\w-]+\/edit/))
-    return { parent: "Program Studi", current: "Edit Program" };
-  const found = navGroups.find((n) => n.href === pathname);
+  const found = navGroups.find(n => n.href === pathname);
   return { current: found?.label ?? "Admin" };
 }
 

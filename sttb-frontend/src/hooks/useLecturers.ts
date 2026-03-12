@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "@/lib/axios";
+import apiClient from "@/libs/axios";
 import type { GetLecturerListResponse, GetLecturerListRequest } from "@/types/lecturers";
 
 async function getLecturerList(params: GetLecturerListRequest): Promise<GetLecturerListResponse> {

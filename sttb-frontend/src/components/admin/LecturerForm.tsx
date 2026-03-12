@@ -7,7 +7,7 @@ import { z } from "zod";
 import { ArrowLeft, Save, Plus, X, Upload, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { useUploadImage } from "@/hooks/useUpload";
 
 // ─── Schema ──────────────────────────────────────────────────────────────────

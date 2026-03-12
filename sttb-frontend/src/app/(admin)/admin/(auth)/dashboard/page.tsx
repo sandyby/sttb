@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Newspaper, Calendar, Users, TrendingUp, Eye, ArrowRight, Plus, Loader2, Image as LucideImage } from "lucide-react";
 import Image from "next/image";
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 
 export default function AdminDashboardPage() {
     const { stats: dashboardStats, recentNews, upcomingEvents, isLoading } = useAdminDashboard();

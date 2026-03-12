@@ -6,7 +6,7 @@ import { motion, useInView, AnimatePresence } from "motion/react";
 import { Mail, GraduationCap, BookOpen, X, ChevronRight, ChevronLeft, Globe, Star, Users, Loader2 } from "lucide-react";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { useGetLecturers } from "@/hooks/useLecturers";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import type { LecturerListItem } from "@/types/lecturers";
 
 /* Leader Card */

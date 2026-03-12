@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminFoundationList, useAdminDeleteFoundationMember } from "@/hooks/useAdminFoundation";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { Button } from "@/components/ui/button";
 
 const CATEGORY_LABELS: Record<string, string> = {

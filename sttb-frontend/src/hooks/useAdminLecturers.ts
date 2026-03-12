@@ -6,7 +6,7 @@ import {
   adminUpdateLecturer,
   adminDeleteLecturer,
   type LecturerPayload,
-} from "@/lib/admin-api";
+} from "@/libs/admin-api";
 
 interface LecturerListParams {
   page?: number;

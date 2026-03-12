@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { adminGetNewsList, adminGetEventList, adminGetMediaList } from "@/lib/admin-api";
+import { adminGetNewsList, adminGetEventList, adminGetMediaList } from "@/libs/admin-api";
 
 export function useAdminDashboard() {
   const { data: session } = useSession();
