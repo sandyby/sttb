@@ -24,6 +24,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Lecturer> Lecturers => Set<Lecturer>();
     public DbSet<FoundationMember> FoundationMembers => Set<FoundationMember>();
     public DbSet<AdmissionWave> AdmissionWaves => Set<AdmissionWave>();
+    public DbSet<Scholarship> Scholarships => Set<Scholarship>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -74,6 +75,11 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.Entity<Lecturer>(entity =>
         {
             ConfigureStringListMapping(entity.Property(l => l.Courses));
+        });
+
+        builder.Entity<Scholarship>(entity =>
+        {
+            ConfigureStringListMapping(entity.Property(s => s.Requirements));
         });
 
         builder.Entity<AdmissionWave>(entity =>
