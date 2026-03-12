@@ -56,6 +56,14 @@ public static class ApiRoutes
         public const string Delete = "delete/{id}";
     }
 
+    public static class Foundation
+    {
+        public const string List = "list";
+        public const string Create = "create";
+        public const string Update = "update/{id}";
+        public const string Delete = "delete/{id}";
+    }
+
     public static class Upload
     {
         public const string Image = "image";
