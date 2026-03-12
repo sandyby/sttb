@@ -3,7 +3,7 @@
 import { useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "motion/react";
-import { Mail, GraduationCap, BookOpen, X, ChevronRight, Globe, Star, Users, Loader2 } from "lucide-react";
+import { Mail, GraduationCap, BookOpen, X, ChevronRight, ChevronLeft, Globe, Star, Users, Loader2 } from "lucide-react";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { useGetLecturers } from "@/hooks/useLecturers";
 import { getImageUrl } from "@/lib/api";
@@ -352,6 +352,8 @@ function FacultyModal({ person, onClose }: { person: LecturerListItem | null; on
 export default function DewanDosenPage() {
     const [selectedFaculty, setSelectedFaculty] = useState<LecturerListItem | null>(null);
     const [filter, setFilter] = useState("Semua");
+    const [regularPage, setRegularPage] = useState(1);
+    const REGULAR_PAGE_SIZE = 8;
 
     const { data, isLoading, error } = useGetLecturers({ isActive: true, pageSize: 200 });
     const allLecturers = data?.items ?? [];
@@ -373,6 +375,12 @@ export default function DewanDosenPage() {
             f.specialization.toLowerCase().includes(filter.toLowerCase()) ||
             f.degree.toLowerCase().includes(filter.toLowerCase())
         );
+
+    const totalRegularPages = Math.max(1, Math.ceil(filteredRegular.length / REGULAR_PAGE_SIZE));
+    const paginatedRegular = filteredRegular.slice(
+        (regularPage - 1) * REGULAR_PAGE_SIZE,
+        regularPage * REGULAR_PAGE_SIZE,
+    );
 
     return (
         <>
@@ -513,7 +521,7 @@ export default function DewanDosenPage() {
                                     {specializations.map((spec) => (
                                         <button
                                             key={spec}
-                                            onClick={() => setFilter(spec)}
+                                            onClick={() => { setFilter(spec); setRegularPage(1); }}
                                             className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all flex-shrink-0 ${filter === spec
                                                 ? "bg-[#E62129] text-white shadow-md shadow-red-200 dark:shadow-none"
                                                 : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700"
@@ -531,26 +539,64 @@ export default function DewanDosenPage() {
                                         <p>Tidak ada dosen ditemukan untuk filter ini.</p>
                                     </div>
                                 ) : (
-                                    <AnimatePresence mode="wait">
-                                        <motion.div
-                                            key={filter}
-                                            layout
-                                            initial={{ opacity: 0, y: 12 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.3 }}
-                                            className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
-                                        >
-                                            {filteredRegular.map((f, i) => (
-                                                <FacultyCard
-                                                    key={f.id}
-                                                    person={f}
-                                                    index={i}
-                                                    onClick={() => setSelectedFaculty(f)}
-                                                />
-                                            ))}
-                                        </motion.div>
-                                    </AnimatePresence>
+                                    <>
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={`${filter}-${regularPage}`}
+                                                initial={{ opacity: 0, y: 12 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                                className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+                                            >
+                                                {paginatedRegular.map((f, i) => (
+                                                    <FacultyCard
+                                                        key={f.id}
+                                                        person={f}
+                                                        index={i}
+                                                        onClick={() => setSelectedFaculty(f)}
+                                                    />
+                                                ))}
+                                            </motion.div>
+                                        </AnimatePresence>
+
+                                        {/* Pagination */}
+                                        {totalRegularPages > 1 && (
+                                            <div className="flex items-center justify-between mt-10">
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {(regularPage - 1) * REGULAR_PAGE_SIZE + 1}–{Math.min(regularPage * REGULAR_PAGE_SIZE, filteredRegular.length)} dari {filteredRegular.length} dosen
+                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => { setRegularPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                                                        disabled={regularPage === 1}
+                                                        className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+                                                    >
+                                                        <ChevronLeft className="w-4 h-4" />
+                                                    </button>
+                                                    {Array.from({ length: totalRegularPages }, (_, i) => i + 1).map((p) => (
+                                                        <button
+                                                            key={p}
+                                                            onClick={() => { setRegularPage(p); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                                                            className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${p === regularPage
+                                                                ? "bg-[#E62129] text-white"
+                                                                : "border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800"
+                                                            }`}
+                                                        >
+                                                            {p}
+                                                        </button>
+                                                    ))}
+                                                    <button
+                                                        onClick={() => { setRegularPage((p) => Math.min(totalRegularPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                                                        disabled={regularPage === totalRegularPages}
+                                                        className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+                                                    >
+                                                        <ChevronRight className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </section>
