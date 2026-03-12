@@ -110,6 +110,15 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Jadwal Admisi",
+    href: "/admin/admission-waves",
+    icon: Calendar,
+    children: [
+      { label: "Semua Gelombang", href: "/admin/admission-waves", icon: Calendar },
+      { label: "Tambah Baru", href: "/admin/admission-waves/create", icon: Plus },
+    ],
+  },
+  {
     label: "Pengguna",
     href: "/admin/users",
     icon: Users,
@@ -230,6 +239,8 @@ function getBreadcrumb(pathname: string): { parent?: string; current: string } {
     return { parent: "Yayasan", current: "Tambah Baru" };
   if (pathname.match(/\/foundation\/\w+\/edit/))
     return { parent: "Yayasan", current: "Edit Anggota" };
+  if (pathname.includes("/admission-waves/create")) return { parent: "Jadwal Admisi", current: "Tambah Gelombang" };
+  if (pathname.match(/\/admission-waves\/[\w-]+\/edit/)) return { parent: "Jadwal Admisi", current: "Edit Gelombang" };
   if (pathname.includes("/study-programs/new"))
     return { parent: "Program Studi", current: "Tambah Baru" };
   if (pathname.match(/\/study-programs\/[\w-]+\/edit/))

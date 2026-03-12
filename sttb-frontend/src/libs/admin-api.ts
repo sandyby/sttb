@@ -22,6 +22,10 @@ import type {
   UpdateFoundationMemberPayload,
   FoundationMemberListParams,
 } from "@/types/foundation";
+import type {
+  GetAdmissionWaveListResponse,
+  CreateAdmissionWavePayload,
+} from "@/types/admission";
 
 function authHeader(token: string) {
   return { Authorization: `Bearer ${token}` };
@@ -421,6 +425,50 @@ export async function adminDeleteFoundationMember(
   id: string,
 ): Promise<void> {
   await apiClient.delete(`/api/foundation/delete/${id}`, {
+    headers: authHeader(token),
+  });
+}
+
+// ─── Admission Waves ─────────────────────────────────────────────────────────
+
+export async function adminGetAdmissionWaveList(
+  token: string,
+  params: { isActive?: boolean } = {},
+): Promise<GetAdmissionWaveListResponse> {
+  const { data } = await apiClient.get<GetAdmissionWaveListResponse>("/api/admission-waves/list", {
+    headers: authHeader(token),
+    params: {
+      ...(params.isActive !== undefined && { isActive: params.isActive }),
+    },
+  });
+  return data;
+}
+
+export async function adminCreateAdmissionWave(
+  token: string,
+  payload: CreateAdmissionWavePayload,
+): Promise<string> {
+  const { data } = await apiClient.post<string>("/api/admission-waves/create", payload, {
+    headers: authHeader(token),
+  });
+  return data;
+}
+
+export async function adminUpdateAdmissionWave(
+  token: string,
+  id: string,
+  payload: CreateAdmissionWavePayload,
+): Promise<void> {
+  await apiClient.put(`/api/admission-waves/update/${id}`, payload, {
+    headers: authHeader(token),
+  });
+}
+
+export async function adminDeleteAdmissionWave(
+  token: string,
+  id: string,
+): Promise<void> {
+  await apiClient.delete(`/api/admission-waves/delete/${id}`, {
     headers: authHeader(token),
   });
 }
