@@ -7,7 +7,7 @@ public class AdmissionWaveListItem
     public Guid Id { get; set; }
     public string WaveNumber { get; set; } = string.Empty;
     public string Label { get; set; } = string.Empty;
-    public string Deadline { get; set; } = string.Empty;
+    public DateTime? Deadline { get; set; }
     public string Status { get; set; } = string.Empty;
     public string Color { get; set; } = string.Empty;
     public DateTime? PsikotesSchedule { get; set; }

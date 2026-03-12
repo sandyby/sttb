@@ -16,9 +16,8 @@ public class AdmissionWave : IHaveCreateAndUpdateAudit
     [StringLength(100)]
     public string Label { get; set; } = string.Empty;
 
-    /// <summary>Text-format deadline, e.g. "13 Oktober 2025"</summary>
-    [StringLength(200)]
-    public string Deadline { get; set; } = string.Empty;
+    /// <summary>Deadline for registration</summary>
+    public DateTime? Deadline { get; set; }
 
     /// <summary>"open" | "closed" | "upcoming"</summary>
     [StringLength(20)]

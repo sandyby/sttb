@@ -12,7 +12,7 @@ public class UpdateAdmissionWaveRequestValidator : AbstractValidator<UpdateAdmis
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.WaveNumber).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Label).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.Deadline).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.Deadline).NotEmpty();
         RuleFor(x => x.Status)
             .NotEmpty()
             .Must(s => AllowedStatuses.Contains(s))

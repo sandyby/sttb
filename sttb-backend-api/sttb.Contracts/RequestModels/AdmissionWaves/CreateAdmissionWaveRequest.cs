@@ -6,7 +6,7 @@ public class CreateAdmissionWaveRequest : IRequest<Guid>
 {
     public string WaveNumber { get; set; } = string.Empty;
     public string Label { get; set; } = string.Empty;
-    public string Deadline { get; set; } = string.Empty;
+    public DateTime? Deadline { get; set; }
     public string Status { get; set; } = "upcoming";
     public string Color { get; set; } = "#0A2C74";
     public DateTime? PsikotesSchedule { get; set; }
