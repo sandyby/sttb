@@ -19,6 +19,7 @@ public static class DataSeeder
         await SeedStudyProgramsAsync(db, adminUserId);
         await SeedLecturersAsync(db, adminUserId);
         await SeedFoundationMembersAsync(db, adminUserId);
+        await SeedAdmissionWavesAsync(db, adminUserId);
     }
 
     // ─── Categories ──────────────────────────────────────────────────────────
@@ -1880,6 +1881,105 @@ public static class DataSeeder
         };
 
         db.FoundationMembers.AddRange(members);
+        await db.SaveChangesAsync();
+    }
+
+    // ─── Admission Waves ─────────────────────────────────────────────────────
+
+    private static async Task SeedAdmissionWavesAsync(ApplicationDbContext db, string adminUserId)
+    {
+        if (await db.AdmissionWaves.AnyAsync())
+            return;
+
+        var waves = new List<AdmissionWave>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                WaveNumber = "I",
+                Label = "Gelombang I",
+                Deadline = new DateTime(2025, 10, 13),
+                Status = "closed",
+                Color = "#E62129",
+                PsikotesSchedule = new DateTime(2025, 10, 17, 9, 0, 0),
+                TertulisSchedule = new DateTime(2025, 10, 21, 9, 0, 0),
+                WawancaraSchedule = new DateTime(2025, 11, 20, 9, 0, 0),
+                DisplayOrder = 1,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+                Steps = new List<AdmissionWaveStepItem>
+                {
+                    new() { StepNumber = 1, Title = "Batas Pengembalian Formulir", WhenText = new DateTime(2025, 10, 13, 0, 0, 0), Via = "Via pos atau e-mail" },
+                    new() { StepNumber = 2, Title = "Seleksi Dokumen Pendaftaran", WhenText = new DateTime(2025, 10, 14, 9, 0, 0), Via = "Onsite" },
+                    new() { StepNumber = 3, Title = "Panggilan Tes", WhenText = new DateTime(2025, 10, 15, 9, 0, 0), Via = "Via email & WhatsApp" },
+                    new() { StepNumber = 4, Title = "Psikotes Online Tahap 1 (Pengisian Form)", WhenText = new DateTime(2025, 10, 17, 9, 0, 0), Via = "Via website" },
+                    new() { StepNumber = 5, Title = "Psikotes Online Tahap 2 (Tes Bersama)", WhenText = new DateTime(2025, 10, 20, 9, 0, 0), Via = "Via Zoom & website" },
+                    new() { StepNumber = 6, Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)", WhenText = new DateTime(2025, 10, 21, 9, 0, 0), Via = "Via Zoom & website" },
+                    new() { StepNumber = 7, Title = "Psikotes Tahap 3 (Wawancara Psikolog)", WhenText = new DateTime(2025, 10, 27, 9, 0, 0), Via = "Via Zoom" },
+                    new() { StepNumber = 8, Title = "Wawancara dengan Dosen STTB", WhenText = new DateTime(2025, 11, 17, 9, 0, 0), Via = "Via Zoom" },
+                    new() { StepNumber = 9, Title = "Pengumuman Hasil Penerimaan", WhenText = new DateTime(2025, 11, 26, 9, 0, 0), Via = "Via e-mail & WhatsApp" },
+                }
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                WaveNumber = "II",
+                Label = "Gelombang II",
+                Deadline = new DateTime(2026, 2, 2),
+                Status = "closed",
+                Color = "#0A2C74",
+                PsikotesSchedule = new DateTime(2026, 2, 6, 9, 0, 0),
+                TertulisSchedule = new DateTime(2026, 2, 10, 9, 0, 0),
+                WawancaraSchedule = new DateTime(2026, 3, 3, 9, 0, 0),
+                DisplayOrder = 2,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+                Steps = new List<AdmissionWaveStepItem>
+                {
+                    new() { StepNumber = 1, Title = "Batas Pengembalian Formulir", WhenText = new DateTime(2026, 2, 2, 0, 0, 0), Via = "Via pos atau e-mail" },
+                    new() { StepNumber = 2, Title = "Seleksi Dokumen Pendaftaran", WhenText = new DateTime(2026, 2, 3, 9, 0, 0), Via = "Onsite" },
+                    new() { StepNumber = 3, Title = "Panggilan Tes", WhenText = new DateTime(2026, 2, 4, 9, 0, 0), Via = "Via email & WhatsApp" },
+                    new() { StepNumber = 4, Title = "Psikotes Online Tahap 1 (Pengisian Form)", WhenText = new DateTime(2026, 2, 6, 9, 0, 0), Via = "Via website" },
+                    new() { StepNumber = 5, Title = "Psikotes Online Tahap 2 (Tes Bersama)", WhenText = new DateTime(2026, 2, 9, 9, 0, 0), Via = "Via Zoom & website" },
+                    new() { StepNumber = 6, Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)", WhenText = new DateTime(2026, 2, 10, 9, 0, 0), Via = "Via Zoom & website" },
+                    new() { StepNumber = 7, Title = "Psikotes Tahap 3 (Wawancara Psikolog)", WhenText = new DateTime(2026, 2, 16, 9, 0, 0), Via = "Via Zoom" },
+                    new() { StepNumber = 8, Title = "Wawancara dengan Dosen STTB", WhenText = new DateTime(2026, 3, 16, 9, 0, 0), Via = "Via Zoom" },
+                    new() { StepNumber = 9, Title = "Pengumuman Hasil Penerimaan", WhenText = new DateTime(2026, 3, 25, 9, 0, 0), Via = "Via e-mail & WhatsApp" },
+                }
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                WaveNumber = "III",
+                Label = "Gelombang III",
+                Deadline = new DateTime(2026, 4, 27),
+                Status = "upcoming",
+                Color = "#0570CD",
+                PsikotesSchedule = new DateTime(2026, 5, 1, 9, 0, 0),
+                TertulisSchedule = new DateTime(2026, 5, 5, 9, 0, 0),
+                WawancaraSchedule = new DateTime(2026, 5, 26, 9, 0, 0),
+                DisplayOrder = 3,
+                IsActive = true,
+                CreatedBy = adminUserId,
+                CreatedAt = DateTime.UtcNow,
+                Steps = new List<AdmissionWaveStepItem>
+                {
+                    new() { StepNumber = 1, Title = "Batas Pengembalian Formulir", WhenText = new DateTime(2026, 4, 27, 0, 0, 0), Via = "Via pos atau e-mail" },
+                    new() { StepNumber = 2, Title = "Seleksi Dokumen Pendaftaran", WhenText = new DateTime(2026, 4, 28, 9, 0, 0), Via = "Onsite" },
+                    new() { StepNumber = 3, Title = "Panggilan Tes", WhenText = new DateTime(2026, 4, 29, 9, 0, 0), Via = "Via email & WhatsApp" },
+                    new() { StepNumber = 4, Title = "Psikotes Online Tahap 1 (Pengisian Form)", WhenText = new DateTime(2026, 5, 1, 9, 0, 0), Via = "Via website" },
+                    new() { StepNumber = 5, Title = "Psikotes Online Tahap 2 (Tes Bersama)", WhenText = new DateTime(2026, 5, 4, 9, 0, 0), Via = "Via Zoom & website" },
+                    new() { StepNumber = 6, Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)", WhenText = new DateTime(2026, 5, 5, 9, 0, 0), Via = "Via Zoom & website" },
+                    new() { StepNumber = 7, Title = "Psikotes Tahap 3 (Wawancara Psikolog)", WhenText = new DateTime(2026, 5, 11, 9, 0, 0), Via = "Via Zoom" },
+                    new() { StepNumber = 8, Title = "Wawancara dengan Dosen STTB", WhenText = new DateTime(2026, 6, 15, 9, 0, 0), Via = "Via Zoom" },
+                    new() { StepNumber = 9, Title = "Pengumuman Hasil Penerimaan", WhenText = new DateTime(2026, 6, 24, 9, 0, 0), Via = "Via e-mail & WhatsApp" },
+                }
+            }
+        };
+
+        db.AdmissionWaves.AddRange(waves);
         await db.SaveChangesAsync();
     }
 }
