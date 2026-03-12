@@ -28,7 +28,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             NotFoundException => (StatusCodes.Status404NotFound, exception.Message),
             UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, exception.Message),
-            ValidationException => (StatusCodes.Status400BadRequest, "Validation failed!"),
+            ValidationException => (StatusCodes.Status400BadRequest, exception.Message),
             InvalidOperationException => (StatusCodes.Status400BadRequest, exception.Message),
             _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred."),
         };

@@ -7,23 +7,27 @@ using sttb.Entities;
 
 namespace sttb.Commons.RequestHandlers.StudyPrograms;
 
-public class GetStudyProgramRequestHandler : IRequestHandler<GetStudyProgramRequest, GetStudyProgramResponse>
+public class GetStudyProgramRequestByIdHandler
+    : IRequestHandler<GetStudyProgramByIdRequest, GetStudyProgramResponse>
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public GetStudyProgramRequestHandler(ApplicationDbContext dbContext)
+    public GetStudyProgramRequestByIdHandler(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<GetStudyProgramResponse> Handle(GetStudyProgramRequest request, CancellationToken cancellationToken)
+    public async Task<GetStudyProgramResponse> Handle(
+        GetStudyProgramByIdRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var program = await _dbContext.StudyPrograms
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Slug == request.Slug, cancellationToken);
+        var program = await _dbContext
+            .StudyPrograms.AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == Guid.Parse(request.Id), cancellationToken);
 
         if (program is null)
-            throw new NotFoundException("StudyProgram", request.Slug);
+            throw new NotFoundException("StudyProgram", request.Id);
 
         return new GetStudyProgramResponse
         {
@@ -48,7 +52,7 @@ public class GetStudyProgramRequestHandler : IRequestHandler<GetStudyProgramRequ
             CreatedAt = program.CreatedAt,
             CreatedBy = program.CreatedBy,
             UpdatedAt = program.UpdatedAt,
-            UpdatedBy = program.UpdatedBy
+            UpdatedBy = program.UpdatedBy,
         };
     }
 }
