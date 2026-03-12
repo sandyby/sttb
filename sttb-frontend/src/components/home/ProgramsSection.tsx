@@ -1,178 +1,61 @@
 "use client";
 
-import Link from "next/link"
+import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, BookOpen, Award, ChevronRight, GraduationCap, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Award,
+  ChevronRight,
+  GraduationCap,
+  Sparkles,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { programs } from "../../data/mock-data";
+import { useStudyProgramsList } from "@/hooks/useStudyPrograms";
 import { FadeIn } from "../ui/FadeIn";
 
 const s1Color = "#E62129";
 const s2Color = "#0A2C74";
 
-// Short taglines for each program
+// Short taglines for each program - kept as fallback or specific override if needed
+// though backend now has Tagline field
 const taglines: Record<string, string> = {
   "sarjana-teologi": "Bentuk fondasi teologis yang kokoh",
   "sarjana-pendidikan-kristen": "Didik generasi iman masa depan",
-  "magister-teologi-pelayanan-pastoral-gereja-urban": "Pelayanan kota yang kontekstual",
-  "magister-teologi-transformasi-budaya-masyarakat": "Transformasi budaya & masyarakat",
+  "magister-teologi-pelayanan-pastoral-gereja-urban":
+    "Pelayanan kota yang kontekstual",
+  "magister-teologi-transformasi-budaya-masyarakat":
+    "Transformasi budaya & masyarakat",
   "magister-pendidikan-kristen": "Keahlian pedagogis berbasis iman",
   "magister-ministri-marketplace": "Integrasikan iman & dunia kerja",
   "magister-ministri-kepemimpinan-pastoral": "Kepemimpinan rohani yang efektif",
-  "magister-ministri-teologi-pelayanan-gerejawi": "Teologi praktis lintas denominasi",
+  "magister-ministri-teologi-pelayanan-gerejawi":
+    "Teologi praktis lintas denominasi",
 };
 
 export function ProgramsSection() {
   const [activeTab, setActiveTab] = useState<"S1" | "S2">("S1");
-  const s1Programs = programs.filter((p) => p.level === "S1");
-  const s2Programs = programs.filter((p) => p.level === "S2");
+  const { data: programs = [], isLoading } = useStudyProgramsList();
+
+  // Only show published ones in public view
+  const publishedPrograms = programs.filter((p) => p.isPublished);
+
+  const s1Programs = publishedPrograms.filter((p) => p.level === "S1");
+  const s2Programs = publishedPrograms.filter((p) => p.level === "S2");
+
+  const validS1Sks = s1Programs
+    .map((p) => p.credits)
+    .filter((c) => typeof c === "number" && !isNaN(c));
+
+  const validS2Sks = s2Programs
+    .map((p) => p.credits)
+    .filter((c) => typeof c === "number" && !isNaN(c));
 
   const displayedPrograms = activeTab === "S1" ? s1Programs : s2Programs;
 
   return (
-    // <section className="py-20 bg-gray-50 dark:bg-gray-950">
-    //   <div className="max-w-7xl mx-auto px-4">
-    //     {/* Header */}
-    //     <div className="text-center mb-14">
-    //       <p className="text-[#E62129] text-sm font-semibold uppercase tracking-wider mb-2">
-    //         Program Akademik
-    //       </p>
-    //       <h2
-    //         className="text-gray-900 dark:text-white mb-4"
-    //         style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.2rem)", fontWeight: 700 }}
-    //       >
-    //         Temukan Program Studi Anda
-    //       </h2>
-    //       <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-    //         STTB menawarkan 8 program studi teologi berkualitas tinggi dari
-    //         jenjang Sarjana hingga Magister, dirancang untuk mempersiapkan
-    //         pemimpin gereja masa depan.
-    //       </p>
-    //     </div>
-
-    //     {/* S1 Programs */}
-    //     <div className="mb-12">
-    //       <div className="flex items-center gap-3 mb-6">
-    //         <div className="w-8 h-8 rounded-lg bg-[#E62129] flex items-center justify-center">
-    //           <BookOpen className="w-4 h-4 text-white" />
-    //         </div>
-    //         <div>
-    //           <h3 className="text-gray-900 dark:text-white font-bold">
-    //             Program Sarjana (S1)
-    //           </h3>
-    //           <p className="text-gray-500 dark:text-gray-400 text-xs">
-    //             4 tahun · Terakreditasi BAN-PT
-    //           </p>
-    //         </div>
-    //       </div>
-
-    //       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-    //         {s1Programs.map((program, i) => (
-    //           <motion.div
-    //             key={program.id}
-    //             initial={{ opacity: 0, x: -20 }}
-    //             whileInView={{ opacity: 1, x: 0 }}
-    //             viewport={{ once: true }}
-    //             transition={{ duration: 0.5, delay: i * 0.1 }}
-    //           >
-    //             <Link
-    //               href={`/${program.slug}`}
-    //               className="group flex gap-4 p-5 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-[#E62129]/50 hover:shadow-md transition-all"
-    //             >
-    //               <div className="w-12 h-12 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#E62129] transition-colors">
-    //                 <span className="text-[#E62129] group-hover:text-white font-bold text-sm transition-colors">
-    //                   {program.degree}
-    //                 </span>
-    //               </div>
-    //               <div className="flex-1 min-w-0">
-    //                 <h4 className="text-gray-900 dark:text-white font-semibold group-hover:text-[#E62129] transition-colors mb-1">
-    //                   {program.name}
-    //                 </h4>
-    //                 <p className="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 mb-2">
-    //                   {program.description}
-    //                 </p>
-    //                 <div className="flex items-center gap-3 text-xs text-gray-400">
-    //                   <span>{program.duration}</span>
-    //                   <span>·</span>
-    //                   <span>{program.credits} SKS</span>
-    //                 </div>
-    //               </div>
-    //               <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#E62129] flex-shrink-0 mt-1 transition-all group-hover:translate-x-1" />
-    //             </Link>
-    //           </motion.div>
-    //         ))}
-    //       </div>
-    //     </div>
-
-    //     {/* S2 Programs */}
-    //     <div>
-    //       <div className="flex items-center gap-3 mb-6">
-    //         <div className="w-8 h-8 rounded-lg bg-[#0A2C74] flex items-center justify-center">
-    //           <Award className="w-4 h-4 text-white" />
-    //         </div>
-    //         <div>
-    //           <h3 className="text-gray-900 dark:text-white font-bold">
-    //             Program Magister (S2)
-    //           </h3>
-    //           <p className="text-gray-500 dark:text-gray-400 text-xs">
-    //             2 tahun · 6 konsentrasi tersedia
-    //           </p>
-    //         </div>
-    //       </div>
-
-    //       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-    //         {s2Programs.map((program, i) => (
-    //           <motion.div
-    //             key={program.id}
-    //             initial={{ opacity: 0, y: 20 }}
-    //             whileInView={{ opacity: 1, y: 0 }}
-    //             viewport={{ once: true }}
-    //             transition={{ duration: 0.5, delay: i * 0.08 }}
-    //           >
-    //             <Link
-    //               href={`/${program.slug}`}
-    //               className="group flex flex-col p-5 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-[#0A2C74]/50 hover:shadow-md transition-all h-full"
-    //             >
-    //               <div className="flex items-center justify-between mb-3">
-    //                 <span className="px-2 py-0.5 rounded-md bg-[#0A2C74]/10 text-[#0A2C74] dark:text-blue-300 text-xs font-semibold">
-    //                   {program.degree}
-    //                 </span>
-    //                 <span className="text-xs text-gray-400">
-    //                   {program.credits} SKS
-    //                 </span>
-    //               </div>
-    //               <h4 className="text-gray-900 dark:text-white font-semibold group-hover:text-[#0A2C74] dark:group-hover:text-blue-300 transition-colors mb-2 flex-1">
-    //                 {program.name}
-    //               </h4>
-    //               <p className="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 mb-3">
-    //                 {program.description}
-    //               </p>
-    //               <div className="flex items-center justify-between text-xs text-gray-400">
-    //                 <span>{program.duration}</span>
-    //                 <span className="flex items-center gap-1 text-[#0A2C74] dark:text-blue-300 font-medium group-hover:gap-2 transition-all">
-    //                   Pelajari <ArrowRight className="w-3 h-3" />
-    //                 </span>
-    //               </div>
-    //             </Link>
-    //           </motion.div>
-    //         ))}
-    //       </div>
-    //     </div>
-
-    //     {/* CTA */}
-    //     <div className="text-center mt-10">
-    //       <Link
-    //         href="/prosedur-admisi"
-    //         className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white font-medium transition-all hover:shadow-lg hover:-translate-y-0.5"
-    //       >
-    //         Mulai Proses Pendaftaran <ArrowRight className="w-4 h-4" />
-    //       </Link>
-    //     </div>
-    //   </div>
-    // </section>
     <section className="py-20 bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
-
         {/* ── Section header ─────────────────────────────────── */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
           <FadeIn>
@@ -183,9 +66,13 @@ export function ProgramsSection() {
               </div>
               <h2
                 className="text-gray-900 dark:text-white"
-                style={{ fontSize: "clamp(1.7rem, 3.5vw, 2.4rem)", fontWeight: 800 }}
+                style={{
+                  fontSize: "clamp(1.7rem, 3.5vw, 2.4rem)",
+                  fontWeight: 800,
+                }}
               >
-                Temukan Program<br />
+                Temukan Program
+                <br />
                 <span style={{ color: "#E62129" }}>Panggilan</span> Anda
               </h2>
             </div>
@@ -194,7 +81,8 @@ export function ProgramsSection() {
           <FadeIn delay={0.1} direction="left">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <p className="text-gray-500 dark:text-gray-400 max-w-xs text-sm leading-relaxed">
-                8 program studi dari jenjang Sarjana hingga Magister, terakreditasi BAN-PT.
+                8 program studi dari jenjang Sarjana hingga Magister,
+                terakreditasi BAN-PT.
               </p>
               <Link
                 href="/program-studi"
@@ -209,11 +97,9 @@ export function ProgramsSection() {
 
         {/* ── Main layout ────────────────────────────────────── */}
         <div className="grid lg:grid-cols-5 gap-8 items-start">
-
           {/* Left — Level switcher card */}
           <FadeIn direction="right" className="lg:col-span-2">
             <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-24">
-
               {/* Tab header */}
               <div className="flex">
                 <button
@@ -226,7 +112,11 @@ export function ProgramsSection() {
                       layoutId="level-bg"
                       className="absolute inset-0"
                       style={{ background: s1Color }}
-                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 35,
+                      }}
                     />
                   )}
                   <span className="relative z-10 flex items-center justify-center gap-2">
@@ -244,7 +134,11 @@ export function ProgramsSection() {
                       layoutId="level-bg"
                       className="absolute inset-0"
                       style={{ background: s2Color }}
-                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 35,
+                      }}
                     />
                   )}
                   <span className="relative z-10 flex items-center justify-center gap-2">
@@ -257,18 +151,28 @@ export function ProgramsSection() {
               {/* Level summary */}
               <div
                 className="px-5 pt-5 pb-3 border-b border-gray-100 dark:border-gray-800"
-                style={{ background: activeTab === "S1" ? "#FEF2F2" : "#EFF6FF" }}
+                style={{
+                  background: activeTab === "S1" ? "#FEF2F2" : "#EFF6FF",
+                }}
               >
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm"
-                    style={{ fontWeight: 800, background: activeTab === "S1" ? s1Color : s2Color }}
+                    style={{
+                      fontWeight: 800,
+                      background: activeTab === "S1" ? s1Color : s2Color,
+                    }}
                   >
                     {activeTab}
                   </div>
                   <div>
-                    <p className="text-gray-900 dark:text-gray-100 text-sm" style={{ fontWeight: 700 }}>
-                      {activeTab === "S1" ? "Program Sarjana" : "Program Magister"}
+                    <p
+                      className="text-gray-900 dark:text-gray-100 text-sm"
+                      style={{ fontWeight: 700 }}
+                    >
+                      {activeTab === "S1"
+                        ? "Program Sarjana"
+                        : "Program Magister"}
                     </p>
                     <p className="text-gray-500 text-xs">
                       {activeTab === "S1"
@@ -282,11 +186,30 @@ export function ProgramsSection() {
               {/* Stats */}
               <div className="grid grid-cols-3 divide-x divide-gray-100 dark:divide-gray-800 border-b border-gray-100 dark:border-gray-800">
                 {(activeTab === "S1"
-                  ? [["4 thn", "Durasi"], ["148", "Maks SKS"], ["2", "Prodi"]]
-                  : [["2 thn", "Durasi"], ["72", "Maks SKS"], ["6", "Prodi"]]
+                  ? [
+                      ["4 thn", "Durasi"],
+                      [
+                        validS1Sks.length > 0 ? Math.max(...validS1Sks) : 0,
+                        "Maks SKS",
+                      ],
+                      [s1Programs.length > 0 ? s1Programs.length : 0, "Prodi"],
+                    ]
+                  : [
+                      ["2 thn", "Durasi"],
+                      [
+                        validS2Sks.length > 0 ? Math.max(...validS2Sks) : 0,
+                        "Maks SKS",
+                      ],
+                      [s2Programs.length > 0 ? s2Programs.length : 0, "Prodi"],
+                    ]
                 ).map(([val, lbl]) => (
                   <div key={lbl} className="px-4 py-3 text-center">
-                    <div className="text-gray-900 dark:text-white text-sm" style={{ fontWeight: 700 }}>{val}</div>
+                    <div
+                      className="text-gray-900 dark:text-white text-sm"
+                      style={{ fontWeight: 700 }}
+                    >
+                      {val}
+                    </div>
                     <div className="text-gray-400 text-xs">{lbl}</div>
                   </div>
                 ))}
@@ -297,9 +220,13 @@ export function ProgramsSection() {
                 <Link
                   href="/program-studi"
                   className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
-                  style={{ background: `linear-gradient(135deg, ${activeTab === "S1" ? "#E62129, #c4131a" : "#0A2C74, #0570CD"})` }}
+                  style={{
+                    background: `linear-gradient(135deg, ${activeTab === "S1" ? "#E62129, #c4131a" : "#0A2C74, #0570CD"})`,
+                  }}
                 >
-                  <span>Jelajahi {activeTab === "S1" ? "Sarjana" : "Magister"}</span>
+                  <span>
+                    Jelajahi {activeTab === "S1" ? "Sarjana" : "Magister"}
+                  </span>
                   <GraduationCap className="w-4 h-4" />
                 </Link>
               </div>
@@ -322,19 +249,24 @@ export function ProgramsSection() {
                     key={program.id}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.07, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      delay: i * 0.07,
+                      duration: 0.45,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
                     <Link
-                      href={`/${program.slug}`}
+                      href={`/program-studi/${program.slug}`}
                       className="group flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 hover:shadow-md transition-all duration-300 hover:border-gray-200"
                     >
                       {/* Degree badge */}
                       <div
                         className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 text-white text-xs transition-all duration-300 group-hover:scale-105"
                         style={{
-                          background: activeTab === "S1"
-                            ? `linear-gradient(135deg, #E62129, #c4131a)`
-                            : `linear-gradient(135deg, #0A2C74, #0570CD)`,
+                          background:
+                            activeTab === "S1"
+                              ? `linear-gradient(135deg, #E62129, #c4131a)`
+                              : `linear-gradient(135deg, #0A2C74, #0570CD)`,
                           fontWeight: 800,
                         }}
                       >
@@ -349,7 +281,9 @@ export function ProgramsSection() {
                         >
                           {program.name}
                         </p>
-                        <p className="text-gray-400 text-xs">{taglines[program.slug]}</p>
+                        <p className="text-gray-400 text-xs">
+                          {program.tagline || taglines[program.slug]}
+                        </p>
                       </div>
 
                       {/* Arrow */}
@@ -369,8 +303,13 @@ export function ProgramsSection() {
             <FadeIn delay={0.3}>
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-[#0A2C74] to-[#0570CD]">
                 <div className="text-center sm:text-left">
-                  <p className="text-white text-sm" style={{ fontWeight: 700 }}>Belum yakin dengan program yang tepat?</p>
-                  <p className="text-blue-200 text-xs">Lihat perbandingan lengkap semua program di halaman Program Studi.</p>
+                  <p className="text-white text-sm" style={{ fontWeight: 700 }}>
+                    Belum yakin dengan program yang tepat?
+                  </p>
+                  <p className="text-blue-200 text-xs">
+                    Lihat perbandingan lengkap semua program di halaman Program
+                    Studi.
+                  </p>
                 </div>
                 <Link
                   href="/program-studi"

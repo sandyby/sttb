@@ -34,6 +34,7 @@ export function useAdminCreateEvent() {
     mutationFn: (payload: EventPayload) => adminCreateEvent(token, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
+      queryClient.invalidateQueries({ queryKey: ["events", "detail"] });
     },
   });
 }
@@ -48,6 +49,7 @@ export function useAdminUpdateEvent() {
       adminUpdateEvent(token, id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
+      queryClient.invalidateQueries({ queryKey: ["events", "detail"] });
     },
   });
 }
@@ -61,6 +63,7 @@ export function useAdminDeleteEvent() {
     mutationFn: (id: string) => adminDeleteEvent(token, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
+      queryClient.invalidateQueries({ queryKey: ["events", "detail"] });
     },
   });
 }

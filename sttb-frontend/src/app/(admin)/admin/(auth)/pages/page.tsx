@@ -14,25 +14,7 @@ interface Page {
     updatedAt: string;
 }
 
-const initialPages: Page[] = [
-    { id: "1", title: "Beranda", slug: "/", section: "Publik", status: "published", updatedAt: "2026-03-08" },
-    { id: "2", title: "Visi & Misi", slug: "/visi-misi", section: "Tentang", status: "published", updatedAt: "2026-03-05" },
-    { id: "3", title: "Sejarah STTB", slug: "/sejarah", section: "Tentang", status: "published", updatedAt: "2026-03-01" },
-    { id: "4", title: "Pengakuan Iman", slug: "/pengakuan-iman", section: "Tentang", status: "published", updatedAt: "2026-02-28" },
-    { id: "5", title: "Pengurus Yayasan", slug: "/pengurus-yayasan", section: "Tentang", status: "published", updatedAt: "2026-02-20" },
-    { id: "6", title: "Mars STTB", slug: "/mars-sttb", section: "Tentang", status: "published", updatedAt: "2026-02-15" },
-    { id: "7", title: "Sarjana Teologi", slug: "/sarjana-teologi", section: "Program Studi", status: "published", updatedAt: "2026-02-10" },
-    { id: "8", title: "Sarjana Pendidikan Kristen", slug: "/sarjana-pendidikan-kristen", section: "Program Studi", status: "published", updatedAt: "2026-02-10" },
-    { id: "9", title: "Jadwal Admisi", slug: "/jadwal-admisi", section: "Admisi", status: "published", updatedAt: "2026-03-07" },
-    { id: "10", title: "Info Persyaratan", slug: "/informasi-persyaratan", section: "Admisi", status: "published", updatedAt: "2026-03-07" },
-    { id: "11", title: "Beasiswa", slug: "/beasiswa", section: "Admisi", status: "published", updatedAt: "2026-03-06" },
-    { id: "12", title: "FAQ Admisi", slug: "/faq", section: "Admisi", status: "published", updatedAt: "2026-03-05" },
-    { id: "13", title: "Pembinaan Mahasiswa", slug: "/pembinaan", section: "Kehidupan Kampus", status: "published", updatedAt: "2026-03-04" },
-    { id: "14", title: "Senat Mahasiswa", slug: "/senat", section: "Kehidupan Kampus", status: "published", updatedAt: "2026-03-03" },
-    { id: "15", title: "Fasilitas", slug: "/fasilitas", section: "Kehidupan Kampus", status: "draft", updatedAt: "2026-03-02" },
-    { id: "16", title: "Biaya Studi", slug: "/biaya-studi", section: "Keuangan", status: "published", updatedAt: "2026-03-01" },
-    { id: "17", title: "Kontak Kami", slug: "/kontak-kami", section: "Publik", status: "published", updatedAt: "2026-02-28" },
-];
+import { useAdminPagesList, useUpdatePage, useDeletePage } from "@/hooks/useAdminPages";
 
 const sections = ["Semua", "Publik", "Tentang", "Program Studi", "Admisi", "Kehidupan Kampus", "Keuangan"];
 
@@ -45,8 +27,22 @@ const sectionColors: Record<string, string> = {
     "Keuangan": "#D97706",
 };
 
-function EditPageModal({ page, onClose, onSave }: { page: Page; onClose: () => void; onSave: (p: Page) => void }) {
+function EditPageModal({ page, onClose }: { page: any; onClose: () => void }) {
     const [form, setForm] = useState({ ...page });
+    const updatePage = useUpdatePage();
+
+    const handleSave = () => {
+        updatePage.mutate({ id: page.id, payload: form }, {
+            onSuccess: () => {
+                toast.success("Halaman berhasil diperbarui");
+                onClose();
+            },
+            onError: () => {
+                toast.error("Gagal memperbarui halaman");
+            }
+        });
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
@@ -61,7 +57,7 @@ function EditPageModal({ page, onClose, onSave }: { page: Page; onClose: () => v
                     </div>
                     <div>
                         <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1">URL Slug</label>
-                        <input className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E62129] font-mono" value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} />
+                        <input className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E62129] font-mono" value={form.slug} disabled />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -70,21 +66,29 @@ function EditPageModal({ page, onClose, onSave }: { page: Page; onClose: () => v
                                 {sections.slice(1).map((s) => <option key={s}>{s}</option>)}
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1">Status</label>
-                            <select className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E62129]" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as "published" | "draft" }))}>
-                                <option value="published">Published</option>
-                                <option value="draft">Draft</option>
-                            </select>
+                        <div className="flex items-center gap-2 mt-6">
+                            <input 
+                                type="checkbox" 
+                                id="isPublished"
+                                checked={form.isPublished} 
+                                onChange={(e) => setForm((f) => ({ ...f, isPublished: e.target.checked }))}
+                            />
+                            <label htmlFor="isPublished" className="text-sm font-medium text-gray-700 dark:text-gray-300">Terbit</label>
                         </div>
                     </div>
                     <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                        <p className="text-amber-700 dark:text-amber-400 text-xs">Konten halaman dikelola langsung melalui kode aplikasi. Gunakan panel ini hanya untuk mengubah metadata halaman.</p>
+                        <p className="text-amber-700 dark:text-amber-400 text-xs">Beberapa halaman publik memiliki layout khusus yang tidak dapat diedit sepenuhnya dari sini. Perubahan judul dan visibilitas akan langsung berdampak pada website.</p>
                     </div>
                 </div>
                 <div className="border-t border-gray-100 dark:border-gray-800 px-6 py-4 flex gap-3 justify-end">
                     <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm">Batal</button>
-                    <button onClick={() => { onSave({ ...form, updatedAt: new Date().toISOString().split("T")[0] }); onClose(); toast.success("Halaman berhasil diperbarui"); }} className="px-5 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium">Simpan</button>
+                    <button 
+                        onClick={handleSave} 
+                        disabled={updatePage.isPending}
+                        className="px-5 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium disabled:opacity-50"
+                    >
+                        {updatePage.isPending ? "Menyimpan..." : "Simpan"}
+                    </button>
                 </div>
             </motion.div>
         </div>
@@ -92,10 +96,13 @@ function EditPageModal({ page, onClose, onSave }: { page: Page; onClose: () => v
 }
 
 export default function AdminHalamanPage() {
-    const [pages, setPages] = useState(initialPages);
+    const { data: pages = [], isLoading } = useAdminPagesList();
+    const deletePage = useDeletePage();
+    const updatePage = useUpdatePage();
+
     const [search, setSearch] = useState("");
     const [activeSection, setActiveSection] = useState("Semua");
-    const [editing, setEditing] = useState<Page | null>(null);
+    const [editing, setEditing] = useState<any | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
     const filtered = pages.filter((p) => {
@@ -104,19 +111,34 @@ export default function AdminHalamanPage() {
         return matchSearch && matchSection;
     });
 
-    // Group by section
-    const grouped = filtered.reduce<Record<string, Page[]>>((acc, p) => {
-        if (!acc[p.section]) acc[p.section] = [];
-        acc[p.section].push(p);
+    const grouped = filtered.reduce<Record<string, any[]>>((acc, p) => {
+        const section = p.section || "Publik";
+        if (!acc[section]) acc[section] = [];
+        acc[section].push(p);
         return acc;
     }, {});
 
-    const handleSave = (p: Page) => setPages((prev) => prev.map((pg) => pg.id === p.id ? p : pg));
-    const handleDelete = (id: string) => { setPages((prev) => prev.filter((p) => p.id !== id)); setDeleteConfirm(null); toast.success("Halaman berhasil dihapus"); };
-    const handleToggle = (id: string) => {
-        setPages((prev) => prev.map((p) => p.id === id ? { ...p, status: p.status === "published" ? "draft" : "published" } : p));
-        const pg = pages.find((p) => p.id === id);
-        toast.success(pg?.status === "published" ? "Halaman dijadikan draft" : "Halaman diterbitkan");
+    const handleDelete = (id: string) => {
+        deletePage.mutate(id, {
+            onSuccess: () => {
+                toast.success("Halaman berhasil dihapus");
+                setDeleteConfirm(null);
+            },
+            onError: () => {
+                toast.error("Gagal menghapus halaman");
+            }
+        });
+    };
+
+    const handleToggle = (page: any) => {
+        updatePage.mutate({ 
+            id: page.id, 
+            payload: { ...page, isPublished: !page.isPublished } 
+        }, {
+            onSuccess: () => {
+                toast.success(page.isPublished ? "Halaman dijadikan draft" : "Halaman diterbitkan");
+            }
+        });
     };
 
     return (
@@ -168,15 +190,15 @@ export default function AdminHalamanPage() {
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <span className="hidden lg:flex items-center gap-1 text-gray-400 text-xs">
                                         <Clock className="w-3 h-3" />
-                                        {new Date(p.updatedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+                                        {new Date(p.updatedAt ?? p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
                                     </span>
-                                    <button onClick={() => handleToggle(p.id)} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${p.status === "published" ? "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"}`}>
-                                        {p.status === "published" ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                                        {p.status === "published" ? "Terbit" : "Draft"}
+                                    <button onClick={() => handleToggle(p)} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${p.isPublished ? "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"}`}>
+                                        {p.isPublished ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                                        {p.isPublished ? "Terbit" : "Draft"}
                                     </button>
                                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button onClick={() => setEditing(p)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0A2C74] transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
-                                        <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0570CD] transition-colors"><Eye className="w-3.5 h-3.5" /></button>
+                                        <a href={p.slug} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#0570CD] transition-colors"><Eye className="w-3.5 h-3.5" /></a>
                                         <button onClick={() => setDeleteConfirm(p.id)} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-[#E62129] transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-gray-300 dark:text-gray-600" />
@@ -188,7 +210,7 @@ export default function AdminHalamanPage() {
             ))}
 
             <AnimatePresence>
-                {editing && <EditPageModal page={editing} onClose={() => setEditing(null)} onSave={handleSave} />}
+                {editing && <EditPageModal page={editing} onClose={() => setEditing(null)} />}
                 {deleteConfirm && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)} />

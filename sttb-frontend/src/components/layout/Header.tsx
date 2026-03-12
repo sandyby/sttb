@@ -49,7 +49,7 @@ const navItems: NavItem[] = [
     children: [
       {
         label: "Sarjana Teologi",
-        href: "/program-studi/sarjana-teologi"
+        href: "/program-studi/sarjana-teologi",
       },
       {
         label: "Sarjana Pendidikan Kristen",
@@ -285,12 +285,8 @@ function MobileNavItem({
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<
-    string | null
-  >(null);
-  const hoverTimeout = useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -316,15 +312,11 @@ export function Header() {
   }, [mobileOpen]);
 
   const onEnter = (label: string) => {
-    if (hoverTimeout.current)
-      clearTimeout(hoverTimeout.current);
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
     setActiveDropdown(label);
   };
   const onLeave = () => {
-    hoverTimeout.current = setTimeout(
-      () => setActiveDropdown(null),
-      130,
-    );
+    hoverTimeout.current = setTimeout(() => setActiveDropdown(null), 130);
   };
 
   const isHomePage = pathname === "/";
@@ -360,11 +352,11 @@ export function Header() {
         <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <a
-              href="tel:+62222012010"
+              href="tel:+6281573360009"
               className="flex items-center gap-1.5 hover:text-[#7FB4E5] transition-colors"
             >
               <Phone className="w-3 h-3" />
-              (022) 201-2010
+              (+62)-815-7336-0009
             </a>
             <a
               href="mailto:info@sttb.ac.id"
@@ -427,10 +419,7 @@ export function Header() {
       >
         <div className="max-w-screen-2xl mx-auto px-4 flex items-center justify-between h-14">
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 flex-shrink-0"
-          >
+          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <Image
               src="/sttb-2.png"
               alt="STTB Logo"
@@ -442,9 +431,7 @@ export function Header() {
               <div
                 className={cn(
                   "font-bold text-lg leading-tight transition-colors",
-                  transparent
-                    ? "text-white"
-                    : "text-[#0A2C74] dark:text-white",
+                  transparent ? "text-white" : "text-[#0A2C74] dark:text-white",
                 )}
               >
                 STTB
@@ -480,17 +467,13 @@ export function Header() {
                         : "text-gray-700 dark:text-gray-200 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20",
                     )}
                     aria-haspopup="true"
-                    aria-expanded={
-                      activeDropdown === item.label
-                    }
+                    aria-expanded={activeDropdown === item.label}
                   >
                     {item.label}
                     <ChevronDown
                       className={cn(
                         "w-3 h-3 transition-transform flex-shrink-0",
-                        activeDropdown === item.label
-                          ? "rotate-180"
-                          : "",
+                        activeDropdown === item.label ? "rotate-180" : "",
                       )}
                     />
                   </button>
@@ -509,8 +492,7 @@ export function Header() {
                     transparent
                       ? "text-white/90 hover:text-white hover:bg-white/10"
                       : "text-gray-700 dark:text-gray-200 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20",
-                    pathname === item.href &&
-                      !transparent
+                    pathname === item.href && !transparent
                       ? "text-[#E62129]"
                       : "",
                   )}

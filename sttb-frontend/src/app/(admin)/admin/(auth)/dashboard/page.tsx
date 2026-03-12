@@ -2,14 +2,14 @@
 "use client";
 
 import Link from "next/link";
-import { Newspaper, Calendar, Users, TrendingUp, Eye, ArrowRight, Plus } from "lucide-react";
+import { Newspaper, Calendar, Image as ImageIcon, Users, TrendingUp, Eye, ArrowRight, Plus } from "lucide-react";
 import { newsArticles, events } from "@/data/mock-data";
 import Image from "next/image";
 
 const stats = [
     { label: "Total Berita", value: newsArticles.length, icon: Newspaper, color: "bg-red-50 dark:bg-red-900/20 text-[#E62129]", change: "+3 bulan ini" },
     { label: "Kegiatan Aktif", value: events.filter(e => new Date(e.date) >= new Date()).length, icon: Calendar, color: "bg-blue-50 dark:bg-blue-900/20 text-[#0A2C74]", change: "+2 minggu ini" },
-    { label: "Media Files", value: 48, icon: Image, color: "bg-sky-50 dark:bg-sky-900/20 text-[#0570CD]", change: "+5 bulan ini" },
+    { label: "Media Files", value: 48, icon: ImageIcon, color: "bg-sky-50 dark:bg-sky-900/20 text-[#0570CD]", change: "+5 bulan ini" },
     { label: "Pengunjung/Bulan", value: "12.4K", icon: Eye, color: "bg-purple-50 dark:bg-purple-900/20 text-purple-600", change: "+18% vs bulan lalu" },
 ];
 
@@ -42,7 +42,7 @@ export default function AdminDashboardPage() {
                         <div key={s.label} className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-3">
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${s.color}`}>
-                                    <Icon className="w-5 h-5" src={""} alt={""} />
+                                    <Icon className="w-5 h-5" />
                                 </div>
                                 <TrendingUp className="w-4 h-4 text-green-500" />
                             </div>
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
                             {[
                                 { label: "Tambah Berita", href: "/admin/news/create", icon: Newspaper, color: "text-[#E62129] bg-red-50 dark:bg-red-900/20" },
                                 { label: "Tambah Kegiatan", href: "/admin/events/create", icon: Calendar, color: "text-[#0A2C74] bg-blue-50 dark:bg-blue-900/20" },
-                                { label: "Upload Media", href: "/admin/media", icon: Image, color: "text-[#0570CD] bg-sky-50 dark:bg-sky-900/20" },
+                                { label: "Upload Media", href: "/admin/media", icon: ImageIcon, color: "text-[#0570CD] bg-sky-50 dark:bg-sky-900/20" },
                             ].map((action) => {
                                 const Icon = action.icon;
                                 return (
@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
                                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                                     >
                                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${action.color}`}>
-                                            <Icon className="w-4 h-4" src={""} alt={""} />
+                                            <Icon className="w-4 h-4" />
                                         </div>
                                         <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">
                                             {action.label}
