@@ -1,5 +1,3 @@
-"use client";
-
 import axios, { type AxiosError, type AxiosInstance } from "axios";
 import { getSession } from "next-auth/react";
 import type { ApiError, PaginatedResponse } from "@/types/api";
@@ -46,10 +44,7 @@ apiClient.interceptors.response.use(
         toast.error("Session expired", {
           description: "Your session has expired. Please log in again.",
         });
-
-        setTimeout(() => {
-          window.location.href = "/admin/login?error=SessionExpired";
-        }, 1500);
+        window.location.href = "/admin/login";
       }
     }
 

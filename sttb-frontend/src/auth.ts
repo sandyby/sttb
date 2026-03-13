@@ -107,29 +107,40 @@ export const authOptions: NextAuthOptions = {
             }),
           });
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(
-              errorData.detail ??
-                errorData.message ??
-                errorData.title ??
-                "Login failed",
-            );
+          const contentType = response.headers.get("content-type");
+          let errorData: any = null;
+
+          if (contentType && contentType.includes("application/json")) {
+            try {
+              const data = await response.json();
+              if (response.ok) {
+                const decoded = jwtDecode<DecodedToken>(data.accessToken);
+                return {
+                  id: decoded.sub ?? validatedCredentials.email,
+                  email: validatedCredentials.email,
+                  name: decoded.name ?? validatedCredentials.email,
+                  role: data.role || decoded.role || "user",
+                  accessToken: data.accessToken,
+                  refreshToken: data.refreshToken,
+                  accessTokenExpires: Date.now() + data.expiresIn * 1000,
+                };
+              }
+              errorData = data;
+            } catch (e) {
+              console.error("Auth JSON parse error:", e);
+            }
           }
 
-          const data = (await response.json()) as LoginResponse;
-          const decoded = jwtDecode<DecodedToken>(data.accessToken);
+          if (!response.ok) {
+            const message = 
+              errorData?.detail ?? 
+              errorData?.message ?? 
+              errorData?.title ?? 
+              (response.status === 401 ? "Email atau password salah" : `Server error: ${response.status}`);
+            throw new Error(message);
+          }
 
-          return {
-            id: decoded.sub ?? validatedCredentials.email,
-            email: validatedCredentials.email,
-            name: decoded.name ?? validatedCredentials.email,
-            role: data.role || decoded.role || "user",
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-            // Use expiresIn (seconds from backend) — reliable source of truth
-            accessTokenExpires: Date.now() + data.expiresIn * 1000,
-          };
+          throw new Error("Login failed: Unexpected response format");
         } catch (error) {
           const message =
             error instanceof Error ? error.message : "Login failed";
@@ -232,7 +243,7 @@ async function refreshAccessToken(token: import("next-auth/jwt").JWT) {
       body: JSON.stringify({ refreshToken: token.refreshToken }),
     });
 
-    if (!response.ok) throw new Error("Refresh token failed");
+    if (!response.ok) throw new Error("Refresh token expired or invalid");
 
     const data = (await response.json()) as RefreshTokenResponse;
 

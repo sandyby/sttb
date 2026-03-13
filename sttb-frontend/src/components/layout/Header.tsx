@@ -423,7 +423,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <Image
-              src="/sttb-2.png"
+              src={transparent ? "/sttb-logo-white.png" : "/sttb-2.png"}
               alt="STTB Logo"
               width={100}
               height={50}
@@ -613,7 +613,10 @@ export function Header() {
                           label: p.name,
                           href: `/program-studi/${p.slug}`,
                         })),
-                        { label: "Lihat Semua Program", href: "/program-studi" },
+                        {
+                          label: "Lihat Semua Program",
+                          href: "/program-studi",
+                        },
                       ],
                     };
                   }

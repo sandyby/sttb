@@ -13,6 +13,8 @@ import {
   LogOut,
   Menu,
   X,
+  Book,
+  BookOpenText,
   ChevronRight,
   ChevronDown,
   Bell,
@@ -24,6 +26,8 @@ import {
   GraduationCap,
   Building2,
   Award,
+  Loader2,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "../ui/utils";
 import { useSession, signOut } from "next-auth/react";
@@ -78,12 +82,12 @@ const navGroups: NavGroup[] = [
   {
     label: "Program Studi",
     href: "/admin/study-programs",
-    icon: GraduationCap,
+    icon: Book,
     children: [
       {
         label: "Semua Program",
         href: "/admin/study-programs",
-        icon: GraduationCap,
+        icon: BookOpenText,
       },
       { label: "Tambah Baru", href: "/admin/study-programs/new", icon: Plus },
     ],
@@ -120,8 +124,16 @@ const navGroups: NavGroup[] = [
     href: "/admin/admission-waves",
     icon: Calendar,
     children: [
-      { label: "Semua Gelombang", href: "/admin/admission-waves", icon: Calendar },
-      { label: "Tambah Baru", href: "/admin/admission-waves/create", icon: Plus },
+      {
+        label: "Semua Gelombang",
+        href: "/admin/admission-waves",
+        icon: Calendar,
+      },
+      {
+        label: "Tambah Baru",
+        href: "/admin/admission-waves/create",
+        icon: Plus,
+      },
     ],
   },
   {
@@ -236,29 +248,45 @@ function SidebarItem({
 function getBreadcrumb(pathname: string): { parent?: string; current: string } {
   // Normalize pathname by removing trailing slashes
   const path = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
-  
+
   // Specific overrides for deep nested paths
-  if (path.includes("/news/create")) return { parent: "Berita", current: "Tambah Baru" };
-  if (path.match(/\/news\/\w+\/edit/)) return { parent: "Berita", current: "Edit Berita" };
-  if (path.includes("/events/create")) return { parent: "Kegiatan", current: "Tambah Baru" };
-  if (path.match(/\/events\/\w+\/edit/)) return { parent: "Kegiatan", current: "Edit Kegiatan" };
-  if (path.includes("/study-programs/new")) return { parent: "Program Studi", current: "Tambah Baru" };
-  if (path.match(/\/study-programs\/[\w-]+\/edit/)) return { parent: "Program Studi", current: "Edit Program" };
-  if (path.includes("/lecturers/create")) return { parent: "Dewan Dosen", current: "Tambah Dosen" };
-  if (path.match(/\/lecturers\/\w+\/edit/)) return { parent: "Dewan Dosen", current: "Edit Dosen" };
-  if (path.includes("/foundation/create")) return { parent: "Yayasan", current: "Tambah Baru" };
-  if (path.match(/\/foundation\/\w+\/edit/)) return { parent: "Yayasan", current: "Edit Anggota" };
-  if (path.includes("/admission-waves/create")) return { parent: "Jadwal Admisi", current: "Tambah Gelombang" };
-  if (path.match(/\/admission-waves\/[\w-]+\/edit/)) return { parent: "Jadwal Admisi", current: "Edit Gelombang" };
-  if (path.includes("/scholarships/create")) return { parent: "Beasiswa", current: "Tambah Baru" };
-  if (path.match(/\/scholarships\/\w+\/edit/)) return { parent: "Beasiswa", current: "Edit Beasiswa" };
+  if (path.includes("/news/create"))
+    return { parent: "Berita", current: "Tambah Baru" };
+  if (path.match(/\/news\/\w+\/edit/))
+    return { parent: "Berita", current: "Edit Berita" };
+  if (path.includes("/events/create"))
+    return { parent: "Kegiatan", current: "Tambah Baru" };
+  if (path.match(/\/events\/\w+\/edit/))
+    return { parent: "Kegiatan", current: "Edit Kegiatan" };
+  if (path.includes("/study-programs/new"))
+    return { parent: "Program Studi", current: "Tambah Baru" };
+  if (path.match(/\/study-programs\/[\w-]+\/edit/))
+    return { parent: "Program Studi", current: "Edit Program" };
+  if (path.includes("/lecturers/create"))
+    return { parent: "Dewan Dosen", current: "Tambah Dosen" };
+  if (path.match(/\/lecturers\/\w+\/edit/))
+    return { parent: "Dewan Dosen", current: "Edit Dosen" };
+  if (path.includes("/foundation/create"))
+    return { parent: "Yayasan", current: "Tambah Baru" };
+  if (path.match(/\/foundation\/\w+\/edit/))
+    return { parent: "Yayasan", current: "Edit Anggota" };
+  if (path.includes("/admission-waves/create"))
+    return { parent: "Jadwal Admisi", current: "Tambah Gelombang" };
+  if (path.match(/\/admission-waves\/[\w-]+\/edit/))
+    return { parent: "Jadwal Admisi", current: "Edit Gelombang" };
+  if (path.includes("/scholarships/create"))
+    return { parent: "Beasiswa", current: "Tambah Baru" };
+  if (path.match(/\/scholarships\/\w+\/edit/))
+    return { parent: "Beasiswa", current: "Edit Beasiswa" };
 
   // Try to find in navGroups
-  const group = navGroups.find(n => n.href === path || path.startsWith(n.href + "/"));
+  const group = navGroups.find(
+    (n) => n.href === path || path.startsWith(n.href + "/"),
+  );
   if (group) {
     // If it's a child route, find the child label
     if (group.children) {
-      const child = group.children.find(c => c.href === path);
+      const child = group.children.find((c) => c.href === path);
       if (child) return { parent: group.label, current: child.label };
     }
     return { current: group.label };
@@ -496,7 +524,19 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         </header>
 
         {/* Page */}
-        <main className="flex-1 p-5 overflow-auto">{children}</main>
+        <main className="flex-1 p-5 overflow-auto">
+          {status === "loading" ? (
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="w-8 h-8 animate-spin text-[#E62129]" />
+            </div>
+          ) : session?.error ? (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              Menghalihkan...
+            </div>
+          ) : (
+            children
+          )}
+        </main>
       </div>
 
       <Toaster position="top-right" richColors />

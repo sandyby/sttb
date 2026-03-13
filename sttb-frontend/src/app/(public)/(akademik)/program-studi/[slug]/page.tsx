@@ -58,8 +58,7 @@ export default async function ProgramPage({
         image={coverImg || undefined}
         breadcrumb={[
           { label: "Program Studi", href: "/program-studi" },
-          { label: `Program ${program.level}`, href: "#" },
-          { label: program.name, href: `/program-studi/${slug}` }
+          { label: program.name, href: `/program-studi/${slug}` },
         ]}
       >
         <div className="flex flex-wrap gap-5 mt-8">
@@ -90,9 +89,7 @@ export default async function ProgramPage({
                   <p className="text-white/60 text-xs font-medium uppercase tracking-wider">
                     {s.label}
                   </p>
-                  <p className="text-white font-bold text-sm">
-                    {s.value}
-                  </p>
+                  <p className="text-white font-bold text-sm">{s.value}</p>
                 </div>
               </div>
             );

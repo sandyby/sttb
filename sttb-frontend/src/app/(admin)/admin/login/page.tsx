@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
     "/admin/dashboard";
 
   useEffect(() => {
-    if (status === "authenticated" && session) {
+    if (status === "authenticated" && session && !session.error) {
       router.replace(from);
     }
   }, [status, session, router, from]);

@@ -170,7 +170,11 @@ export async function getStudyProgramBySlug(
       `/api/study-programs/${slug}`,
     );
     return data;
-  } catch {
-    return null;
+  } catch (err: unknown) {
+    if (err && typeof err === "object" && "response" in err) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr.response?.status === 404) return null;
+    }
+    throw err;
   }
 }
