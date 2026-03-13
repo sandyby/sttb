@@ -58,6 +58,15 @@ export const eventFormSchema = z.object({
   organizer: z.string().optional(),
   contactEmail: z.string().optional(),
   tags: z.array(z.string()).default([]),
-});
+})
+.refine(
+  (data) => {
+    if (data.onGoing || !data.endDate || !data.startDate) return true;
+    const start = new Date(data.startDate);
+    const end = new Date(data.endDate);
+    return end >= start;
+  },
+  { message: "Tanggal selesai tidak boleh lebih awal dari tanggal mulai", path: ["endDate"] }
+);
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;

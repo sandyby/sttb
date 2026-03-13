@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import Image from "next/image";
 import {
+  createEventSchema,
   eventFormSchema,
   type EventFormValues,
 } from "@/libs/schemas/event-schema";
@@ -323,7 +324,7 @@ export function EventForm({
   const isPublished = watch("status") === "published";
 
   return (
-    <div className="max-w-4xl mx-auto pb-20">
+    <div className="max-w-4xl mx-auto pb-20 mb-8">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <button

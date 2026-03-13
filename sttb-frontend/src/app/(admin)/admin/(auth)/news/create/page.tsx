@@ -19,6 +19,8 @@ export default function AdminNewsCreatePage() {
             excerpt: data.excerpt || null,
             thumbnailUrl: data.coverImageUrl || null,
             categoryId: data.categoryId || null,
+            author: data.author || null,
+            tags: data.tags || [],
             isFeatured: data.featured,
             isPublished: status === "published",
         });

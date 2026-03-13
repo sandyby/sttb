@@ -299,14 +299,17 @@ function getBreadcrumb(pathname: string): { parent?: string; current: string } {
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const user = session?.user;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Handle session errors (e.g. refresh token expired)
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
-      toast.error("Sesi Anda telah berakhir. Silakan login kembali.");
+      toast.error("Sesi Anda telah berakhir. Silakan login kembali.", {
+        id: "session-expired",
+        duration: 5000,
+      });
       signOut({ callbackUrl: "/admin/login" });
     }
 
@@ -321,7 +324,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
-  }, [session]);
+  }, [session, session?.error]);
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/admin/login" });
@@ -538,12 +541,20 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         {/* Page */}
         <main className="flex-1 p-5 overflow-auto">
           {status === "loading" ? (
-            <div className="flex items-center justify-center h-full">
-              <Loader2 className="w-8 h-8 animate-spin text-[#E62129]" />
+            <div className="flex flex-col items-center justify-center h-full gap-4">
+              <Loader2 className="w-10 h-10 animate-spin text-[#E62129]" />
+              <p className="text-sm text-gray-500 animate-pulse">Memuat sesi...</p>
             </div>
-          ) : session?.error ? (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              Menghalihkan...
+          ) : session?.error === "RefreshAccessTokenError" ? (
+            <div className="flex flex-col items-center justify-center h-full gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                <X className="w-6 h-6 text-[#E62129]" />
+              </div>
+              <div className="text-center">
+                <p className="text-gray-900 dark:text-white font-semibold">Sesi Berakhir</p>
+                <p className="text-sm text-gray-500 mt-1">Mengalihkan ke halaman login...</p>
+              </div>
+              <Loader2 className="w-5 h-5 animate-spin text-gray-400 mt-2" />
             </div>
           ) : (
             children

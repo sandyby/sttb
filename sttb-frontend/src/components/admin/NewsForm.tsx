@@ -306,19 +306,32 @@ export function NewsForm({
 
   const handleSave = async (status: "draft" | "published") => {
     setSaving(status === "draft" ? "draft" : "publish");
-    handleSubmit(async (data: NewsFormValues) => {
-      setIsLoading(true);
-      try {
-        await onSave(data, status);
-        toast.success("Berita berhasil disimpan");
-        router.push(backHref);
-      } catch (error: any) {
-        toast.error(error.message || "Gagal menyimpan berita");
-      } finally {
-        setIsLoading(false);
+    handleSubmit(
+      async (data: NewsFormValues) => {
+        setIsLoading(true);
+        try {
+          await onSave(data, status);
+          toast.success("Berita berhasil disimpan");
+          router.push(backHref);
+        } catch (error: any) {
+          toast.error(error.message || "Gagal menyimpan berita");
+          setSaving(null);
+          setIsLoading(false);
+        } finally {
+          // Note: we don't always reset here if redirecting, 
+          // but we MUST reset if it stayed on the page (e.g. error)
+          // To be safe against all paths:
+          // setIsLoading(false);
+          // setSaving(null);
+        }
+      },
+      (errors) => {
         setSaving(null);
+        setIsLoading(false);
+        toast.error("Lengkapi semua field yang diperlukan");
+        console.log("Form validation errors:", errors);
       }
-    })();
+    )();
   };
 
   const handleImageUpload = async (file: File) => {

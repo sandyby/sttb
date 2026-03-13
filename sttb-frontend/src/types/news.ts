@@ -11,6 +11,8 @@ export interface NewsListItem {
   excerpt?: string | null;
   thumbnailUrl?: string | null;
   category?: string | null;
+  author?: string | null;
+  tags: string[];
   isFeatured: boolean;
   isPublished: boolean;
   publishedAt?: string | null; // ISO 8601
@@ -39,7 +41,9 @@ export interface CreateNewsRequest {
   content: string;
   excerpt?: string | null;
   thumbnailUrl?: string | null;
-  category?: string | null;
+  categoryId?: string | null;
+  author?: string | null;
+  tags: string[];
   isFeatured: boolean;
   isPublished: boolean;
 }

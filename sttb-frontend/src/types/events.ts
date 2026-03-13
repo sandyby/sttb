@@ -13,10 +13,21 @@ export interface EventListItem {
   description: string;
   startDate: string;       // ISO 8601
   endDate?: string | null;
+  isOnGoing: boolean;
   location?: string | null;
+  locationDetails?: string | null;
   imageUrl?: string | null;
   category?: string | null;
   registrationUrl?: string | null;
+  isRegistrationOpen: boolean;
+  registrationDeadline?: string | null;
+  maxParticipants?: string | null;
+  mode: string;
+  isOnline: boolean;
+  streamingUrl?: string | null;
+  organizer?: string | null;
+  contactEmail?: string | null;
+  tags: string[];
   isPublished: boolean;
   createdAt: string;       // ISO 8601
 }
@@ -36,10 +47,21 @@ export interface CreateEventRequest {
   /** ISO 8601 string — convert from form value via new Date(...).toISOString() */
   startDate: string;
   endDate?: string | null;
+  isOnGoing: boolean;
   location?: string | null;
+  locationDetails?: string | null;
   imageUrl?: string | null;
-  category?: string | null;
+  categoryId?: string | null;
   registrationUrl?: string | null;
+  isRegistrationOpen: boolean;
+  registrationDeadline?: string | null;
+  maxParticipants?: string | null;
+  mode: string;
+  isOnline: boolean;
+  streamingUrl?: string | null;
+  organizer?: string | null;
+  contactEmail?: string | null;
+  tags: string[];
   isPublished: boolean;
 }
 

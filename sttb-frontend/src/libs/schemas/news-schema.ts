@@ -44,7 +44,7 @@ export const newsFormSchema = z.object({
   author: z.string(),
   status: z.enum(["draft", "published"]),
   featured: z.boolean(),
-  coverImageUrl: z.string(),
+  coverImageUrl: z.string().optional(),
   tags: z.array(z.string()),
 });
 

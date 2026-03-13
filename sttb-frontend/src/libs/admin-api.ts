@@ -61,6 +61,8 @@ export interface CreateNewsPayload {
   excerpt?: string | null;
   thumbnailUrl?: string | null;
   categoryId?: string | null;
+  author?: string | null;
+  tags: string[];
   isFeatured: boolean;
   isPublished: boolean;
 }
@@ -105,6 +107,8 @@ export interface UpdateNewsPayload {
   excerpt?: string | null;
   thumbnailUrl?: string | null;
   categoryId?: string | null;
+  author?: string | null;
+  tags: string[];
   isFeatured: boolean;
   isPublished: boolean;
 }
@@ -144,10 +148,21 @@ export interface EventPayload {
   description: string;
   startDate: string;
   endDate?: string | null;
+  isOnGoing: boolean;
   location?: string | null;
+  locationDetails?: string | null;
   imageUrl?: string | null;
   categoryId?: string | null;
   registrationUrl?: string | null;
+  isRegistrationOpen: boolean;
+  registrationDeadline?: string | null;
+  maxParticipants?: string | null;
+  mode: string;
+  isOnline: boolean;
+  streamingUrl?: string | null;
+  organizer?: string | null;
+  contactEmail?: string | null;
+  tags: string[];
   isPublished: boolean;
 }
 
