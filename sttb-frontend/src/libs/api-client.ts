@@ -1,3 +1,5 @@
+"use client";
+
 import axios, { type AxiosError, type AxiosInstance } from "axios";
 import { getSession } from "next-auth/react";
 import type { ApiError, PaginatedResponse } from "@/types/api";
