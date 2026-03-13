@@ -9,11 +9,18 @@ import {
   Pencil,
   Trash2,
   Loader2,
+  Search,
+  Edit2,
+  ChevronLeft,
+  ChevronRight,
+  Inbox,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminScholarships } from "@/hooks/useAdminScholarships";
 import { useSession } from "next-auth/react";
 import { getImageUrl } from "@/libs/api";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 export default function AdminScholarshipsPage() {
   const { status: sessionStatus } = useSession();
@@ -29,13 +36,12 @@ export default function AdminScholarshipsPage() {
   const items = data?.items ?? [];
   const filteredItems = isActiveFilter === "" 
     ? items 
-    : items.filter(item => item.isActive === (isActiveFilter === "true"));
+    : items.filter((item: any) => item.isActive === (isActiveFilter === "true"));
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Hapus beasiswa "${name}"? Tindakan ini tidak dapat dibatalkan.`)) return;
-    setDeletingId(id);
+  const handleDelete = async () => {
+    if (!deletingId) return;
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(deletingId);
       toast.success("Beasiswa berhasil dihapus");
     } catch {
       toast.error("Gagal menghapus beasiswa");
@@ -83,16 +89,13 @@ export default function AdminScholarshipsPage() {
             <Loader2 className="w-6 h-6 animate-spin text-[#E62129]" />
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="text-center py-20">
-            <Award className="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-            <p className="text-gray-500 dark:text-gray-400 text-sm">Belum ada beasiswa</p>
-            <Link
-              href="/admin/scholarships/create"
-              className="inline-flex items-center gap-1 mt-3 text-[#E62129] text-sm font-medium hover:underline"
-            >
-              <Plus className="w-3.5 h-3.5" /> Tambah beasiswa pertama
-            </Link>
-          </div>
+          <AdminEmptyState 
+            icon={Award}
+            title="Belum ada beasiswa"
+            description={isActiveFilter ? "Tidak ada beasiswa yang sesuai dengan kriteria filter Anda." : "Belum ada data beasiswa yang terdaftar."}
+            actionLabel="Tambah Beasiswa"
+            actionHref="/admin/scholarships/create"
+          />
         ) : (
           <table className="w-full text-sm">
             <thead className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
@@ -119,7 +122,7 @@ export default function AdminScholarshipsPage() {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <Award className="w-5 h-5" />
+                            <Inbox className="w-5 h-5" />
                           </div>
                         )}
                       </div>
@@ -156,10 +159,10 @@ export default function AdminScholarshipsPage() {
                         className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                         title="Edit"
                       >
-                        <Pencil className="w-4 h-4" />
+                        <Edit2 className="w-4 h-4" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(item.id, item.name)}
+                        onClick={() => setDeletingId(item.id)}
                         disabled={deletingId === item.id}
                         className="p-1.5 rounded-lg text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                         title="Hapus"
@@ -178,6 +181,15 @@ export default function AdminScholarshipsPage() {
           </table>
         )}
       </div>
+
+      <DeleteConfirmModal 
+        isOpen={!!deletingId}
+        onCloseAction={() => setDeletingId(null)}
+        onConfirmAction={handleDelete}
+        title="Hapus Beasiswa?"
+        description="Tindakan ini tidak dapat dibatalkan. Beasiswa akan dihapus secara permanen dari sistem."
+        isPending={deleteMutation.isPending}
+      />
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 import Image from "next/image";
+import PageHeader from "@/components/shared/PageHeader";
 
 const priorities = [
     {
@@ -118,42 +119,15 @@ export default function DukungSttbPage() {
 
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none">
-                    <motion.div
-                        className="absolute top-10 right-10 w-64 h-64 rounded-full bg-white opacity-5"
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 6, repeat: Infinity }}
-                    />
-                    <motion.div
-                        className="absolute bottom-0 left-10 w-40 h-40 rounded-full bg-white opacity-5"
-                        animate={{ scale: [1, 1.15, 1] }}
-                        transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-                    />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-2">
-                            Keuangan
-                        </p>
-                        <h1
-                            className="text-white mb-4"
-                            style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700 }}
-                        >
-                            Dukung STTB
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Bergabunglah dalam mendukung misi STTB melalui donasi dan kemitraan.
-                            Kontribusi Anda membantu membentuk pemimpin Kristen yang berdampak.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Dukung STTB"
+                category="Keuangan"
+                description="Bergabunglah dalam mendukung misi STTB melalui donasi dan kemitraan. Kontribusi Anda membantu membentuk pemimpin Kristen yang berdampak."
+                breadcrumb={[
+                    { label: "Keuangan", href: "#" },
+                    { label: "Dukung STTB", href: "/dukung-sttb" }
+                ]}
+            />
 
             {/* Kontribusi Anda */}
             <section className="py-16 bg-white dark:bg-gray-900">
@@ -194,7 +168,6 @@ export default function DukungSttbPage() {
                                 alt="Dukung STTB"
                                 width={400}
                                 height={400}
-                                preload
                                 className="w-full h-80 object-cover rounded-2xl shadow-xl"
                             />
                         </FadeIn>
@@ -230,7 +203,6 @@ export default function DukungSttbPage() {
                                                 src={p.img}
                                                 alt={p.title}
                                                 fill
-                                                preload
                                                 className="w-full h-full object-cover"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -347,7 +319,6 @@ export default function DukungSttbPage() {
                                     alt="QR Code Placeholder"
                                     width={256}
                                     height={256}
-                                    preload
                                     className="rounded-lg"
                                 />
                                 <p className="text-gray-500 dark:text-gray-400 text-xs">

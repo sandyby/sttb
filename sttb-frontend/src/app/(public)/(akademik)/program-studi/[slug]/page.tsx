@@ -20,6 +20,8 @@ import { getStudyProgramBySlug, getImageUrl } from "@/libs/api";
 const DEFAULT_PROGRAM_IMAGE =
   "https://images.unsplash.com/photo-1505427214476-47e71e07abfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800";
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default async function ProgramPage({
   params,
 }: {
@@ -45,125 +47,58 @@ export default async function ProgramPage({
   }
 
   const isS1 = program.level.toLowerCase() === "s1";
-
   const coverImg = getImageUrl(program.coverImageUrl) || DEFAULT_PROGRAM_IMAGE;
 
   return (
     <>
-      {/* Hero */}
-      <div
-        className={`relative pt-28 pb-0 ${
-          isS1
-            ? "bg-gradient-to-r from-primary-dark-accent  to-primary-light-accent"
-            : "bg-gradient-to-r from-secondary to-accent"
-        } overflow-hidden`}
+      <PageHeader
+        title={program.name}
+        category={`Program ${program.level}`}
+        description={program.description || undefined}
+        image={coverImg || undefined}
+        breadcrumb={[
+          { label: "Program Studi", href: "/program-studi" },
+          { label: `Program ${program.level}`, href: "#" },
+          { label: program.name, href: `/program-studi/${slug}` }
+        ]}
       >
-        <div className="absolute inset-0 overflow-hidden">
-          <Image
-            src={coverImg}
-            alt={program.name}
-            fill
-            priority
-            className="w-full h-full object-cover opacity-20"
-          />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 pb-16">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <Link
-              href="/"
-              className={`${isS1 ? "text-red-100/80 hover:text-red-50/90" : "text-blue-100/60 hover:text-blue-100"} text-sm`}
-            >
-              Beranda
-            </Link>
-            <span className={`${isS1 ? "text-red-50" : "text-blue-200"}`}>
-              /
-            </span>
-            <Link
-              href="/program-studi"
-              className={`${isS1 ? "text-red-100/80 hover:text-red-50/90" : "text-blue-100/60 hover:text-blue-100"} text-sm`}
-            >
-              Program Studi
-            </Link>
-            <span className={`${isS1 ? "text-red-50" : "text-blue-200"}`}>
-              /
-            </span>
-            <span
-              className={`${isS1 ? "text-red-50" : "text-blue-200"} text-sm`}
-            >
-              Program {program.level}
-            </span>
-            <span className={`${isS1 ? "text-red-50" : "text-blue-200"}`}>
-              /
-            </span>
-            <span
-              className={`${isS1 ? "text-red-50" : "text-blue-200"} text-sm`}
-            >
-              {program.name}
-            </span>
-          </div>
-          <div className="flex items-center gap-3 mb-3">
-            <span
-              className={`px-2 py-1 rounded-md ${isS1 ? "bg-primary" : "bg-accent"} text-white text-xs font-bold`}
-            >
-              {program.level}
-            </span>
-            <span className="px-2 py-1 rounded-md bg-white/20 text-white text-xs">
-              {program.degree}
-            </span>
-          </div>
-          <h1
-            className="text-white mb-4 max-w-3xl"
-            style={{
-              fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-              fontWeight: 700,
-              lineHeight: 1.2,
-            }}
-          >
-            {program.name}
-          </h1>
-          <p className="text-white max-w-2xl leading-relaxed mb-8">
-            {program.description}
-          </p>
-
-          {/* Quick stats */}
-          <div className="flex flex-wrap gap-5">
-            {[
-              { icon: Clock, label: "Durasi", value: program.duration },
-              {
-                icon: BookOpen,
-                label: "Total SKS",
-                value: `${program.credits} SKS`,
-              },
-              { icon: Award, label: "Gelar", value: program.degree },
-              {
-                icon: Users,
-                label: "Akreditasi",
-                value: program.accreditation || "BAN-PT",
-              },
-            ].map((s) => {
-              const Icon = s.icon;
-              return (
-                <div
-                  key={s.label}
-                  className={`flex items-center gap-2 ${isS1 ? "bg-white/20" : "bg-white/10"} backdrop-blur-sm rounded-lg px-4 py-2.5 border border-white/20`}
-                >
-                  <Icon className="w-4 h-4 text-white" />
-                  <div>
-                    <p
-                      className={`${isS1 ? "text-red-100/75" : "text-blue-100/75"} text-xs`}
-                    >
-                      {s.label}
-                    </p>
-                    <p className="text-white font-semibold text-sm">
-                      {s.value}
-                    </p>
-                  </div>
+        <div className="flex flex-wrap gap-5 mt-8">
+          {[
+            { icon: Clock, label: "Durasi", value: program.duration },
+            {
+              icon: BookOpen,
+              label: "Total SKS",
+              value: `${program.credits} SKS`,
+            },
+            { icon: Award, label: "Gelar", value: program.degree },
+            {
+              icon: Users,
+              label: "Akreditasi",
+              value: program.accreditation || "BAN-PT",
+            },
+          ].map((s) => {
+            const Icon = s.icon;
+            return (
+              <div
+                key={s.label}
+                className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/20 shadow-xl"
+              >
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
-              );
-            })}
-          </div>
+                <div>
+                  <p className="text-white/60 text-xs font-medium uppercase tracking-wider">
+                    {s.label}
+                  </p>
+                  <p className="text-white font-bold text-sm">
+                    {s.value}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
+      </PageHeader>
 
       {/* Content */}
       <section className="py-14 bg-white dark:bg-gray-900">

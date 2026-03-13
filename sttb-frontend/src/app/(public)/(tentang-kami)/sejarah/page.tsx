@@ -68,55 +68,6 @@ const founders = [
     { name: "Rev. Dorothy I. Marx (Alm.)", role: "Pendiri & Rektor", period: "1999–2005", img: "/assets/dorothy-marx-rev-1.png" },
 ];
 
-/* ─── HERO ───────────────────────────────────────────────── */
-
-function Hero() {
-    const ref = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-    const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-    const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-
-    return (
-        <div ref={ref} className="relative pt-28 pb-28 min-h-[520px] flex items-center overflow-hidden bg-[#060C1A]">
-            <motion.div style={{ y: yBg }} className="absolute inset-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1716625862188-f421d41bfb66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
-                    alt=""
-                    fill
-                    priority
-                    className="w-full h-full object-cover opacity-20" />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #060C1A 40%, #0A2C74/50 100%)" }} />
-            </motion.div>
-            <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)", backgroundSize: "80px 80px" }} />
-
-            <motion.div style={{ opacity }} className="max-w-7xl mx-auto px-4 relative z-10">
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
-                    <div className="flex items-center gap-2 mb-5">
-                        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="w-8 h-px bg-[#E62129] origin-left" />
-                        <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">Tentang STTB</span>
-                    </div>
-                    <h1 className="text-white mb-5" style={{ fontWeight: 800, lineHeight: 1.05 }}>
-                        {["Sejarah", "STTB"].map((word, i) => (
-                            <motion.span key={i} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 + i * 0.15, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                                className={`inline-block mr-3 ${i === 1 ? "text-[#E62129]" : ""}`}
-                                style={{ fontSize: "clamp(2.5rem, 6vw, 4rem)" }}>{word}</motion.span>
-                        ))}
-                    </h1>
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 0.7 }}
-                        className="text-white/60 max-w-2xl leading-relaxed">
-                        Lebih dari 30 tahun melayani gereja dan bangsa Indonesia — perjalanan iman yang digerakkan oleh visi besar untuk memuliakan Tuhan.
-                    </motion.p>
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.6 }}
-                        className="mt-8 flex items-center gap-2 text-white/40 text-sm">
-                        <ChevronDown className="w-4 h-4 animate-bounce" />
-                        Gulir ke bawah untuk melihat perjalanan
-                    </motion.div>
-                </motion.div>
-            </motion.div>
-        </div>
-    );
-}
 
 /* ─── TIMELINE CARD ──────────────────────────────────────── */
 
@@ -288,6 +239,8 @@ function TimelineCard({ item, index, total }: { item: typeof timeline[0]; index:
     );
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 /* ─── PAGE ────────────────────────────────────────────────── */
 
 export default function SejarahPage() {
@@ -296,7 +249,13 @@ export default function SejarahPage() {
 
     return (
         <>
-            <Hero />
+            <PageHeader
+                title="Sejarah STTB"
+                category="Tentang STTB"
+                description="Lebih dari 30 tahun melayani gereja dan bangsa Indonesia — perjalanan iman yang digerakkan oleh visi besar untuk memuliakan Tuhan."
+                breadcrumb={[{ label: "Sejarah", href: "/sejarah" }]}
+                image="https://images.unsplash.com/photo-1716625862188-f421d41bfb66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80"
+            />
 
             {/* Intro */}
             <section className="py-20 bg-white dark:bg-gray-900">
@@ -318,11 +277,10 @@ export default function SejarahPage() {
                         <motion.div initial={{ opacity: 0, x: 60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} className="relative">
                             <div className="rounded-2xl overflow-hidden shadow-2xl">
                                 <Image
-                                    src="https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80"
+                                    src="/sejarah/sejarah-2-rev.png"
                                     alt="Kampus STTB"
                                     width={600}
                                     height={600}
-                                    preload
                                     className="w-full h-80 object-cover" />
                             </div>
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 0.6 }}
@@ -425,7 +383,6 @@ export default function SejarahPage() {
                                             alt={f.name}
                                             width={400}
                                             height={400}
-                                            preload
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[#E62129] flex items-center justify-center shadow-md">

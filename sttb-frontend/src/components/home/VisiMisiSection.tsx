@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -44,7 +45,7 @@ const misiList = [
 export function VisiMisiSection() {
   return (
     <section className="py-20 bg-white dark:bg-gray-900 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 w-full">
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -130,10 +131,12 @@ export function VisiMisiSection() {
           >
             {/* Image with overlay label */}
             <div className="relative rounded-2xl overflow-hidden mb-8 shadow-xl">
-              <img
-                src="https://images.unsplash.com/photo-1626025612377-7d5d17362ff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80"
+              <Image
+                src="/visi-misi/domino-optimo-maximo.png"
                 alt="Kehidupan kampus STTB"
-                className="w-full h-56 object-cover"
+                width={600}
+                height={288}
+                className="w-full h-56 md:h-72 object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A2C74]/80 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">

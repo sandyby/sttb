@@ -10,7 +10,6 @@ import {
   ChevronUp,
   Download,
   Mail,
-  Loader2,
 } from "lucide-react";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 import Image from "next/image";
@@ -84,6 +83,8 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   );
 }
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function BeasiswaPage() {
   const { data, isLoading } = useScholarships(true);
   const scholarships = data?.items ?? [];
@@ -104,33 +105,12 @@ export default function BeasiswaPage() {
 
   return (
     <>
-      {/* Hero */}
-      <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-px bg-[#E62129]" />
-              <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">
-                Keuangan
-              </span>
-            </div>
-            <h1
-              className="text-white mb-4"
-              style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800 }}
-            >
-              Beasiswa STTB
-            </h1>
-            <p className="text-blue-200 max-w-2xl leading-relaxed">
-              STTB menyediakan berbagai kategori beasiswa bagi mereka yang
-              membutuhkan sesuai kriteria dan persyaratan yang berlaku.
-            </p>
-          </motion.div>
-        </div>
-      </div>
+      <PageHeader
+        title="Beasiswa STTB"
+        category="Keuangan"
+        description="STTB menyediakan berbagai kategori beasiswa bagi mereka yang membutuhkan sesuai kriteria dan persyaratan yang berlaku."
+        breadcrumb={[{ label: "Beasiswa", href: "/beasiswa" }]}
+      />
 
       {/* Scholarships */}
       <section className="py-16 bg-white dark:bg-gray-900">
@@ -152,9 +132,27 @@ export default function BeasiswaPage() {
           </FadeIn>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="w-10 h-10 text-[#0A2C74] animate-spin mb-4" />
-              <p className="text-gray-500">Memuat informasi beasiswa...</p>
+            <div className="space-y-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-pulse"
+                >
+                  <div className="grid md:grid-cols-5">
+                    <div className="md:col-span-2 h-48 bg-gray-100 dark:bg-gray-800" />
+                    <div className="md:col-span-3 p-6 space-y-3">
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded w-1/2" />
+                      <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full" />
+                      <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-5/6" />
+                      <div className="space-y-2 pt-2">
+                        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded w-3/4" />
+                        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded w-2/3" />
+                        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded w-4/5" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <StaggerGroup staggerDelay={0.15} className="space-y-6">

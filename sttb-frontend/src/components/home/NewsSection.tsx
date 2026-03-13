@@ -32,11 +32,11 @@ function NewsCard({
 }) {
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group flex flex-col bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all hover:-translate-y-1"
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
+      className="group flex flex-col bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-all hover:scale-[1.02] hover:-translate-y-1"
     >
       {/* Image */}
       <div className="relative overflow-hidden h-48">
@@ -117,7 +117,7 @@ export function NewsSection() {
   const regularNews = allNews.slice(1);
 
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-950">
+    <section className="py-20 bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="flex items-end justify-between mb-10">

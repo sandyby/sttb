@@ -14,6 +14,10 @@ import {
   ChevronRight,
   Star,
   Users,
+  Building2,
+  MoreHorizontal,
+  Mail,
+  Phone,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -21,7 +25,8 @@ import {
   useAdminDeleteFoundationMember,
 } from "@/hooks/useAdminFoundation";
 import { getImageUrl } from "@/libs/api";
-import { Button } from "@/components/ui/button";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 const CATEGORY_LABELS: Record<string, string> = {
   pembina: "Dewan Pembina",
@@ -47,6 +52,7 @@ export default function AdminFoundationPage() {
   const [page, setPage] = useState(1);
   const [categoryFilter, setCategoryFilter] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [search, setSearch] = useState(""); // Added search state
 
   const { data, isLoading } = useAdminFoundationList({
     page,
@@ -60,14 +66,10 @@ export default function AdminFoundationPage() {
   const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 1;
   const items = data?.members ?? [];
 
-  const handleDelete = async (id: string, name: string) => {
-    if (
-      !confirm(`Hapus anggota "${name}"? Tindakan ini tidak dapat dibatalkan.`)
-    )
-      return;
-    setDeletingId(id);
+  const handleDelete = async () => {
+    if (!deletingId) return;
     try {
-      await deleteMember.mutateAsync(id);
+      await deleteMember.mutateAsync(deletingId);
       toast.success("Anggota yayasan berhasil dihapus");
     } catch {
       toast.error("Gagal menghapus anggota");
@@ -118,18 +120,17 @@ export default function AdminFoundationPage() {
             <Loader2 className="w-6 h-6 animate-spin text-[#E62129]" />
           </div>
         ) : items.length === 0 ? (
-          <div className="text-center py-20">
-            <Users className="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Belum ada anggota yayasan
-            </p>
-            <Link
-              href="/admin/foundation/create"
-              className="inline-flex items-center gap-1 mt-3 text-[#E62129] text-sm font-medium hover:underline"
-            >
-              <Plus className="w-3.5 h-3.5" /> Tambah anggota pertama
-            </Link>
-          </div>
+          <AdminEmptyState
+            icon={Users}
+            title="Belum ada anggota"
+            description={
+              search
+                ? "Tidak ada anggota yang sesuai dengan kriteria pencarian Anda."
+                : "Belum ada data anggota yayasan yang terdaftar."
+            }
+            actionLabel="Tambah Anggota"
+            actionHref="/admin/foundation/create"
+          />
         ) : (
           <table className="w-full text-sm">
             <thead className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
@@ -221,7 +222,7 @@ export default function AdminFoundationPage() {
                           <Pencil className="w-4 h-4" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(member.id, member.name)}
+                          onClick={() => setDeletingId(member.id)}
                           disabled={deletingId === member.id}
                           className="p-1.5 rounded-lg text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                           title="Hapus"
@@ -266,6 +267,14 @@ export default function AdminFoundationPage() {
           </div>
         </div>
       )}
+      <DeleteConfirmModal
+        isOpen={!!deletingId}
+        onCloseAction={() => setDeletingId(null)}
+        onConfirmAction={handleDelete}
+        title="Hapus Anggota Yayasan?"
+        description="Tindakan ini tidak dapat dibatalkan. Data anggota akan dihapus secara permanen."
+        isPending={deleteMember.isPending}
+      />
     </div>
   );
 }

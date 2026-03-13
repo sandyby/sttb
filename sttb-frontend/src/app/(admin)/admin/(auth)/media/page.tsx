@@ -4,9 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import { Upload, Search, Trash2, Copy, Grid, List, Newspaper, Film, Filter, CheckCircle, Loader2, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { useMediaList, useDeleteMedia } from "@/hooks/useMedia";
 import { UploadMediaDialog } from "@/components/admin/media/UploadMediaDialog";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 const typeIcons: Record<string, React.ElementType> = {
     image: Newspaper,
@@ -300,26 +302,14 @@ export default function AdminMediaPage() {
                 )}
 
                 {/* Delete confirm Dialog */}
-                <AnimatePresence>
-                    {deleteConfirm && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={isDeleting ? undefined : () => setDeleteConfirm(null)} />
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl max-w-sm w-full border border-gray-100 dark:border-gray-800">
-                                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-                                    <Trash2 className="w-6 h-6 text-[#E62129]" />
-                                </div>
-                                <h3 className="text-gray-900 dark:text-white font-bold text-lg mb-2">Hapus {deleteConfirm.length} File?</h3>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">File akan dihapus secara permanen dari server dan tidak dapat dikembalikan. Apakah Anda yakin?</p>
-                                <div className="flex gap-3 justify-end">
-                                    <button onClick={() => setDeleteConfirm(null)} disabled={isDeleting} className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors">Batal</button>
-                                    <button onClick={() => handleDelete(deleteConfirm)} disabled={isDeleting} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium disabled:opacity-70 transition-colors">
-                                        {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Ya, Hapus"}
-                                    </button>
-                                </div>
-                            </motion.div>
-                        </div>
-                    )}
-                </AnimatePresence>
+                <DeleteConfirmModal 
+                    isOpen={!!deleteConfirm}
+                    onCloseAction={() => setDeleteConfirm(null)}
+                    onConfirmAction={() => deleteConfirm && handleDelete(deleteConfirm)}
+                    title={`Hapus ${deleteConfirm?.length ?? 0} File?`}
+                    description="File akan dihapus secara permanen dari server dan tidak dapat dikembalikan. Apakah Anda yakin?"
+                    isPending={isDeleting}
+                />
             </div>
         </>
     );

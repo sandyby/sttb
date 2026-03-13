@@ -419,7 +419,7 @@ export function Header() {
             : "bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-md",
         )}
       >
-        <div className="max-w-screen-2xl mx-auto px-4 flex items-center justify-between h-14">
+        <div className="max-w-screen-2xl mx-auto px-4 flex items-center justify-between h-14 w-full">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <Image

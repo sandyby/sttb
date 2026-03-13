@@ -21,6 +21,8 @@ import { useAdminEventList, useAdminDeleteEvent } from "@/hooks/useAdminEvents";
 import { useEventCategories } from "@/hooks/useEvents";
 import Image from "next/image";
 import { getImageUrl } from "@/libs/api";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 const PAGE_SIZE = 10;
 
@@ -237,11 +239,15 @@ export default function AdminKegiatanPage() {
                 ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="px-4 py-12 text-center text-gray-400 dark:text-gray-500 text-sm"
-                  >
-                    Tidak ada kegiatan yang ditemukan
+                  <td colSpan={6} className="py-0">
+                    <AdminEmptyState 
+                      icon={Calendar}
+                      title="Belum ada kegiatan"
+                      description={search ? "Tidak ada kegiatan yang sesuai dengan kriteria pencarian Anda." : "Belum ada data kegiatan yang terdaftar."}
+                      actionLabel="Tambah Kegiatan"
+                      actionHref="/admin/events/create"
+                      className="border-none rounded-none shadow-none"
+                    />
                   </td>
                 </tr>
               )}
@@ -294,37 +300,14 @@ export default function AdminKegiatanPage() {
       </div>
 
       {/* Delete confirm */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setDeleteConfirm(null)}
-          />
-          <div className="relative bg-white dark:bg-gray-900 rounded-xl p-6 shadow-2xl max-w-sm w-full">
-            <h3 className="text-gray-900 dark:text-white font-bold mb-2">
-              Hapus Kegiatan?
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-5">
-              Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => handleDelete(deleteConfirm)}
-                disabled={deleteEvent.isPending}
-                className="px-4 py-2 rounded-lg bg-[#E62129] hover:bg-[#c4131a] text-white text-sm font-medium disabled:opacity-50"
-              >
-                {deleteEvent.isPending ? "Menghapus..." : "Hapus"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteConfirmModal
+        isOpen={!!deleteConfirm}
+        onCloseAction={() => setDeleteConfirm(null)}
+        onConfirmAction={() => deleteConfirm && handleDelete(deleteConfirm)}
+        title="Hapus Kegiatan?"
+        description="Tindakan ini tidak dapat dibatalkan. Kegiatan akan dihapus secara permanen dari sistem."
+        isPending={deleteEvent.isPending}
+      />
     </div>
   );
 }

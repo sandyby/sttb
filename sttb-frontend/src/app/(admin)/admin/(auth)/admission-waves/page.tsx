@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2, Loader2, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Calendar, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, Inbox, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminAdmissionWaveList, useAdminDeleteAdmissionWave } from "@/hooks/useAdminAdmissionWaves";
+import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
+import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
 
 function formatDeadline(dateStr: string) {
   if (!dateStr) return "—";
@@ -53,11 +55,10 @@ export default function AdminAdmissionWavesPage() {
   const totalCount = data?.totalCount ?? 0;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  const handleDelete = async (id: string, label: string) => {
-    if (!confirm(`Hapus "${label}"? Tindakan ini tidak dapat dibatalkan.`)) return;
-    setDeletingId(id);
+  const handleDelete = async () => {
+    if (!deletingId) return;
     try {
-      await deleteWave.mutateAsync(id);
+      await deleteWave.mutateAsync(deletingId);
       toast.success("Gelombang berhasil dihapus");
     } catch {
       toast.error("Gagal menghapus gelombang");
@@ -90,16 +91,13 @@ export default function AdminAdmissionWavesPage() {
             <Loader2 className="w-6 h-6 animate-spin text-[#E62129]" />
           </div>
         ) : waves.length === 0 ? (
-          <div className="text-center py-20">
-            <Calendar className="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-            <p className="text-gray-500 dark:text-gray-400 text-sm">Belum ada gelombang admisi</p>
-            <Link
-              href="/admin/admission-waves/create"
-              className="inline-flex items-center gap-1 mt-3 text-[#E62129] text-sm font-medium hover:underline"
-            >
-              <Plus className="w-3.5 h-3.5" /> Tambah gelombang pertama
-            </Link>
-          </div>
+          <AdminEmptyState 
+            icon={Calendar}
+            title="Belum ada gelombang"
+            description="Belum ada data gelombang admisi yang terdaftar."
+            actionLabel="Tambah Gelombang"
+            actionHref="/admin/admission-waves/create"
+          />
         ) : (
           <>
             <div className="overflow-x-auto">
@@ -162,10 +160,10 @@ export default function AdminAdmissionWavesPage() {
                             className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                             title="Edit"
                           >
-                            <Pencil className="w-4 h-4" />
+                            <Edit2 className="w-4 h-4" />
                           </Link>
                           <button
-                            onClick={() => handleDelete(wave.id, wave.label)}
+                            onClick={() => setDeletingId(wave.id)}
                             disabled={deletingId === wave.id}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                             title="Hapus"
@@ -237,6 +235,14 @@ export default function AdminAdmissionWavesPage() {
           </>
         )}
       </div>
+      <DeleteConfirmModal 
+        isOpen={!!deletingId}
+        onCloseAction={() => setDeletingId(null)}
+        onConfirmAction={handleDelete}
+        title="Hapus Gelombang Admisi?"
+        description="Tindakan ini tidak dapat dibatalkan. Data gelombang akan dihapus secara permanen."
+        isPending={deleteWave.isPending}
+      />
     </div>
   );
 }

@@ -75,40 +75,20 @@ const generalReqs = [
     "Untuk calon mahasiswa yang telah menyelesaikan pendidikan umum lainnya (seperti B.A., M.A.) di luar Indonesia, penerimaan akan dipertimbangkan oleh STTB kasus per kasus.",
 ];
 
+import PageHeader from "@/components/shared/PageHeader";
+
 export default function InformasiPersyaratanPage() {
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-6 h-px bg-[#E62129]" />
-                            <span className="text-[#E62129] text-xs font-semibold uppercase tracking-widest">
-                                Admisi
-                            </span>
-                        </div>
-                        <h1
-                            className="text-white mb-4"
-                            style={{
-                                fontSize: "clamp(2rem, 4vw, 2.8rem)",
-                                fontWeight: 800,
-                            }}
-                        >
-                            Informasi Persyaratan
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Persyaratan lengkap pendaftaran mahasiswa baru
-                            STTB per program studi. Bacalah dengan teliti
-                            sebelum mendaftar.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Informasi Persyaratan"
+                category="Admisi"
+                description="Persyaratan lengkap pendaftaran mahasiswa baru STTB per program studi. Bacalah dengan teliti sebelum mendaftar."
+                breadcrumb={[
+                    { label: "Admisi", href: "/jadwal-admisi" },
+                    { label: "Informasi Persyaratan", href: "/informasi-persyaratan" }
+                ]}
+            />
 
             {/* General requirements */}
             <section className="py-12 bg-white dark:bg-gray-900">

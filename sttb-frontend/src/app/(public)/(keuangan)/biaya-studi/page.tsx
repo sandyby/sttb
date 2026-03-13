@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
     GraduationCap, ChevronDown, ChevronUp, Info, ArrowRight,
 } from "lucide-react";
+import PageHeader from "@/components/shared/PageHeader";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/ui/FadeIn";
 
 type FeeRow = { no?: number; jenis: string; nominal: string; };
@@ -270,33 +271,15 @@ function ProgramCard({ program }: { program: Program }) {
 export default function BiayaStudiPage() {
     return (
         <>
-            {/* Hero */}
-            <div className="pt-28 pb-20 bg-gradient-to-br from-[#0A2C74] to-[#0570CD] relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none opacity-10">
-                    <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-white" style={{ transform: "translate(30%, -30%)" }} />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <p className="text-[#7FB4E5] text-sm font-medium uppercase tracking-wider mb-2">
-                            Keuangan
-                        </p>
-                        <h1
-                            className="text-white mb-4"
-                            style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 700 }}
-                        >
-                            Biaya Studi
-                        </h1>
-                        <p className="text-blue-200 max-w-2xl leading-relaxed">
-                            Informasi biaya pendidikan untuk semua program studi S1 dan S2
-                            Sekolah Tinggi Teologi Bandung Tahun Akademik 2025/2026.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+            <PageHeader
+                title="Biaya Studi"
+                category="Keuangan"
+                description="Informasi biaya pendidikan untuk semua program studi S1 dan S2 Sekolah Tinggi Teologi Bandung Tahun Akademik 2025/2026."
+                breadcrumb={[
+                    { label: "Keuangan", href: "#" },
+                    { label: "Biaya Studi", href: "/biaya-studi" }
+                ]}
+            />
 
             <section className="py-12 bg-gray-50 dark:bg-gray-950">
                 <div className="max-w-5xl mx-auto px-4">
