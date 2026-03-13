@@ -23,6 +23,7 @@ import Image from "next/image";
 import { getImageUrl } from "@/libs/api";
 import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
 import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
+import AdminPagination from "@/components/admin/shared/AdminPagination";
 
 const PAGE_SIZE = 10;
 
@@ -31,6 +32,10 @@ export default function AdminKegiatanPage() {
   const [activeCategory, setActiveCategory] = useState("");
   const [page, setPage] = useState(1);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "a-z" | "z-a">(
+    "newest",
+  );
 
   const { data, isLoading } = useAdminEventList({
     page,
@@ -45,13 +50,14 @@ export default function AdminKegiatanPage() {
   const totalCount = data?.totalCount ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-  const filtered = search
-    ? events.filter((e) => e.title.toLowerCase().includes(search.toLowerCase()))
-    : events;
-
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | string[]) => {
     try {
-      await deleteEvent.mutateAsync(id);
+      if (Array.isArray(id)) {
+        await Promise.all(id.map((i) => deleteEvent.mutateAsync(i)));
+        setSelectedIds([]);
+      } else {
+        await deleteEvent.mutateAsync(id);
+      }
       setDeleteConfirm(null);
       toast.success("Kegiatan berhasil dihapus");
     } catch {
@@ -59,17 +65,37 @@ export default function AdminKegiatanPage() {
     }
   };
 
+  const sortedEvents = [...(data?.items ?? [])].sort((a, b) => {
+    if (sortBy === "newest")
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    if (sortBy === "oldest")
+      return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+    if (sortBy === "a-z") return a.title.localeCompare(b.title);
+    if (sortBy === "z-a") return b.title.localeCompare(a.title);
+    return 0;
+  });
+
+  const filtered = search
+    ? sortedEvents.filter((e) =>
+        e.title.toLowerCase().includes(search.toLowerCase()),
+      )
+    : sortedEvents;
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filtered.length) setSelectedIds([]);
+    else setSelectedIds(filtered.map((e) => e.id));
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    );
+  };
+
   const categoryNames = [
     "Semua",
     ...(categoriesData?.map((c) => c.name) ?? []),
   ];
-
-  const pageNumbers: (number | "…")[] = [];
-  for (let i = 1; i <= totalPages; i++) {
-    if (i === 1 || i === totalPages || Math.abs(i - page) <= 1)
-      pageNumbers.push(i);
-    else if (pageNumbers[pageNumbers.length - 1] !== "…") pageNumbers.push("…");
-  }
 
   return (
     <div className="space-y-5">
@@ -121,28 +147,79 @@ export default function AdminKegiatanPage() {
         </div>
       </div>
 
+      {/* Top Pagination & Bulk Actions */}
+      <div className="flex items-center justify-between gap-3 flex-wrap bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-3 shadow-sm">
+        <div className="flex items-center gap-2">
+          {selectedIds.length > 0 && (
+            <button
+              onClick={() => setDeleteConfirm("bulk")}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-[#E62129] text-xs font-semibold hover:bg-red-100 transition-colors border border-red-100 dark:border-red-800 shadow-sm"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Hapus Terpilih (
+              {selectedIds.length})
+            </button>
+          )}
+          <div className="flex items-center gap-1.5 ml-1">
+            <span className="text-xs text-gray-400">Urutkan:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-transparent text-xs font-semibold text-gray-700 dark:text-gray-300 focus:outline-none cursor-pointer"
+            >
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama</option>
+              <option value="a-z">A-Z</option>
+              <option value="z-a">Z-A</option>
+            </select>
+          </div>
+        </div>
+
+        {totalPages > 1 && (
+          <div className="flex-1 min-w-[300px]">
+            <AdminPagination
+              currentPage={page}
+              totalPages={totalPages}
+              totalItems={totalCount}
+              onPageChange={setPage}
+              pageSize={PAGE_SIZE}
+            />
+          </div>
+        )}
+      </div>
+
       {/* Table */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100 dark:border-gray-800">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 text-left">
+                <th className="px-4 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedIds.length === filtered.length &&
+                      filtered.length > 0
+                    }
+                    onChange={toggleSelectAll}
+                    className="rounded border-gray-300 dark:border-gray-700 text-[#E62129] focus:ring-[#E62129] w-4 h-4 cursor-pointer translate-y-[1px]"
+                  />
+                </th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Kegiatan
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                   Tanggal
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
                   Lokasi
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
                   Kategori
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">
                   Aksi
                 </th>
               </tr>
@@ -151,7 +228,7 @@ export default function AdminKegiatanPage() {
               {isLoading && (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-4 py-12 text-center text-gray-400 dark:text-gray-500 text-sm"
                   >
                     Memuat data...
@@ -162,8 +239,16 @@ export default function AdminKegiatanPage() {
                 filtered.map((ev) => (
                   <tr
                     key={ev.id}
-                    className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
+                    className={`border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors ${selectedIds.includes(ev.id) ? "bg-red-50/30 dark:bg-red-900/10" : ""}`}
                   >
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(ev.id)}
+                        onChange={() => toggleSelectOne(ev.id)}
+                        className="rounded border-gray-300 dark:border-gray-700 text-[#E62129] focus:ring-[#E62129] w-4 h-4 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-800">
@@ -239,11 +324,15 @@ export default function AdminKegiatanPage() {
                 ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-0">
-                    <AdminEmptyState 
+                  <td colSpan={7} className="py-0">
+                    <AdminEmptyState
                       icon={Calendar}
                       title="Belum ada kegiatan"
-                      description={search ? "Tidak ada kegiatan yang sesuai dengan kriteria pencarian Anda." : "Belum ada data kegiatan yang terdaftar."}
+                      description={
+                        search
+                          ? "Tidak ada kegiatan yang sesuai dengan kriteria pencarian Anda."
+                          : "Belum ada data kegiatan yang terdaftar."
+                      }
                       actionLabel="Tambah Kegiatan"
                       actionHref="/admin/events/create"
                       className="border-none rounded-none shadow-none"
@@ -256,56 +345,38 @@ export default function AdminKegiatanPage() {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Halaman {page} dari {totalPages} · {totalCount} kegiatan
-            </p>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {pageNumbers.map((n, i) =>
-                n === "…" ? (
-                  <span
-                    key={`ellipsis-${i}`}
-                    className="px-1 text-gray-400 text-sm"
-                  >
-                    …
-                  </span>
-                ) : (
-                  <button
-                    key={n}
-                    onClick={() => setPage(n)}
-                    className={`w-7 h-7 rounded-lg text-xs font-medium transition-colors ${page === n ? "bg-[#E62129] text-white" : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"}`}
-                  >
-                    {n}
-                  </button>
-                ),
-              )}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+          <AdminPagination
+            currentPage={page}
+            totalPages={totalPages}
+            totalItems={totalCount}
+            onPageChange={setPage}
+            pageSize={PAGE_SIZE}
+          />
+        </div>
       </div>
 
       {/* Delete confirm */}
       <DeleteConfirmModal
         isOpen={!!deleteConfirm}
         onCloseAction={() => setDeleteConfirm(null)}
-        onConfirmAction={() => deleteConfirm && handleDelete(deleteConfirm)}
-        title="Hapus Kegiatan?"
-        description="Tindakan ini tidak dapat dibatalkan. Kegiatan akan dihapus secara permanen dari sistem."
+        onConfirmAction={() => {
+          if (deleteConfirm === "bulk") {
+            handleDelete(selectedIds);
+          } else if (deleteConfirm) {
+            handleDelete(deleteConfirm);
+          }
+        }}
+        title={
+          deleteConfirm === "bulk"
+            ? `Hapus ${selectedIds.length} Kegiatan?`
+            : "Hapus Kegiatan?"
+        }
+        description={
+          deleteConfirm === "bulk"
+            ? "Tindakan ini tidak dapat dibatalkan. Semua kegiatan yang dipilih akan dihapus secara permanen."
+            : "Tindakan ini tidak dapat dibatalkan. Kegiatan akan dihapus secara permanen dari sistem."
+        }
         isPending={deleteEvent.isPending}
       />
     </div>

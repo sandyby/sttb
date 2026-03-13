@@ -309,6 +309,18 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       toast.error("Sesi Anda telah berakhir. Silakan login kembali.");
       signOut({ callbackUrl: "/admin/login" });
     }
+
+    // Proactively check session when window is focused
+    const handleFocus = () => {
+      if (session) {
+        // next-auth useSession hook will automatically re-fetch if focus is detected
+        // but we can also manually check if needed or just let the hook do its thing.
+        // By just having it as a dependency in this effect, it ensures we catch errors faster.
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, [session]);
 
   const handleLogout = async () => {

@@ -26,12 +26,17 @@ import { useNewsCategories } from "@/hooks/useNews";
 import { getImageUrl } from "@/libs/api";
 import { DeleteConfirmModal } from "@/components/admin/shared/DeleteConfirmModal";
 import { AdminEmptyState } from "@/components/admin/shared/AdminEmptyState";
+import AdminPagination from "@/components/admin/shared/AdminPagination";
 
 export default function AdminNewsPage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "a-z" | "z-a">(
+    "newest",
+  );
   const PAGE_SIZE = 10;
 
   const { data: categoriesData = [] } = useNewsCategories();
@@ -44,25 +49,58 @@ export default function AdminNewsPage() {
     search: search || undefined,
   });
 
-
   const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 1;
 
   const deleteNews = useDeleteNews();
-  const articles = data?.items ?? [];
 
   const handleDelete = async () => {
-    if (!deleteId) return;
-    
-    deleteNews.mutate(deleteId, {
-      onSuccess: () => {
-        toast.success("Berita berhasil dihapus");
+    if (!deleteId && selectedIds.length === 0) return;
+
+    if (deleteId === "bulk") {
+      try {
+        await Promise.all(selectedIds.map((id) => deleteNews.mutateAsync(id)));
+        setSelectedIds([]);
+        toast.success(`${selectedIds.length} berita berhasil dihapus`);
+      } catch {
+        toast.error("Beberapa berita gagal dihapus");
+      } finally {
         setDeleteId(null);
-      },
-      onError: () => {
-        toast.error("Gagal menghapus berita");
-        setDeleteId(null);
-      },
-    });
+      }
+    } else if (deleteId) {
+      deleteNews.mutate(deleteId, {
+        onSuccess: () => {
+          toast.success("Berita berhasil dihapus");
+          setDeleteId(null);
+        },
+        onError: () => {
+          toast.error("Gagal menghapus berita");
+          setDeleteId(null);
+        },
+      });
+    }
+  };
+
+  const sortedArticles = [...(data?.items ?? [])].sort((a, b) => {
+    const dateA = new Date(a.publishedAt ?? a.createdAt).getTime();
+    const dateB = new Date(b.publishedAt ?? b.createdAt).getTime();
+    if (sortBy === "newest") return dateB - dateA;
+    if (sortBy === "oldest") return dateA - dateB;
+    if (sortBy === "a-z") return a.title.localeCompare(b.title);
+    if (sortBy === "z-a") return b.title.localeCompare(a.title);
+    return 0;
+  });
+
+  const articles = sortedArticles;
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === articles.length) setSelectedIds([]);
+    else setSelectedIds(articles.map((a) => a.id));
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    );
   };
 
   return (
@@ -107,7 +145,7 @@ export default function AdminNewsPage() {
             />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <Filter className="w-4 h-4 text-gray-400 shrink-0" />
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -128,12 +166,63 @@ export default function AdminNewsPage() {
         </div>
       </div>
 
+      {/* Top Pagination & Bulk Actions */}
+      <div className="flex items-center justify-between gap-3 flex-wrap bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-3">
+        <div className="flex items-center gap-2">
+          {selectedIds.length > 0 && (
+            <button
+              onClick={() => setDeleteId("bulk")}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-[#E62129] text-xs font-semibold hover:bg-red-100 transition-colors border border-red-100 dark:border-red-800"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Hapus Terpilih (
+              {selectedIds.length})
+            </button>
+          )}
+          <div className="flex items-center gap-1.5 ml-1">
+            <span className="text-xs text-gray-400">Urutkan:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-transparent text-xs font-semibold text-gray-700 dark:text-gray-300 focus:outline-none cursor-pointer"
+            >
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama</option>
+              <option value="a-z">A-Z</option>
+              <option value="z-a">Z-A</option>
+            </select>
+          </div>
+        </div>
+
+        {totalPages > 1 && (
+          <div className="flex-1 min-w-[300px]">
+            <AdminPagination
+              currentPage={page}
+              totalPages={totalPages}
+              totalItems={data?.totalCount ?? 0}
+              onPageChange={setPage}
+              pageSize={PAGE_SIZE}
+            />
+          </div>
+        )}
+      </div>
+
       {/* Table */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                <th className="py-3 px-4 w-10">
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedIds.length === articles.length &&
+                      articles.length > 0
+                    }
+                    onChange={toggleSelectAll}
+                    className="rounded border-gray-300 dark:border-gray-700 text-[#E62129] focus:ring-[#E62129] w-4 h-4 cursor-pointer translate-y-px"
+                  />
+                </th>
                 <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 text-xs font-semibold uppercase tracking-wider">
                   Berita
                 </th>
@@ -178,14 +267,14 @@ export default function AdminNewsPage() {
                 ))
               ) : articles.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-0">
+                  <td colSpan={6} className="py-0">
                     <AdminEmptyState
-                        icon={Newspaper}
-                        title="Tidak ada berita ditemukan"
-                        description="Belum ada data berita yang sesuai dengan filter saat ini. Coba ubah kata kunci atau kategori."
-                        actionLabel="Tambah Berita Baru"
-                        actionHref="/admin/news/create"
-                        className="border-none rounded-none shadow-none"
+                      icon={Newspaper}
+                      title="Tidak ada berita ditemukan"
+                      description="Belum ada data berita yang sesuai dengan filter saat ini. Coba ubah kata kunci atau kategori."
+                      actionLabel="Tambah Berita Baru"
+                      actionHref="/admin/news/create"
+                      className="border-none rounded-none shadow-none"
                     />
                   </td>
                 </tr>
@@ -196,8 +285,16 @@ export default function AdminNewsPage() {
                   return (
                     <tr
                       key={article.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                      className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${selectedIds.includes(article.id) ? "bg-red-50/30 dark:bg-red-900/10" : ""}`}
                     >
+                      <td className="py-3.5 px-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(article.id)}
+                          onChange={() => toggleSelectOne(article.id)}
+                          className="rounded border-gray-300 dark:border-gray-700 text-[#E62129] focus:ring-[#E62129] w-4 h-4 cursor-pointer"
+                        />
+                      </td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
                           {imgSrc ? (
@@ -209,7 +306,7 @@ export default function AdminNewsPage() {
                               className="w-12 h-10 object-cover rounded-lg flex-shrink-0 hidden sm:block"
                             />
                           ) : (
-                            <div className="w-12 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex-shrink-0 hidden sm:block" />
+                            <div className="w-12 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 shrink-0 hidden sm:block" />
                           )}
                           <div>
                             <p className="text-gray-900 dark:text-white text-sm font-medium line-clamp-1">
@@ -291,7 +388,7 @@ export default function AdminNewsPage() {
                           </Link>
                           <button
                             onClick={() => {
-                                setDeleteId(article.id);
+                              setDeleteId(article.id);
                             }}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-[#E62129] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                             title="Hapus"
@@ -307,58 +404,15 @@ export default function AdminNewsPage() {
             </tbody>
           </table>
         </div>
-        <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-4 flex-wrap">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {isLoading
-              ? "Memuat data..."
-              : `Halaman ${page} dari ${totalPages} · ${data?.totalCount ?? 0} berita`}
-          </p>
-          {totalPages > 1 && (
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1 || isLoading}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" /> Prev
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter(
-                  (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1,
-                )
-                .reduce<(number | "…")[]>((acc, p, idx, arr) => {
-                  if (idx > 0 && p - (arr[idx - 1] as number) > 1)
-                    acc.push("…");
-                  acc.push(p);
-                  return acc;
-                }, [])
-                .map((p, i) =>
-                  p === "…" ? (
-                    <span
-                      key={`ellipsis-${i}`}
-                      className="px-2 text-xs text-gray-400"
-                    >
-                      …
-                    </span>
-                  ) : (
-                    <button
-                      key={p}
-                      onClick={() => setPage(p)}
-                      className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${page === p ? "bg-[#E62129] text-white" : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"}`}
-                    >
-                      {p}
-                    </button>
-                  ),
-                )}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages || isLoading}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                Next <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
+        {/* Pagination */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+          <AdminPagination
+            currentPage={page}
+            totalPages={totalPages}
+            totalItems={data?.totalCount ?? 0}
+            onPageChange={setPage}
+            pageSize={PAGE_SIZE}
+          />
         </div>
       </div>
 
@@ -367,8 +421,16 @@ export default function AdminNewsPage() {
         isOpen={!!deleteId}
         onCloseAction={() => setDeleteId(null)}
         onConfirmAction={handleDelete}
-        title="Hapus Berita?"
-        description="Tindakan ini tidak dapat dibatalkan. Berita akan dihapus secara permanen dari sistem."
+        title={
+          deleteId === "bulk"
+            ? `Hapus ${selectedIds.length} Berita?`
+            : "Hapus Berita?"
+        }
+        description={
+          deleteId === "bulk"
+            ? "Tindakan ini tidak dapat dibatalkan. Semua berita yang dipilih akan dihapus secara permanen."
+            : "Tindakan ini tidak dapat dibatalkan. Berita akan dihapus secara permanen dari sistem."
+        }
         isPending={deleteNews.isPending}
       />
     </div>

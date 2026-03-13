@@ -1,4 +1,4 @@
-import { ReactNode, useState, useRef } from "react";
+import { ReactNode, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -175,6 +175,7 @@ export function EventForm({
     register,
     handleSubmit,
     control,
+    reset,
     setValue,
     watch,
     formState: { errors },
@@ -205,6 +206,54 @@ export function EventForm({
         (initialData?.isOnline ? "online" : "offline"),
     },
   });
+
+  useEffect(() => {
+    if (initialData && !isEdit) {
+      const now = new Date();
+      const localDate = now.toLocaleDateString("en-CA"); // YYYY-MM-DD
+      const localTime = now.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      reset({
+        ...initialData,
+        startDate: localDate,
+        startTime: localTime,
+        mode: "offline",
+        status: "draft",
+      });
+    } else if (initialData && isEdit) {
+      reset({
+        ...initialData,
+        startDate: initialData.startDate
+          ? initialData.startDate.split("T")[0]
+          : "",
+        startTime: initialData.startDate
+          ? initialData.startDate.split("T")[1]?.substring(0, 5)
+          : "",
+        endDate: initialData.endDate ? initialData.endDate.split("T")[0] : "",
+        endTime: initialData.endDate
+          ? initialData.endTime?.substring(0, 5) || ""
+          : "",
+        organizer:
+          initialData.organizer || (initialData as any).organizer || "",
+        locationDetail:
+          initialData.locationDetail ||
+          (initialData as any).locationDetail ||
+          "",
+      });
+    }
+  }, [initialData, isEdit, reset]);
+
+  // Watch for onGoing toggle to clear end dates
+  const onGoingValue = watch("onGoing");
+  useEffect(() => {
+    if (onGoingValue) {
+      setValue("endDate", "");
+      setValue("endTime", "");
+    }
+  }, [onGoingValue, setValue]);
 
   const titleValue = watch("title");
   const dateValue = watch("startDate");
@@ -479,13 +528,13 @@ export function EventForm({
                   <input
                     type="date"
                     {...register("endDate")}
-                    disabled={onGoing}
+                    disabled={onGoingValue}
                     className={inputCls() + " flex-1 disabled:opacity-50"}
                   />
                   <input
                     type="time"
                     {...register("endTime")}
-                    disabled={onGoing}
+                    disabled={onGoingValue}
                     className={inputCls() + " w-28 disabled:opacity-50"}
                   />
                 </div>
@@ -596,16 +645,6 @@ export function EventForm({
               className={inputCls(errors.description?.message) + " resize-none"}
             />
           </Field>
-
-          <div className="flex justify-end pt-4">
-            <button
-              type="button"
-              onClick={() => setTab("registration")}
-              className="px-6 py-2.5 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#08235c] transition-colors"
-            >
-              Selanjutnya
-            </button>
-          </div>
         </div>
       )}
 
@@ -711,23 +750,6 @@ export function EventForm({
                 className={inputCls()}
               />
             </Field>
-          </div>
-
-          <div className="flex justify-between pt-4">
-            <button
-              type="button"
-              onClick={() => setTab("basic")}
-              className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Sebelumnya
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("details")}
-              className="px-6 py-2.5 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#08235c] transition-colors"
-            >
-              Selanjutnya
-            </button>
           </div>
         </div>
       )}
@@ -861,16 +883,6 @@ export function EventForm({
                 </span>
               </div>
             ))}
-          </div>
-
-          <div className="flex justify-start pt-4">
-            <button
-              type="button"
-              onClick={() => setTab("registration")}
-              className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Sebelumnya
-            </button>
           </div>
         </div>
       )}

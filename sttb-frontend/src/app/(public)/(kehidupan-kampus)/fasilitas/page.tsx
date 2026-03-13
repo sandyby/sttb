@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -269,13 +269,33 @@ function MasonryGallery() {
     null,
   );
 
+  const [visibleCount, setVisibleCount] = useState(8);
+
   const filtered =
     activeTag === "Semua"
       ? galleryImages
       : galleryImages.filter((img) => img.tag === activeTag);
 
+  const paginated = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  // Handle scroll lock when lightbox is open
+  useEffect(() => {
+    if (lightbox) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [lightbox]);
+
   return (
-    <section ref={ref} className="py-20 bg-gray-950">
+    <section
+      ref={ref}
+      className="pb-8 px-20 pt-20 bg-gradient-to-b from-secondary via-secondary/80 to-secondary"
+    >
       {/* Lightbox */}
       <AnimatePresence>
         {lightbox && (
@@ -283,7 +303,7 @@ function MasonryGallery() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[200] bg-gradient-to-br from-secondary/80 to-accent/60 flex flex-col items-center justify-center p-4 backdrop-blur-sm"
             onClick={() => setLightbox(null)}
           >
             <motion.div
@@ -291,37 +311,39 @@ function MasonryGallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-[90vw] h-[85vh]"
+              className="relative max-w-[90dvw] h-[80dvh] flex flex-col gap-y-4 items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
-                src={lightbox.url}
-                alt={lightbox.label}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                className="object-contain rounded-2xl"
-                priority
-              />
-              <div className="absolute top-3 right-3">
-                <button
-                  onClick={() => setLightbox(null)}
-                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+              <div className="relative w-fit h-fit">
+                <Image
+                  src={lightbox.url}
+                  alt={lightbox.label}
+                  width={0}
+                  height={0}
+                  className="w-fit lg:max-h-[500px] md:max-h-[450px] max-h-[400px] object-contain rounded-2xl"
+                  priority
+                />
+                <div className="absolute -top-4 -right-4">
+                  <button
+                    onClick={() => setLightbox(null)}
+                    className="w-9 h-9 rounded-full bg-white/30 hover:bg-primary/60    hover:text-white flex items-center justify-center text-white transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <div className="mt-3 text-center">
-                <span className="text-white/80 text-sm px-2 py-3 rounded-3xl bg-gradient-to-r from-[#0A2C74] to [#0570CD] ">
-                  {lightbox.label}
-                </span>
+              <div className="mt-4 flex flex-col items-center gap-y-4">
                 <span
-                  className="ml-3 px-2 py-0.5 rounded-full text-xs font-medium"
+                  className="px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase border border-white/20"
                   style={{
-                    backgroundColor: `${TAG_COLORS[lightbox.tag]}30`,
-                    color: TAG_COLORS[lightbox.tag],
+                    backgroundColor: `${TAG_COLORS[lightbox.tag]}40`,
+                    color: "white",
                   }}
                 >
                   {lightbox.tag}
+                </span>
+                <span className="max-w-150 text-white/90 text-center text-xl line-clamp-5 md:line-clamp-3 font-semibold">
+                  {lightbox.label}
                 </span>
               </div>
             </motion.div>
@@ -347,8 +369,7 @@ function MasonryGallery() {
             Lihat Kampus STTB
           </h2>
           <p className="text-white/50 text-sm max-w-lg mx-auto">
-            Potret nyata kehidupan dan fasilitas kampus — klik foto untuk
-            memperbesar.
+            Potret nyata kehidupan dan fasilitas kampus
           </p>
         </motion.div>
 
@@ -365,8 +386,8 @@ function MasonryGallery() {
               onClick={() => setActiveTag(tag)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 activeTag === tag
-                  ? "bg-[#E62129] text-white shadow-lg shadow-red-900/30"
-                  : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+                  ? "bg-primary text-white shadow-lg shadow-red-900/30"
+                  : "bg-white/20 text-white/70 hover:bg-white/20 hover:text-white"
               }`}
             >
               {tag}
@@ -386,7 +407,7 @@ function MasonryGallery() {
             className="flex w-auto -ml-3"
             columnClassName="pl-3"
           >
-            {filtered.map((img, i) => (
+            {paginated.map((img, i) => (
               <motion.div
                 key={img.url + img.tag}
                 layout
@@ -411,14 +432,14 @@ function MasonryGallery() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between">
                   {/* // TODO: fix lightbox images size, and change label stylings */}
                   <span
-                    className="mb-1.5 self-start mt-2 ml-2 px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-tr from-secondary/80 to-accent/60"
+                    className="mb-1.5 self-start mt-2 ml-2 px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-tr from-primary-dark-accent/80 to-primary-light-accent/60"
                     style={{
                       backdropFilter: "blur(4px)",
                     }}
                   >
                     {img.tag}
                   </span>
-                  <p className="text-white text-xs font-semibold leading-tight px-2 py-3 rounded-bl-xl bg-gradient-to-r from-secondary/80 via-accent/50 to-transparent">
+                  <p className="text-white text-xs font-semibold leading-tight px-2 py-3 rounded-bl-xl bg-gradient-to-r from-primary-dark-accent/80 via-primary-light-accent/50 to-transparent">
                     {img.label}
                   </p>
                 </div>
@@ -432,14 +453,32 @@ function MasonryGallery() {
           </Masonry>
         </motion.div>
 
+        {/* Load More */}
+        {hasMore && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.3 }}
+            className="mt-12 text-center"
+          >
+            <button
+              onClick={() => setVisibleCount((prev) => prev + 8)}
+              className="px-8 py-3 rounded-xl bg-white/10 text-white font-semibold hover:bg-white/20 transition-all border border-white/10 hover:border-white/20"
+            >
+              Lihat Lebih Banyak Foto
+            </button>
+          </motion.div>
+        )}
+
         {/* View count */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 0.5 }}
-          className="text-center text-white/30 text-xs mt-6"
+          className="text-center text-white/40 text-sm mt-6"
         >
-          Menampilkan {filtered.length} dari {galleryImages.length} foto
+          Menampilkan {paginated.length} dari {filtered.length} foto{" "}
+          {activeTag !== "Semua" && `dalam kategori ${activeTag}`}
         </motion.p>
       </div>
     </section>
@@ -464,8 +503,20 @@ function CategorySection({
   const isEven = index % 2 === 0;
   const Icon = cat.icon;
 
+  // Handle scroll lock when lightbox is open
+  useEffect(() => {
+    if (lightboxImg) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [lightboxImg]);
+
   return (
-    <section ref={ref} className="py-24 overflow-hidden relative">
+    <section ref={ref} className="py-16 overflow-hidden relative">
       {/* Ambient glow */}
       <div
         className="absolute pointer-events-none"
@@ -542,7 +593,7 @@ function CategorySection({
                     className="flex items-center gap-2.5 p-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm"
                   >
                     <div
-                      className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                      className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
                       style={{ backgroundColor: `${cat.color}15` }}
                     >
                       <HIcon
@@ -616,7 +667,7 @@ function CategorySection({
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5">
-                    <span className="text-white text-xs py-0.5 px-2 rounded-full bg-gradient-to-r from-secondary/80 to-accent/50 font-medium leading-tight">
+                    <span className="text-white text-xs py-0.5 px-2 rounded-full bg-linear-to-r from-secondary/80 to-accent/50 font-medium leading-tight line-clamp-1">
                       {img.label}
                     </span>
                   </div>
@@ -634,34 +685,39 @@ function CategorySection({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+            className="fixed inset-0 z-100 bg-linear-to-br from-secondary/80 to-accent/60 flex flex-col items-center justify-center p-4 backdrop-blur-sm"
             onClick={() => setLightboxImg(null)}
           >
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="relative w-[70vw] max-w-6xl h-[60vh]"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-[90dvw] h-[80dvh] flex flex-col gap-y-8 items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
-                src={lightboxImg.url}
-                alt={lightboxImg.label}
-                fill
-                className="object-contain rounded-2xl"
-                priority
-              />
-              <div className="absolute -top-4 -right-4">
-                <button
-                  onClick={() => setLightboxImg(null)}
-                  className="w-9 h-9 rounded-full bg-white/30 hover:bg-white/80 hover:text-[#0A2C74] flex items-center justify-center text-white transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+              <div className="relative w-fit h-fit">
+                <Image
+                  src={lightboxImg.url}
+                  alt={lightboxImg.label}
+                  width={0}
+                  height={0}
+                  className="w-fit lg:max-h-[500px] md:max-h-[450px] max-h-[400px] object-contain rounded-2xl"
+                  priority
+                />
+                <div className="absolute -top-4 -right-4">
+                  <button
+                    onClick={() => setLightboxImg(null)}
+                    className="w-9 h-9 rounded-full bg-white/30 hover:bg-primary/60    hover:text-white flex items-center justify-center text-white transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <p className="text-white/70 text-center mt-3 text-sm">
-                {lightboxImg.label}
-              </p>
+              <div className="max-w-150">
+                <p className="text-white/90 text-center text-xl line-clamp-5 md:line-clamp-3 font-semibold ">
+                  {lightboxImg.label}
+                </p>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -678,16 +734,6 @@ function StatsBar() {
 
   return (
     <section ref={ref} className="py-16 bg-[#0A2C74] relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute top-0 left-0 w-64 h-64 rounded-full bg-white/5"
-          style={{ transform: "translate(-30%, -30%)" }}
-        />
-        <div
-          className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-[#E62129]/10"
-          style={{ transform: "translate(30%, 30%)" }}
-        />
-      </div>
       <div className="max-w-5xl mx-auto px-4 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -723,8 +769,8 @@ function StatsBar() {
               >
                 {s.value}
               </div>
-              <div className="text-blue-200 font-semibold mt-1">{s.label}</div>
-              <div className="text-blue-400 text-sm">{s.sub}</div>
+              <div className="text-blue-100 font-semibold mt-1">{s.label}</div>
+              <div className="text-blue-200/70 text-sm">{s.sub}</div>
             </motion.div>
           ))}
         </div>
@@ -737,7 +783,7 @@ function StatsBar() {
 
 function SectionDivider({ color }: { color: string }) {
   return (
-    <div className="relative py-8 overflow-hidden">
+    <div className="relative 4 overflow-hidden">
       <div className="flex items-center max-w-7xl mx-auto px-4 gap-4">
         <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />
         <div
