@@ -54,6 +54,8 @@ public class CreateNewsRequestHandler : IRequestHandler<CreateNewsRequest, Guid>
             Excerpt = request.Excerpt,
             ThumbnailUrl = request.ThumbnailUrl,
             CategoryId = request.CategoryId,
+            Author = request.Author,
+            Tags = request.Tags,
             IsFeatured = request.IsFeatured,
             IsPublished = request.IsPublished,
             PublishedAt = request.IsPublished ? DateTime.UtcNow : null,

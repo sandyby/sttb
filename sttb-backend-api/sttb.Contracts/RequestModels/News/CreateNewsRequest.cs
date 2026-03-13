@@ -10,6 +10,8 @@ public class CreateNewsRequest : IRequest<Guid>
     public string? Excerpt { get; set; }
     public string? ThumbnailUrl { get; set; }
     public Guid? CategoryId { get; set; }
+    public string? Author { get; set; }
+    public List<string> Tags { get; set; } = new();
     public bool IsFeatured { get; set; } = false;
     public bool IsPublished { get; set; } = false;
 }

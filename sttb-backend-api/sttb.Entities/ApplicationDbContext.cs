@@ -48,6 +48,9 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasForeignKey(e => e.CategoryId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        ConfigureStringListMapping(builder.Entity<News>().Property(n => n.Tags));
+        ConfigureStringListMapping(builder.Entity<Event>().Property(e => e.Tags));
+
         builder.Entity<EventCategory>().HasIndex(c => c.Slug).IsUnique();
 
         builder

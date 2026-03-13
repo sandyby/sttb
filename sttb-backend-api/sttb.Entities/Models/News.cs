@@ -27,6 +27,11 @@ public class News : IHaveCreateAndUpdateAudit
 
     public bool IsFeatured { get; set; } = false;
 
+    [StringLength(300)]
+    public string? Author { get; set; }
+
+    public List<string> Tags { get; set; } = new();
+
     public bool IsPublished { get; set; } = false;
 
     public DateTime? PublishedAt { get; set; }

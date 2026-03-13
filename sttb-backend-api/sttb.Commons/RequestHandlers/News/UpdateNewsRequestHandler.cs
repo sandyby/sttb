@@ -44,6 +44,8 @@ public class UpdateNewsRequestHandler : IRequestHandler<UpdateNewsRequest>
         news.Excerpt = request.Excerpt;
         news.ThumbnailUrl = request.ThumbnailUrl;
         news.CategoryId = request.CategoryId;
+        news.Author = request.Author;
+        news.Tags = request.Tags;
         news.IsFeatured = request.IsFeatured;
 
         if (request.IsPublished && !news.IsPublished)
