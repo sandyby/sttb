@@ -178,7 +178,7 @@ function MasonryGallery() {
                                 </button>
                             </div>
                             <div className="mt-3 text-center">
-                                <span className="text-white/80 text-sm px-2 py-3 rounded-3xl bg-gradient-to-r from-[#0A2C74] to [#0570CD] ">{lightbox.label}</span>
+                                <span className="text-white/80 text-sm px-2 py-3 rounded-3xl bg-gradient-to-r from-[#0A2C74] to-[#0570CD] ">{lightbox.label}</span>
                                 <span
                                     className="ml-3 px-2 py-0.5 rounded-full text-xs font-medium"
                                     style={{
@@ -280,7 +280,7 @@ function MasonryGallery() {
                                     >
                                         {img.tag}
                                     </span>
-                                    <p className="text-white text-xs font-semibold leading-tight px-2 py-3 rounded-bl-xl bg-gradient-to-r from-[#0A2C74] to [#0570CD] ">{img.label}</p>
+                                    <p className="text-white text-xs font-semibold leading-tight px-2 py-3 rounded-bl-xl bg-gradient-to-r from-[#0A2C74] to-[#0570CD] ">{img.label}</p>
                                 </div>
 
                                 {/* Camera icon */}
