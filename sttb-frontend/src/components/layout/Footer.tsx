@@ -22,13 +22,13 @@ const quickLinks = [
 ];
 
 const academicLinks = [
-  { label: "Sarjana Teologi", href: "/sarjana-teologi" },
-  { label: "Sarjana Pendidikan Kristen", href: "/sarjana-pendidikan-kristen" },
+  { label: "Sarjana Teologi", href: "/program-studi/sarjana-teologi" },
+  { label: "Sarjana Pendidikan Kristen", href: "/program-studi/sarjana-pendidikan-kristen" },
   {
     label: "Magister Teologi",
-    href: "/magister-teologi-pelayanan-pastoral-gereja-urban",
+    href: "/program-studi/magister-teologi-pelayanan-pastoral-gereja-urban",
   },
-  { label: "Magister Ministri", href: "/magister-ministri-marketplace" },
+  { label: "Magister Ministri", href: "/program-studi/magister-ministri-marketplace" },
   { label: "Prosedur Admisi", href: "/prosedur-admisi" },
   { label: "Biaya Studi", href: "/biaya-studi" },
   { label: "Beasiswa", href: "/beasiswa" },
