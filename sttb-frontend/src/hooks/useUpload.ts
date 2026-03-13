@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api-client";
+import apiClient from "@/libs/api-client";
 import type { UploadResponse } from "@/types/media";
 
 interface UploadArgs {

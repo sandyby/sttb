@@ -1,4 +1,4 @@
-import apiClient from "./axios";
+import apiClient from "@/libs/api-client";
 import type { GetNewsListResponse } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
 import type { GetLecturerListResponse } from "@/types/lecturers";
@@ -88,9 +88,13 @@ export async function adminCreateNewsCategory(
   token: string,
   payload: { name: string; slug: string },
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/news/categories/create", payload, {
-    headers: authHeader(token),
-  });
+  const { data } = await apiClient.post<string>(
+    "/api/news/categories/create",
+    payload,
+    {
+      headers: authHeader(token),
+    },
+  );
   return data;
 }
 
@@ -290,9 +294,13 @@ export async function adminCreateEventCategory(
   token: string,
   payload: { name: string; slug: string },
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/events/categories/create", payload, {
-    headers: authHeader(token),
-  });
+  const { data } = await apiClient.post<string>(
+    "/api/events/categories/create",
+    payload,
+    {
+      headers: authHeader(token),
+    },
+  );
   return data;
 }
 
@@ -302,10 +310,13 @@ export async function adminGetMediaList(
   token: string,
   params: GetMediaListRequest = {},
 ): Promise<GetMediaListResponse> {
-  const { data } = await apiClient.get<GetMediaListResponse>("/api/media/list", {
-    headers: authHeader(token),
-    params,
-  });
+  const { data } = await apiClient.get<GetMediaListResponse>(
+    "/api/media/list",
+    {
+      headers: authHeader(token),
+      params,
+    },
+  );
   return data;
 }
 
@@ -313,9 +324,13 @@ export async function adminCreateMediaCategory(
   token: string,
   payload: { name: string; slug: string },
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/media/categories/create", payload, {
-    headers: authHeader(token),
-  });
+  const { data } = await apiClient.post<string>(
+    "/api/media/categories/create",
+    payload,
+    {
+      headers: authHeader(token),
+    },
+  );
   return data;
 }
 
@@ -339,18 +354,27 @@ export interface LecturerPayload {
 
 export async function adminGetLecturerList(
   token: string,
-  params: { page?: number; pageSize?: number; rank?: string; search?: string; isActive?: boolean } = {},
+  params: {
+    page?: number;
+    pageSize?: number;
+    rank?: string;
+    search?: string;
+    isActive?: boolean;
+  } = {},
 ): Promise<GetLecturerListResponse> {
-  const { data } = await apiClient.get<GetLecturerListResponse>("/api/lecturers/list", {
-    headers: authHeader(token),
-    params: {
-      ...(params.page && { page: params.page }),
-      ...(params.pageSize && { pageSize: params.pageSize }),
-      ...(params.rank && { rank: params.rank }),
-      ...(params.search && { search: params.search }),
-      ...(params.isActive !== undefined && { isActive: params.isActive }),
+  const { data } = await apiClient.get<GetLecturerListResponse>(
+    "/api/lecturers/list",
+    {
+      headers: authHeader(token),
+      params: {
+        ...(params.page && { page: params.page }),
+        ...(params.pageSize && { pageSize: params.pageSize }),
+        ...(params.rank && { rank: params.rank }),
+        ...(params.search && { search: params.search }),
+        ...(params.isActive !== undefined && { isActive: params.isActive }),
+      },
     },
-  });
+  );
   return data;
 }
 
@@ -358,9 +382,13 @@ export async function adminCreateLecturer(
   token: string,
   payload: LecturerPayload,
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/lecturers/create", payload, {
-    headers: authHeader(token),
-  });
+  const { data } = await apiClient.post<string>(
+    "/api/lecturers/create",
+    payload,
+    {
+      headers: authHeader(token),
+    },
+  );
   return data;
 }
 
@@ -389,14 +417,17 @@ export async function adminGetFoundationMemberList(
   token: string,
   params: FoundationMemberListParams = {},
 ): Promise<GetFoundationMemberListResponse> {
-  const { data } = await apiClient.get<GetFoundationMemberListResponse>("/api/foundation/list", {
-    headers: authHeader(token),
-    params: {
-      ...params,
-      ...(params.page && { page: params.page }),
-      ...(params.pageSize && { pageSize: params.pageSize }),
+  const { data } = await apiClient.get<GetFoundationMemberListResponse>(
+    "/api/foundation/list",
+    {
+      headers: authHeader(token),
+      params: {
+        ...params,
+        ...(params.page && { page: params.page }),
+        ...(params.pageSize && { pageSize: params.pageSize }),
+      },
     },
-  });
+  );
   return data;
 }
 
@@ -404,9 +435,13 @@ export async function adminCreateFoundationMember(
   token: string,
   payload: CreateFoundationMemberPayload,
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/foundation/create", payload, {
-    headers: authHeader(token),
-  });
+  const { data } = await apiClient.post<string>(
+    "/api/foundation/create",
+    payload,
+    {
+      headers: authHeader(token),
+    },
+  );
   return data;
 }
 
@@ -435,14 +470,17 @@ export async function adminGetAdmissionWaveList(
   token: string,
   params: { isActive?: boolean; page?: number; pageSize?: number } = {},
 ): Promise<GetAdmissionWaveListResponse> {
-  const { data } = await apiClient.get<GetAdmissionWaveListResponse>("/api/admission-waves/list", {
-    headers: authHeader(token),
-    params: {
-      ...(params.isActive !== undefined && { isActive: params.isActive }),
-      ...(params.page && { page: params.page }),
-      ...(params.pageSize && { pageSize: params.pageSize }),
+  const { data } = await apiClient.get<GetAdmissionWaveListResponse>(
+    "/api/admission-waves/list",
+    {
+      headers: authHeader(token),
+      params: {
+        ...(params.isActive !== undefined && { isActive: params.isActive }),
+        ...(params.page && { page: params.page }),
+        ...(params.pageSize && { pageSize: params.pageSize }),
+      },
     },
-  });
+  );
   return data;
 }
 
@@ -450,9 +488,13 @@ export async function adminCreateAdmissionWave(
   token: string,
   payload: CreateAdmissionWavePayload,
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/admission-waves/create", payload, {
-    headers: authHeader(token),
-  });
+  const { data } = await apiClient.post<string>(
+    "/api/admission-waves/create",
+    payload,
+    {
+      headers: authHeader(token),
+    },
+  );
   return data;
 }
 
@@ -488,12 +530,15 @@ export async function adminGetScholarshipList(
   token: string,
   params: { isActive?: boolean } = {},
 ): Promise<GetScholarshipListResponse> {
-  const { data } = await apiClient.get<GetScholarshipListResponse>("/api/scholarships/list", {
-    headers: authHeader(token),
-    params: {
-      IsActive: params.isActive,
+  const { data } = await apiClient.get<GetScholarshipListResponse>(
+    "/api/scholarships/list",
+    {
+      headers: authHeader(token),
+      params: {
+        IsActive: params.isActive,
+      },
     },
-  });
+  );
   return data;
 }
 
@@ -501,9 +546,13 @@ export async function adminCreateScholarship(
   token: string,
   payload: CreateScholarshipRequest,
 ): Promise<string> {
-  const { data } = await apiClient.post<string>("/api/scholarships/create", payload, {
-    headers: authHeader(token),
-  });
+  const { data } = await apiClient.post<string>(
+    "/api/scholarships/create",
+    payload,
+    {
+      headers: authHeader(token),
+    },
+  );
   return data;
 }
 

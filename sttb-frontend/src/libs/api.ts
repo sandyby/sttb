@@ -1,4 +1,4 @@
-import apiClient from "./axios";
+import apiClient from "./api-client";
 import type { GetNewsListResponse, NewsDetail } from "@/types/news";
 import type { GetEventListResponse } from "@/types/events";
 import type { GetMediaListResponse } from "@/types/media";

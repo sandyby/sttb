@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api-client";
+import apiClient from "@/libs/api-client";
 import { getMediaList, getMediaCategories } from "@/libs/api";
 import { adminCreateMediaCategory } from "@/libs/admin-api";
 import { useSession } from "next-auth/react";
