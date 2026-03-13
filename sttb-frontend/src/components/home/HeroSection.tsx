@@ -20,8 +20,7 @@ const slides = [
     ctaHref: "/prosedur-admisi",
     secondaryCta: "Jadwal Admisi",
     secondaryHref: "/jadwal-admisi",
-    imageUrl:
-      "/cathedral-of-our-lady-of-peace_highres_web.jpg",
+    imageUrl: "/cathedral-of-our-lady-of-peace_highres_web.jpg",
     accent: "#E62129",
   },
   {
@@ -64,14 +63,15 @@ export function HeroSection() {
   const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const DURATION = 7000;
 
-  const { data: programs = [] } = useStudyProgramsList();
+  const { data: allPrograms = [] } = useStudyProgramsList();
+  const publishedPrograms = allPrograms.filter((p) => p.isPublished);
 
   const STATS = [
     {
       value: `${Math.abs(differenceInYears(new Date(1992, 7, 1), new Date()))}+`,
       label: "Tahun Melayani",
     },
-    { value: programs.length, label: "Program Studi" },
+    { value: publishedPrograms.length, label: "Program Studi" },
     { value: "47K+", label: "Koleksi Buku" },
     { value: "BAN-PT", label: "Terakreditasi" },
   ];
