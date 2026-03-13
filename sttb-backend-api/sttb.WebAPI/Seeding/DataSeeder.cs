@@ -38,8 +38,10 @@ public static class DataSeeder
                 Name = "Beasiswa Pastor Scholar",
                 Level = "S1",
                 Color = "#E62129",
-                ImageUrl = "https://images.unsplash.com/photo-1665391222532-9940e1a75660?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                Description = "Beasiswa bergengsi untuk mahasiswa S1 terpilih yang menjadikan STTB sebagai pilihan pertama dan memiliki prestasi akademik menonjol.",
+                ImageUrl =
+                    "https://images.unsplash.com/photo-1665391222532-9940e1a75660?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                Description =
+                    "Beasiswa bergengsi untuk mahasiswa S1 terpilih yang menjadikan STTB sebagai pilihan pertama dan memiliki prestasi akademik menonjol.",
                 Requirements = new List<string>
                 {
                     "Diperuntukkan bagi mahasiswa S1 yang menjadikan STTB sebagai pilihan pertama",
@@ -62,9 +64,11 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Name = "Beasiswa Formatio",
                 Level = "S1",
-                Color = "#0A2C74",
-                ImageUrl = "https://images.unsplash.com/photo-1722962674485-d34e69a9a406?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
-                Description = "Beasiswa untuk mahasiswa S1 aktif yang telah memasuki tahun kedua studi dan menunjukkan prestasi akademik yang baik.",
+                Color = "#E62129",
+                ImageUrl =
+                    "https://images.unsplash.com/photo-1722962674485-d34e69a9a406?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
+                Description =
+                    "Beasiswa untuk mahasiswa S1 aktif yang telah memasuki tahun kedua studi dan menunjukkan prestasi akademik yang baik.",
                 Requirements = new List<string>
                 {
                     "Beasiswa meliputi biaya pendidikan S1 dari tahun kedua atau telah menempuh semester 2",
@@ -84,9 +88,11 @@ public static class DataSeeder
                 Id = Guid.NewGuid(),
                 Name = "Beasiswa Transformative Leadership",
                 Level = "S1 – S2",
-                Color = "#0570CD",
-                ImageUrl = "https://images.unsplash.com/photo-1607332796965-436d1bf61731?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
-                Description = "Beasiswa untuk mahasiswa S2 dengan prestasi akademik dan non-akademik menonjol yang berkomitmen dalam pelayanan.",
+                Color = "#0A2C74",
+                ImageUrl =
+                    "https://images.unsplash.com/photo-1607332796965-436d1bf61731?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80",
+                Description =
+                    "Beasiswa untuk mahasiswa S2 dengan prestasi akademik dan non-akademik menonjol yang berkomitmen dalam pelayanan.",
                 Requirements = new List<string>
                 {
                     "Diperuntukkan bagi mahasiswa S2 dengan prestasi akademik maupun non-akademik yang menonjol",
@@ -1507,14 +1513,21 @@ public static class DataSeeder
                 Name = "Sutrisna Harjanto",
                 Title = "Ketua STTB",
                 Rank = "pimpinan",
-                Degree = "Ph.D. Trinity International University, USA; M.Div. Trinity Theological College, Singapore; S.Farm. Universitas Padjajaran",
+                Degree =
+                    "Ph.D. Trinity International University, USA; M.Div. Trinity Theological College, Singapore; S.Farm. Universitas Padjajaran",
                 Specialization = "Pendidikan, Biblika, Marketplace",
                 ImageUrl = "/uploads/lecturers/sutrisna-1.png",
                 Email = "ketua@sttb.ac.id",
-                Bio = "Sutrisna Harjanto adalah seorang akademisi dengan latar belakang multidisiplin yang unik, menggabungkan ilmu farmasi dengan teologi mendalam. Beliau fokus pada integrasi iman di dunia kerja (marketplace) dan pengembangan institusi pendidikan teologi.",
+                Bio =
+                    "Sutrisna Harjanto adalah seorang akademisi dengan latar belakang multidisiplin yang unik, menggabungkan ilmu farmasi dengan teologi mendalam. Beliau fokus pada integrasi iman di dunia kerja (marketplace) dan pengembangan institusi pendidikan teologi.",
                 AlmaMater = "Trinity International University, USA",
                 Origin = "Deerfield, Illinois — USA",
-                Courses = new List<string> { "Etika Marketplace", "Teologi Pendidikan", "Kepemimpinan Strategis" },
+                Courses = new List<string>
+                {
+                    "Etika Marketplace",
+                    "Teologi Pendidikan",
+                    "Kepemimpinan Strategis",
+                },
                 DisplayOrder = 1,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1526,14 +1539,21 @@ public static class DataSeeder
                 Name = "Tan Giok Lie",
                 Title = "Wakil Ketua I Akademik",
                 Rank = "pimpinan",
-                Degree = "Ed.D. Biola University Talbot School Theology USA; M.A. Institut Alkitab Tiranus; S.S. Universitas Kristen Maranatha",
+                Degree =
+                    "Ed.D. Biola University Talbot School Theology USA; M.A. Institut Alkitab Tiranus; S.S. Universitas Kristen Maranatha",
                 Specialization = "Pendidikan",
                 ImageUrl = "/uploads/lecturers/tan-giok-lie.png",
                 Email = "akademik@sttb.ac.id",
-                Bio = "Dr. Tan Giok Lie memiliki kepakaran dalam administrasi akademik dan pengembangan kurikulum teologi. Beliau berdedikasi untuk memastikan standar pendidikan di STTB memenuhi kualitas internasional dan relevansi gerejawi.",
+                Bio =
+                    "Dr. Tan Giok Lie memiliki kepakaran dalam administrasi akademik dan pengembangan kurikulum teologi. Beliau berdedikasi untuk memastikan standar pendidikan di STTB memenuhi kualitas internasional dan relevansi gerejawi.",
                 AlmaMater = "Biola University, California",
                 Origin = "La Mirada, California — USA",
-                Courses = new List<string> { "Administrasi Pendidikan", "Pengembangan Kurikulum", "Teologi Pendidikan Kristen" },
+                Courses = new List<string>
+                {
+                    "Administrasi Pendidikan",
+                    "Pengembangan Kurikulum",
+                    "Teologi Pendidikan Kristen",
+                },
                 DisplayOrder = 2,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1545,14 +1565,21 @@ public static class DataSeeder
                 Name = "Wemmy Prayogo",
                 Title = "Wakil Ketua II Adm. & Keuangan",
                 Rank = "pimpinan",
-                Degree = "M.Ed. Monash University Australia; S.Pd. Universitas Kristen Satya Wacana Salatiga",
+                Degree =
+                    "M.Ed. Monash University Australia; S.Pd. Universitas Kristen Satya Wacana Salatiga",
                 Specialization = "Pendidikan",
                 ImageUrl = "/uploads/lecturers/wemmy-prayogo.png",
                 Email = "admin-keuangan@sttb.ac.id",
-                Bio = "Wemmy Prayogo mengkhususkan diri dalam manajemen pendidikan dan efisiensi operasional institusi. Keahliannya memastikan stabilitas keuangan dan infrastruktur pendukung bagi seluruh civitas akademika STTB.",
+                Bio =
+                    "Wemmy Prayogo mengkhususkan diri dalam manajemen pendidikan dan efisiensi operasional institusi. Keahliannya memastikan stabilitas keuangan dan infrastruktur pendukung bagi seluruh civitas akademika STTB.",
                 AlmaMater = "Monash University, Australia",
                 Origin = "Melbourne — Australia",
-                Courses = new List<string> { "Manajemen Sekolah", "Kepemimpinan Organisasi", "Kebijakan Pendidikan" },
+                Courses = new List<string>
+                {
+                    "Manajemen Sekolah",
+                    "Kepemimpinan Organisasi",
+                    "Kebijakan Pendidikan",
+                },
                 DisplayOrder = 3,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1564,20 +1591,26 @@ public static class DataSeeder
                 Name = "Johan Setiawan",
                 Title = "Wakil Ketua III Kemahasiswaan",
                 Rank = "pimpinan",
-                Degree = "M.Th. STT Bandung; M.C.M Discipleship Training Centre Singapore; S.Psi. UGM Yogyakarta",
+                Degree =
+                    "M.Th. STT Bandung; M.C.M Discipleship Training Centre Singapore; S.Psi. UGM Yogyakarta",
                 Specialization = "Biblika & Praktika",
                 ImageUrl = "/uploads/lecturers/johan-setiawan.png",
                 Email = "kemahasiswaan@sttb.ac.id",
-                Bio = "Johan Setiawan mengintegrasikan ilmu psikologi dengan pelayanan praktika. Sebagai wakil bidang kemahasiswaan, beliau berfokus pada pembentukan karakter, pemuridan, dan kesehatan mental mahasiswa teologi.",
+                Bio =
+                    "Johan Setiawan mengintegrasikan ilmu psikologi dengan pelayanan praktika. Sebagai wakil bidang kemahasiswaan, beliau berfokus pada pembentukan karakter, pemuridan, dan kesehatan mental mahasiswa teologi.",
                 AlmaMater = "Universitas Gadjah Mada (UGM)",
                 Origin = "Yogyakarta — Indonesia",
-                Courses = new List<string> { "Psikologi Konseling", "Teologi Pemuridan", "Pelayanan Praktika" },
+                Courses = new List<string>
+                {
+                    "Psikologi Konseling",
+                    "Teologi Pemuridan",
+                    "Pelayanan Praktika",
+                },
                 DisplayOrder = 4,
                 IsActive = true,
                 CreatedBy = adminUserId,
                 CreatedAt = DateTime.UtcNow,
             },
-
             // --- KETUA PROGRAM STUDI (KAPRODI) ---
             new()
             {
@@ -1588,10 +1621,16 @@ public static class DataSeeder
                 Degree = "M.Th. STT Tiranus; S.Th. STT Tawangmangu",
                 Specialization = "Pendidikan & Praktika",
                 ImageUrl = "/uploads/lecturers/ferry.png",
-                Bio = "Ferry Herlianto memiliki panggilan dalam mendidik calon guru agama Kristen. Beliau menekankan pada pedagogi yang kreatif dan penguasaan teologi dasar bagi pendidik di lingkungan sekolah.",
+                Bio =
+                    "Ferry Herlianto memiliki panggilan dalam mendidik calon guru agama Kristen. Beliau menekankan pada pedagogi yang kreatif dan penguasaan teologi dasar bagi pendidik di lingkungan sekolah.",
                 AlmaMater = "STT Tiranus",
                 Origin = "Bandung — Indonesia",
-                Courses = new List<string> { "Metode Mengajar", "PAK Anak & Remaja", "Evangelisme" },
+                Courses = new List<string>
+                {
+                    "Metode Mengajar",
+                    "PAK Anak & Remaja",
+                    "Evangelisme",
+                },
                 DisplayOrder = 5,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1603,13 +1642,20 @@ public static class DataSeeder
                 Name = "Dwi Maria Handayani",
                 Title = "Ketua Program Studi M.Th.",
                 Rank = "tetap",
-                Degree = "Ph.D. AGST Manila; M.Th. International Theological Seminary USA; M.A. STT Bandung; S.E. Unika Widyakarya",
+                Degree =
+                    "Ph.D. AGST Manila; M.Th. International Theological Seminary USA; M.A. STT Bandung; S.E. Unika Widyakarya",
                 Specialization = "Biblika & Praktika",
                 ImageUrl = "/uploads/lecturers/dwi-maria.png",
-                Bio = "Dr. Dwi Maria adalah seorang peneliti biblika yang tekun. Sebagai Kaprodi Pascasarjana, beliau mendorong mahasiswa untuk melakukan riset teologi yang mendalam dan berkontribusi bagi literatur akademik global.",
+                Bio =
+                    "Dr. Dwi Maria adalah seorang peneliti biblika yang tekun. Sebagai Kaprodi Pascasarjana, beliau mendorong mahasiswa untuk melakukan riset teologi yang mendalam dan berkontribusi bagi literatur akademik global.",
                 AlmaMater = "AGST Manila, Philippines",
                 Origin = "Manila — Philippines",
-                Courses = new List<string> { "Metodologi Penelitian Teologi", "Hermeneutika Lanjutan", "Eksegesis PB" },
+                Courses = new List<string>
+                {
+                    "Metodologi Penelitian Teologi",
+                    "Hermeneutika Lanjutan",
+                    "Eksegesis PB",
+                },
                 DisplayOrder = 6,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1621,13 +1667,20 @@ public static class DataSeeder
                 Name = "Sarinah Lo",
                 Title = "Ketua Program Studi M.Pd.K.",
                 Rank = "tetap",
-                Degree = "Ph.D. TEDS; M.Ed. Calvin College USA; M.A. Singapore Bible College; S.Si. Universitas Indonesia",
+                Degree =
+                    "Ph.D. TEDS; M.Ed. Calvin College USA; M.A. Singapore Bible College; S.Si. Universitas Indonesia",
                 Specialization = "Pendidikan",
                 ImageUrl = "/uploads/lecturers/sarinah-lo.png",
-                Bio = "Dr. Sarinah Lo menggabungkan latar belakang sains dengan pendidikan Kristen. Fokus risetnya adalah pada pembentukan iman melalui institusi pendidikan formal dan kurikulum Kristen kontemporer.",
+                Bio =
+                    "Dr. Sarinah Lo menggabungkan latar belakang sains dengan pendidikan Kristen. Fokus risetnya adalah pada pembentukan iman melalui institusi pendidikan formal dan kurikulum Kristen kontemporer.",
                 AlmaMater = "Trinity Evangelical Divinity School (TEDS)",
                 Origin = "Deerfield, Illinois — USA",
-                Courses = new List<string> { "Filsafat Pendidikan Kristen", "Teori Belajar Lanjutan", "Desain Kurikulum" },
+                Courses = new List<string>
+                {
+                    "Filsafat Pendidikan Kristen",
+                    "Teori Belajar Lanjutan",
+                    "Desain Kurikulum",
+                },
                 DisplayOrder = 7,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1639,13 +1692,20 @@ public static class DataSeeder
                 Name = "Heriyanto",
                 Title = "Ketua Program Studi M.Min.",
                 Rank = "tetap",
-                Degree = "DR. UPI Bandung; M.Th. International Theological Seminary USA; S.Th. STT Bandung",
+                Degree =
+                    "DR. UPI Bandung; M.Th. International Theological Seminary USA; S.Th. STT Bandung",
                 Specialization = "Biblika, Pendidikan & Praktika",
                 ImageUrl = "/uploads/lecturers/heriyanto2.png",
-                Bio = "Dr. Heriyanto aktif dalam pengembangan pelayanan pelayanan gerejawi melalui program Magister Pelayanan. Beliau berfokus pada efektivitas kepemimpinan rohani di tengah tantangan budaya modern.",
+                Bio =
+                    "Dr. Heriyanto aktif dalam pengembangan pelayanan pelayanan gerejawi melalui program Magister Pelayanan. Beliau berfokus pada efektivitas kepemimpinan rohani di tengah tantangan budaya modern.",
                 AlmaMater = "Universitas Pendidikan Indonesia (UPI)",
                 Origin = "Bandung — Indonesia",
-                Courses = new List<string> { "Kepemimpinan Pastoral", "Teologi Pelayanan", "Pertumbuhan Gereja" },
+                Courses = new List<string>
+                {
+                    "Kepemimpinan Pastoral",
+                    "Teologi Pelayanan",
+                    "Pertumbuhan Gereja",
+                },
                 DisplayOrder = 8,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1660,16 +1720,21 @@ public static class DataSeeder
                 Degree = "M.Th. STT Bandung; M.Div. STT SAAT Malang; S.Si. MIPA UNS Surakarta",
                 Specialization = "Teologi",
                 ImageUrl = "/uploads/lecturers/kristian-Kusumawardana-1.png",
-                Bio = "Kristian Kusumawardana adalah pengajar teologi sistematika yang berfokus pada relevansi doktrin klasik bagi jemaat modern. Beliau aktif dalam membimbing mahasiswa sarjana dalam dasar-dasar iman Kristen.",
+                Bio =
+                    "Kristian Kusumawardana adalah pengajar teologi sistematika yang berfokus pada relevansi doktrin klasik bagi jemaat modern. Beliau aktif dalam membimbing mahasiswa sarjana dalam dasar-dasar iman Kristen.",
                 AlmaMater = "STT SAAT Malang",
                 Origin = "Surakarta — Indonesia",
-                Courses = new List<string> { "Teologi Sistematika I", "Doktrin Allah", "Sejarah Teologi" },
+                Courses = new List<string>
+                {
+                    "Teologi Sistematika I",
+                    "Doktrin Allah",
+                    "Sejarah Teologi",
+                },
                 DisplayOrder = 9,
                 IsActive = true,
                 CreatedBy = adminUserId,
                 CreatedAt = DateTime.UtcNow,
             },
-
             // --- DOSEN TETAP ---
             new()
             {
@@ -1677,13 +1742,20 @@ public static class DataSeeder
                 Name = "Joseph Tong",
                 Title = "Dosen Filsafat, Sistematika & Praktika",
                 Rank = "tetap",
-                Degree = "Ph.D. University of Southern California USA; M.B.A. Graduate Theological Foundation Indiana; M.Th. Calvin Theological Seminary USA; B.A. Calvin College USA; B.Th. Seminari Alkitab Asia Tenggara Malang",
+                Degree =
+                    "Ph.D. University of Southern California USA; M.B.A. Graduate Theological Foundation Indiana; M.Th. Calvin Theological Seminary USA; B.A. Calvin College USA; B.Th. Seminari Alkitab Asia Tenggara Malang",
                 Specialization = "Filsafat, Sistematika & Praktika",
                 ImageUrl = "/uploads/lecturers/joseph-tong-rev-1.png",
-                Bio = "Dr. Joseph Tong adalah figur senior dengan pengalaman akademik internasional yang sangat luas. Beliau dikenal karena kemampuannya menghubungkan filsafat barat dengan teologi sistematika yang ketat.",
+                Bio =
+                    "Dr. Joseph Tong adalah figur senior dengan pengalaman akademik internasional yang sangat luas. Beliau dikenal karena kemampuannya menghubungkan filsafat barat dengan teologi sistematika yang ketat.",
                 AlmaMater = "University of Southern California (USC)",
                 Origin = "Los Angeles, California — USA",
-                Courses = new List<string> { "Filsafat Agama", "Apologetika", "Teologi Sistematika Lanjutan" },
+                Courses = new List<string>
+                {
+                    "Filsafat Agama",
+                    "Apologetika",
+                    "Teologi Sistematika Lanjutan",
+                },
                 DisplayOrder = 10,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1695,13 +1767,20 @@ public static class DataSeeder
                 Name = "Herlise Y. Sagala",
                 Title = "Dosen Biblika & Praktika",
                 Rank = "tetap",
-                Degree = "D.Th. & D.Min. & M.Div. & S.Th. Institut Injil Indonesia Batu Malang; M.Th. International Theological Seminary USA; B.A. Universitas 17 Agustus 1945 Medan",
+                Degree =
+                    "D.Th. & D.Min. & M.Div. & S.Th. Institut Injil Indonesia Batu Malang; M.Th. International Theological Seminary USA; B.A. Universitas 17 Agustus 1945 Medan",
                 Specialization = "Biblika & Praktika",
                 ImageUrl = "/uploads/lecturers/herlise-y.png",
-                Bio = "Dr. Herlise Sagala memiliki dedikasi panjang dalam pengajaran Alkitab, khususnya dalam studi Perjanjian Baru. Beliau aktif dalam pelayanan praktika dan pembinaan rohani kaum wanita.",
+                Bio =
+                    "Dr. Herlise Sagala memiliki dedikasi panjang dalam pengajaran Alkitab, khususnya dalam studi Perjanjian Baru. Beliau aktif dalam pelayanan praktika dan pembinaan rohani kaum wanita.",
                 AlmaMater = "Institut Injil Indonesia (I3) Batu",
                 Origin = "Batu, Malang — Indonesia",
-                Courses = new List<string> { "Studi PB: Surat-Surat Paulus", "Bahasa Yunani Alkitab", "Hermeneutika Biblika" },
+                Courses = new List<string>
+                {
+                    "Studi PB: Surat-Surat Paulus",
+                    "Bahasa Yunani Alkitab",
+                    "Hermeneutika Biblika",
+                },
                 DisplayOrder = 11,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1713,13 +1792,20 @@ public static class DataSeeder
                 Name = "Agus Gunawan",
                 Title = "Dosen Teologi, Praktika & Pendidikan",
                 Rank = "tetap",
-                Degree = "Ph.D. Biola University USA; M.Th. International Theological Seminary USA; M.Th. Trinity Theological College Singapore; S.Th. SAAT Malang",
+                Degree =
+                    "Ph.D. Biola University USA; M.Th. International Theological Seminary USA; M.Th. Trinity Theological College Singapore; S.Th. SAAT Malang",
                 Specialization = "Teologi, Praktika & Pendidikan",
                 ImageUrl = "/uploads/lecturers/agus-gunawan.png",
-                Bio = "Dr. Agus Gunawan adalah pakar dalam studi teologi praktika dengan wawasan global. Riset-risetnya berfokus pada transformasi komunitas melalui pendidikan dan misi gereja di era digital.",
+                Bio =
+                    "Dr. Agus Gunawan adalah pakar dalam studi teologi praktika dengan wawasan global. Riset-risetnya berfokus pada transformasi komunitas melalui pendidikan dan misi gereja di era digital.",
                 AlmaMater = "Biola University, USA",
                 Origin = "La Mirada, California — USA",
-                Courses = new List<string> { "Misiologi Kontemporer", "Teologi Praktika", "Etika Kristen" },
+                Courses = new List<string>
+                {
+                    "Misiologi Kontemporer",
+                    "Teologi Praktika",
+                    "Etika Kristen",
+                },
                 DisplayOrder = 12,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1731,13 +1817,20 @@ public static class DataSeeder
                 Name = "Chandra Koewoso",
                 Title = "Dosen Biblika & Praktika",
                 Rank = "tetap",
-                Degree = "D.Min. & M.Div. Singapore Bible College; M.M. & S.T. Universitas Tarumanagara Jakarta",
+                Degree =
+                    "D.Min. & M.Div. Singapore Bible College; M.M. & S.T. Universitas Tarumanagara Jakarta",
                 Specialization = "Biblika & Praktika",
                 ImageUrl = "/uploads/lecturers/chandra-koewoso.png",
-                Bio = "Dr. Chandra Koewoso membawa perspektif manajemen dan teknik ke dalam pelayanan biblika. Fokus pengajarannya adalah pada kepemimpinan Kristen yang transformatif dan manajemen pelayanan.",
+                Bio =
+                    "Dr. Chandra Koewoso membawa perspektif manajemen dan teknik ke dalam pelayanan biblika. Fokus pengajarannya adalah pada kepemimpinan Kristen yang transformatif dan manajemen pelayanan.",
                 AlmaMater = "Singapore Bible College",
                 Origin = "Singapore",
-                Courses = new List<string> { "Manajemen Gereja", "Eksegesis PL", "Kepemimpinan Kristiani" },
+                Courses = new List<string>
+                {
+                    "Manajemen Gereja",
+                    "Eksegesis PL",
+                    "Kepemimpinan Kristiani",
+                },
                 DisplayOrder = 13,
                 IsActive = true,
                 CreatedBy = adminUserId,
@@ -1749,18 +1842,25 @@ public static class DataSeeder
                 Name = "Budiyanto Santosa",
                 Title = "Dosen Pendidikan & Biblika",
                 Rank = "tetap",
-                Degree = "D.Min. Gordon Conwell Theological Seminary USA; M.Th. Trinity Theological Seminary Singapore; S.Th. SAAT Malang; S.Pd. Universitas Katolik Indonesia Atmajaya Jakarta",
+                Degree =
+                    "D.Min. Gordon Conwell Theological Seminary USA; M.Th. Trinity Theological Seminary Singapore; S.Th. SAAT Malang; S.Pd. Universitas Katolik Indonesia Atmajaya Jakarta",
                 Specialization = "Pendidikan & Biblika",
                 ImageUrl = "/uploads/lecturers/budiyanto-1.png",
-                Bio = "Dr. Budiyanto Santosa adalah ahli dalam pendidikan biblika yang menggabungkan metode pedagogi modern dengan kedalaman eksegetis. Beliau berfokus pada literasi Alkitab di kalangan jemaat awam.",
+                Bio =
+                    "Dr. Budiyanto Santosa adalah ahli dalam pendidikan biblika yang menggabungkan metode pedagogi modern dengan kedalaman eksegetis. Beliau berfokus pada literasi Alkitab di kalangan jemaat awam.",
                 AlmaMater = "Gordon-Conwell Theological Seminary",
                 Origin = "South Hamilton, Massachusetts — USA",
-                Courses = new List<string> { "Pedagogi Alkitab", "Teologi Biblika", "Pengantar PL & PB" },
+                Courses = new List<string>
+                {
+                    "Pedagogi Alkitab",
+                    "Teologi Biblika",
+                    "Pengantar PL & PB",
+                },
                 DisplayOrder = 14,
                 IsActive = true,
                 CreatedBy = adminUserId,
                 CreatedAt = DateTime.UtcNow,
-            }
+            },
         };
 
         db.Lecturers.AddRange(lecturers);
@@ -1769,7 +1869,10 @@ public static class DataSeeder
 
     // ─── Foundation ──────────────────────────────────────────────────────────
 
-    private static async Task SeedFoundationMembersAsync(ApplicationDbContext db, string adminUserId)
+    private static async Task SeedFoundationMembersAsync(
+        ApplicationDbContext db,
+        string adminUserId
+    )
     {
         if (await db.FoundationMembers.AnyAsync())
             return;
@@ -1783,7 +1886,8 @@ public static class DataSeeder
                 Name = "Pdt. Agus Gunawan, Ph.D.",
                 Position = "Anggota Dewan Pembina",
                 Category = "pembina",
-                Description = "Pdt. Dr. Agus Gunawan adalah hamba Tuhan senior yang berdedikasi pada pendidikan teologi dan bimbingan spiritual yayasan.",
+                Description =
+                    "Pdt. Dr. Agus Gunawan adalah hamba Tuhan senior yang berdedikasi pada pendidikan teologi dan bimbingan spiritual yayasan.",
                 ImageUrl = "/uploads/foundation/agus-gunawan.png",
                 DisplayOrder = 1,
                 IsActive = true,
@@ -1796,7 +1900,8 @@ public static class DataSeeder
                 Name = "Pnt. Subianto Tjandra",
                 Position = "Anggota Dewan Pembina",
                 Category = "pembina",
-                Description = "Penatua Subianto Tjandra berkontribusi dalam pengawasan tata kelola dan integritas operasional yayasan.",
+                Description =
+                    "Penatua Subianto Tjandra berkontribusi dalam pengawasan tata kelola dan integritas operasional yayasan.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 2,
                 IsActive = true,
@@ -1809,14 +1914,14 @@ public static class DataSeeder
                 Name = "Pdt. Budiyanto Santosa, D.Min.",
                 Position = "Anggota Dewan Pembina",
                 Category = "pembina",
-                Description = "Pdt. Dr. Budiyanto Santosa memberikan arahan strategis dalam bidang pelayanan misi dan pengembangan gereja.",
+                Description =
+                    "Pdt. Dr. Budiyanto Santosa memberikan arahan strategis dalam bidang pelayanan misi dan pengembangan gereja.",
                 ImageUrl = "/uploads/foundation/budiyanto-1.png",
                 DisplayOrder = 3,
                 IsActive = true,
                 CreatedBy = adminUserId,
                 CreatedAt = DateTime.UtcNow,
             },
-
             // Category: pengurus
             new()
             {
@@ -1824,7 +1929,8 @@ public static class DataSeeder
                 Name = "Pnts. Benny Soenarjo",
                 Position = "Ketua Dewan Pengurus",
                 Category = "pengurus",
-                Description = "Penatua Benny Soenarjo memimpin operasional yayasan dengan visi transformatif, berfokus pada efektivitas pelayanan dan kolaborasi.",
+                Description =
+                    "Penatua Benny Soenarjo memimpin operasional yayasan dengan visi transformatif, berfokus pada efektivitas pelayanan dan kolaborasi.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 1,
                 IsActive = true,
@@ -1837,7 +1943,8 @@ public static class DataSeeder
                 Name = "Pnts. Ginawan Chondro",
                 Position = "Wakil Ketua Dewan Pengurus",
                 Category = "pengurus",
-                Description = "Penatua Ginawan Chondro mendampingi Ketua dalam perencanaan strategis dan pengawasan pelaksanaan program kerja yayasan.",
+                Description =
+                    "Penatua Ginawan Chondro mendampingi Ketua dalam perencanaan strategis dan pengawasan pelaksanaan program kerja yayasan.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 2,
                 IsActive = true,
@@ -1850,7 +1957,8 @@ public static class DataSeeder
                 Name = "Pnt. Arif Subagyo",
                 Position = "Sekretaris",
                 Category = "pengurus",
-                Description = "Penatua Arif Subagyo mengelola korespondensi formal, pencatatan rapat, dan administrasi umum yayasan dengan teliti.",
+                Description =
+                    "Penatua Arif Subagyo mengelola korespondensi formal, pencatatan rapat, dan administrasi umum yayasan dengan teliti.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 3,
                 IsActive = true,
@@ -1863,14 +1971,14 @@ public static class DataSeeder
                 Name = "Pnt. Widianto Tjandradipura",
                 Position = "Bendahara",
                 Category = "pengurus",
-                Description = "Penatua Widianto Tjandradipura bertanggung jawab atas penyusunan anggaran, pelaporan keuangan, dan kepatuhan finansial yayasan.",
+                Description =
+                    "Penatua Widianto Tjandradipura bertanggung jawab atas penyusunan anggaran, pelaporan keuangan, dan kepatuhan finansial yayasan.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 4,
                 IsActive = true,
                 CreatedBy = adminUserId,
                 CreatedAt = DateTime.UtcNow,
             },
-
             // Category: anggota
             new()
             {
@@ -1878,7 +1986,8 @@ public static class DataSeeder
                 Name = "Pnts. Agus Tjandra",
                 Position = "Anggota Dewan",
                 Category = "anggota",
-                Description = "Penatua Agus Tjandra aktif dalam memberikan masukan strategis bagi pengembangan pelayanan jemaat dan komunitas.",
+                Description =
+                    "Penatua Agus Tjandra aktif dalam memberikan masukan strategis bagi pengembangan pelayanan jemaat dan komunitas.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 1,
                 IsActive = true,
@@ -1891,7 +2000,8 @@ public static class DataSeeder
                 Name = "Ev. Doroti Tunggal Widjaja, M.Th.",
                 Position = "Anggota Dewan",
                 Category = "anggota",
-                Description = "Penginjil Doroti Tunggal Widjaja, M.Th. berkontribusi dalam inisiatif pendidikan iman dan pengembangan kurikulum teologi.",
+                Description =
+                    "Penginjil Doroti Tunggal Widjaja, M.Th. berkontribusi dalam inisiatif pendidikan iman dan pengembangan kurikulum teologi.",
                 ImageUrl = "/uploads/foundation/doroti-tong-rev.png",
                 DisplayOrder = 2,
                 IsActive = true,
@@ -1904,7 +2014,8 @@ public static class DataSeeder
                 Name = "Bp. Eddy Samuel Affendie",
                 Position = "Anggota Dewan",
                 Category = "anggota",
-                Description = "Bapak Eddy Samuel Affendie memberikan saran ahli dalam manajemen aset dan optimalisasi sumber daya yayasan.",
+                Description =
+                    "Bapak Eddy Samuel Affendie memberikan saran ahli dalam manajemen aset dan optimalisasi sumber daya yayasan.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 3,
                 IsActive = true,
@@ -1917,7 +2028,8 @@ public static class DataSeeder
                 Name = "Pnts. Edi Sukamto Josana",
                 Position = "Anggota Dewan",
                 Category = "anggota",
-                Description = "Penatua Edi Sukamto Josana fokus pada program pemberdayaan ekonomi jemaat dan pengembangan kemitraan strategis.",
+                Description =
+                    "Penatua Edi Sukamto Josana fokus pada program pemberdayaan ekonomi jemaat dan pengembangan kemitraan strategis.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 4,
                 IsActive = true,
@@ -1930,7 +2042,8 @@ public static class DataSeeder
                 Name = "Bp. Herjanto Gunawan",
                 Position = "Anggota Dewan",
                 Category = "anggota",
-                Description = "Bapak Herjanto Gunawan berkontribusi dengan kepakaran teknisnya dalam proyek infrastruktur dan teknologi informasi yayasan.",
+                Description =
+                    "Bapak Herjanto Gunawan berkontribusi dengan kepakaran teknisnya dalam proyek infrastruktur dan teknologi informasi yayasan.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 5,
                 IsActive = true,
@@ -1943,7 +2056,8 @@ public static class DataSeeder
                 Name = "Pnts. Joseph Koshan",
                 Position = "Anggota Dewan",
                 Category = "anggota",
-                Description = "Penatua Joseph Koshan fokus pada pengembangan pelayanan pemuda dan inisiatif penginjilan kontemporer.",
+                Description =
+                    "Penatua Joseph Koshan fokus pada pengembangan pelayanan pemuda dan inisiatif penginjilan kontemporer.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 6,
                 IsActive = true,
@@ -1956,13 +2070,14 @@ public static class DataSeeder
                 Name = "Pnt. Suwito Kwee",
                 Position = "Anggota Dewan",
                 Category = "anggota",
-                Description = "Penatua Suwito Kwee memberikan masukan strategis dalam upaya menjalin hubungan baik dengan pemerintah dan masyarakat luas.",
+                Description =
+                    "Penatua Suwito Kwee memberikan masukan strategis dalam upaya menjalin hubungan baik dengan pemerintah dan masyarakat luas.",
                 ImageUrl = "/uploads/foundation/profile-placeholder.jpg",
                 DisplayOrder = 7,
                 IsActive = true,
                 CreatedBy = adminUserId,
                 CreatedAt = DateTime.UtcNow,
-            }
+            },
         };
 
         db.FoundationMembers.AddRange(members);
@@ -1995,16 +2110,70 @@ public static class DataSeeder
                 CreatedAt = DateTime.UtcNow,
                 Steps = new List<AdmissionWaveStepItem>
                 {
-                    new() { StepNumber = 1, Title = "Batas Pengembalian Formulir", WhenText = new DateTime(2025, 10, 13, 0, 0, 0), Via = "Via pos atau e-mail" },
-                    new() { StepNumber = 2, Title = "Seleksi Dokumen Pendaftaran", WhenText = new DateTime(2025, 10, 14, 9, 0, 0), Via = "Onsite" },
-                    new() { StepNumber = 3, Title = "Panggilan Tes", WhenText = new DateTime(2025, 10, 15, 9, 0, 0), Via = "Via email & WhatsApp" },
-                    new() { StepNumber = 4, Title = "Psikotes Online Tahap 1 (Pengisian Form)", WhenText = new DateTime(2025, 10, 17, 9, 0, 0), Via = "Via website" },
-                    new() { StepNumber = 5, Title = "Psikotes Online Tahap 2 (Tes Bersama)", WhenText = new DateTime(2025, 10, 20, 9, 0, 0), Via = "Via Zoom & website" },
-                    new() { StepNumber = 6, Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)", WhenText = new DateTime(2025, 10, 21, 9, 0, 0), Via = "Via Zoom & website" },
-                    new() { StepNumber = 7, Title = "Psikotes Tahap 3 (Wawancara Psikolog)", WhenText = new DateTime(2025, 10, 27, 9, 0, 0), Via = "Via Zoom" },
-                    new() { StepNumber = 8, Title = "Wawancara dengan Dosen STTB", WhenText = new DateTime(2025, 11, 17, 9, 0, 0), Via = "Via Zoom" },
-                    new() { StepNumber = 9, Title = "Pengumuman Hasil Penerimaan", WhenText = new DateTime(2025, 11, 26, 9, 0, 0), Via = "Via e-mail & WhatsApp" },
-                }
+                    new()
+                    {
+                        StepNumber = 1,
+                        Title = "Batas Pengembalian Formulir",
+                        WhenText = new DateTime(2025, 10, 13, 0, 0, 0),
+                        Via = "Via pos atau e-mail",
+                    },
+                    new()
+                    {
+                        StepNumber = 2,
+                        Title = "Seleksi Dokumen Pendaftaran",
+                        WhenText = new DateTime(2025, 10, 14, 9, 0, 0),
+                        Via = "Onsite",
+                    },
+                    new()
+                    {
+                        StepNumber = 3,
+                        Title = "Panggilan Tes",
+                        WhenText = new DateTime(2025, 10, 15, 9, 0, 0),
+                        Via = "Via email & WhatsApp",
+                    },
+                    new()
+                    {
+                        StepNumber = 4,
+                        Title = "Psikotes Online Tahap 1 (Pengisian Form)",
+                        WhenText = new DateTime(2025, 10, 17, 9, 0, 0),
+                        Via = "Via website",
+                    },
+                    new()
+                    {
+                        StepNumber = 5,
+                        Title = "Psikotes Online Tahap 2 (Tes Bersama)",
+                        WhenText = new DateTime(2025, 10, 20, 9, 0, 0),
+                        Via = "Via Zoom & website",
+                    },
+                    new()
+                    {
+                        StepNumber = 6,
+                        Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)",
+                        WhenText = new DateTime(2025, 10, 21, 9, 0, 0),
+                        Via = "Via Zoom & website",
+                    },
+                    new()
+                    {
+                        StepNumber = 7,
+                        Title = "Psikotes Tahap 3 (Wawancara Psikolog)",
+                        WhenText = new DateTime(2025, 10, 27, 9, 0, 0),
+                        Via = "Via Zoom",
+                    },
+                    new()
+                    {
+                        StepNumber = 8,
+                        Title = "Wawancara dengan Dosen STTB",
+                        WhenText = new DateTime(2025, 11, 17, 9, 0, 0),
+                        Via = "Via Zoom",
+                    },
+                    new()
+                    {
+                        StepNumber = 9,
+                        Title = "Pengumuman Hasil Penerimaan",
+                        WhenText = new DateTime(2025, 11, 26, 9, 0, 0),
+                        Via = "Via e-mail & WhatsApp",
+                    },
+                },
             },
             new()
             {
@@ -2023,16 +2192,70 @@ public static class DataSeeder
                 CreatedAt = DateTime.UtcNow,
                 Steps = new List<AdmissionWaveStepItem>
                 {
-                    new() { StepNumber = 1, Title = "Batas Pengembalian Formulir", WhenText = new DateTime(2026, 2, 2, 0, 0, 0), Via = "Via pos atau e-mail" },
-                    new() { StepNumber = 2, Title = "Seleksi Dokumen Pendaftaran", WhenText = new DateTime(2026, 2, 3, 9, 0, 0), Via = "Onsite" },
-                    new() { StepNumber = 3, Title = "Panggilan Tes", WhenText = new DateTime(2026, 2, 4, 9, 0, 0), Via = "Via email & WhatsApp" },
-                    new() { StepNumber = 4, Title = "Psikotes Online Tahap 1 (Pengisian Form)", WhenText = new DateTime(2026, 2, 6, 9, 0, 0), Via = "Via website" },
-                    new() { StepNumber = 5, Title = "Psikotes Online Tahap 2 (Tes Bersama)", WhenText = new DateTime(2026, 2, 9, 9, 0, 0), Via = "Via Zoom & website" },
-                    new() { StepNumber = 6, Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)", WhenText = new DateTime(2026, 2, 10, 9, 0, 0), Via = "Via Zoom & website" },
-                    new() { StepNumber = 7, Title = "Psikotes Tahap 3 (Wawancara Psikolog)", WhenText = new DateTime(2026, 2, 16, 9, 0, 0), Via = "Via Zoom" },
-                    new() { StepNumber = 8, Title = "Wawancara dengan Dosen STTB", WhenText = new DateTime(2026, 3, 16, 9, 0, 0), Via = "Via Zoom" },
-                    new() { StepNumber = 9, Title = "Pengumuman Hasil Penerimaan", WhenText = new DateTime(2026, 3, 25, 9, 0, 0), Via = "Via e-mail & WhatsApp" },
-                }
+                    new()
+                    {
+                        StepNumber = 1,
+                        Title = "Batas Pengembalian Formulir",
+                        WhenText = new DateTime(2026, 2, 2, 0, 0, 0),
+                        Via = "Via pos atau e-mail",
+                    },
+                    new()
+                    {
+                        StepNumber = 2,
+                        Title = "Seleksi Dokumen Pendaftaran",
+                        WhenText = new DateTime(2026, 2, 3, 9, 0, 0),
+                        Via = "Onsite",
+                    },
+                    new()
+                    {
+                        StepNumber = 3,
+                        Title = "Panggilan Tes",
+                        WhenText = new DateTime(2026, 2, 4, 9, 0, 0),
+                        Via = "Via email & WhatsApp",
+                    },
+                    new()
+                    {
+                        StepNumber = 4,
+                        Title = "Psikotes Online Tahap 1 (Pengisian Form)",
+                        WhenText = new DateTime(2026, 2, 6, 9, 0, 0),
+                        Via = "Via website",
+                    },
+                    new()
+                    {
+                        StepNumber = 5,
+                        Title = "Psikotes Online Tahap 2 (Tes Bersama)",
+                        WhenText = new DateTime(2026, 2, 9, 9, 0, 0),
+                        Via = "Via Zoom & website",
+                    },
+                    new()
+                    {
+                        StepNumber = 6,
+                        Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)",
+                        WhenText = new DateTime(2026, 2, 10, 9, 0, 0),
+                        Via = "Via Zoom & website",
+                    },
+                    new()
+                    {
+                        StepNumber = 7,
+                        Title = "Psikotes Tahap 3 (Wawancara Psikolog)",
+                        WhenText = new DateTime(2026, 2, 16, 9, 0, 0),
+                        Via = "Via Zoom",
+                    },
+                    new()
+                    {
+                        StepNumber = 8,
+                        Title = "Wawancara dengan Dosen STTB",
+                        WhenText = new DateTime(2026, 3, 16, 9, 0, 0),
+                        Via = "Via Zoom",
+                    },
+                    new()
+                    {
+                        StepNumber = 9,
+                        Title = "Pengumuman Hasil Penerimaan",
+                        WhenText = new DateTime(2026, 3, 25, 9, 0, 0),
+                        Via = "Via e-mail & WhatsApp",
+                    },
+                },
             },
             new()
             {
@@ -2051,17 +2274,71 @@ public static class DataSeeder
                 CreatedAt = DateTime.UtcNow,
                 Steps = new List<AdmissionWaveStepItem>
                 {
-                    new() { StepNumber = 1, Title = "Batas Pengembalian Formulir", WhenText = new DateTime(2026, 4, 27, 0, 0, 0), Via = "Via pos atau e-mail" },
-                    new() { StepNumber = 2, Title = "Seleksi Dokumen Pendaftaran", WhenText = new DateTime(2026, 4, 28, 9, 0, 0), Via = "Onsite" },
-                    new() { StepNumber = 3, Title = "Panggilan Tes", WhenText = new DateTime(2026, 4, 29, 9, 0, 0), Via = "Via email & WhatsApp" },
-                    new() { StepNumber = 4, Title = "Psikotes Online Tahap 1 (Pengisian Form)", WhenText = new DateTime(2026, 5, 1, 9, 0, 0), Via = "Via website" },
-                    new() { StepNumber = 5, Title = "Psikotes Online Tahap 2 (Tes Bersama)", WhenText = new DateTime(2026, 5, 4, 9, 0, 0), Via = "Via Zoom & website" },
-                    new() { StepNumber = 6, Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)", WhenText = new DateTime(2026, 5, 5, 9, 0, 0), Via = "Via Zoom & website" },
-                    new() { StepNumber = 7, Title = "Psikotes Tahap 3 (Wawancara Psikolog)", WhenText = new DateTime(2026, 5, 11, 9, 0, 0), Via = "Via Zoom" },
-                    new() { StepNumber = 8, Title = "Wawancara dengan Dosen STTB", WhenText = new DateTime(2026, 6, 15, 9, 0, 0), Via = "Via Zoom" },
-                    new() { StepNumber = 9, Title = "Pengumuman Hasil Penerimaan", WhenText = new DateTime(2026, 6, 24, 9, 0, 0), Via = "Via e-mail & WhatsApp" },
-                }
-            }
+                    new()
+                    {
+                        StepNumber = 1,
+                        Title = "Batas Pengembalian Formulir",
+                        WhenText = new DateTime(2026, 4, 27, 0, 0, 0),
+                        Via = "Via pos atau e-mail",
+                    },
+                    new()
+                    {
+                        StepNumber = 2,
+                        Title = "Seleksi Dokumen Pendaftaran",
+                        WhenText = new DateTime(2026, 4, 28, 9, 0, 0),
+                        Via = "Onsite",
+                    },
+                    new()
+                    {
+                        StepNumber = 3,
+                        Title = "Panggilan Tes",
+                        WhenText = new DateTime(2026, 4, 29, 9, 0, 0),
+                        Via = "Via email & WhatsApp",
+                    },
+                    new()
+                    {
+                        StepNumber = 4,
+                        Title = "Psikotes Online Tahap 1 (Pengisian Form)",
+                        WhenText = new DateTime(2026, 5, 1, 9, 0, 0),
+                        Via = "Via website",
+                    },
+                    new()
+                    {
+                        StepNumber = 5,
+                        Title = "Psikotes Online Tahap 2 (Tes Bersama)",
+                        WhenText = new DateTime(2026, 5, 4, 9, 0, 0),
+                        Via = "Via Zoom & website",
+                    },
+                    new()
+                    {
+                        StepNumber = 6,
+                        Title = "Tes Tertulis Online (Teologi, Bahasa Indonesia, Bahasa Inggris)",
+                        WhenText = new DateTime(2026, 5, 5, 9, 0, 0),
+                        Via = "Via Zoom & website",
+                    },
+                    new()
+                    {
+                        StepNumber = 7,
+                        Title = "Psikotes Tahap 3 (Wawancara Psikolog)",
+                        WhenText = new DateTime(2026, 5, 11, 9, 0, 0),
+                        Via = "Via Zoom",
+                    },
+                    new()
+                    {
+                        StepNumber = 8,
+                        Title = "Wawancara dengan Dosen STTB",
+                        WhenText = new DateTime(2026, 6, 15, 9, 0, 0),
+                        Via = "Via Zoom",
+                    },
+                    new()
+                    {
+                        StepNumber = 9,
+                        Title = "Pengumuman Hasil Penerimaan",
+                        WhenText = new DateTime(2026, 6, 24, 9, 0, 0),
+                        Via = "Via e-mail & WhatsApp",
+                    },
+                },
+            },
         };
 
         db.AdmissionWaves.AddRange(waves);
