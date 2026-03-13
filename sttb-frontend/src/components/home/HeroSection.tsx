@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Fragment } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -10,8 +10,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
-import { differenceInYears } from "date-fns";
-import { useStudyProgramsList } from "@/hooks/useStudyPrograms";
 
 const slides = [
   {
@@ -67,19 +65,6 @@ export function HeroSection() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const DURATION = 7000;
-
-  const { data: allPrograms = [] } = useStudyProgramsList();
-  const publishedPrograms = allPrograms.filter((p) => p.isPublished);
-
-  const STATS = [
-    {
-      value: `${Math.abs(differenceInYears(new Date(1992, 7, 1), new Date()))}+`,
-      label: "Tahun Melayani",
-    },
-    { value: publishedPrograms.length, label: "Program Studi" },
-    { value: "47K+", label: "Koleksi Buku" },
-    { value: "BAN-PT", label: "Terakreditasi" },
-  ];
 
   const startProgress = () => {
     setProgress(0);
@@ -246,7 +231,7 @@ export function HeroSection() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
           <span className="text-white/40 text-xs uppercase tracking-widest">
             Scroll
           </span>
@@ -260,30 +245,6 @@ export function HeroSection() {
 
         {/* Bottom bar */}
         <div className="relative z-10 pb-4">
-          {/* Stats strip */}
-          <div className="max-w-7xl mx-auto px-6 mb-4 w-full">
-            <div className="flex items-center gap-8 md:gap-16 flex-wrap">
-              {STATS.map((s, i) => (
-                <Fragment key={s.label}>
-                  {i > 0 && (
-                    <div className="h-8 w-px bg-white/20 hidden sm:block" />
-                  )}
-                  <div>
-                    <p
-                      className="text-white font-bold"
-                      style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.6rem)" }}
-                    >
-                      {s.value}
-                    </p>
-                    <p className="text-white/50 text-xs uppercase tracking-wider">
-                      {s.label}
-                    </p>
-                  </div>
-                </Fragment>
-              ))}
-            </div>
-          </div>
-
           {/* Controls */}
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between w-full">
             {/* Slide indicators with progress */}
