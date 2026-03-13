@@ -5,10 +5,15 @@ import {
   adminCreateFoundationMember,
   adminUpdateFoundationMember,
   adminDeleteFoundationMember,
-} from "@/lib/admin-api";
-import type { CreateFoundationMemberPayload, FoundationMemberListParams } from "@/types/foundation";
+} from "@/libs/admin-api";
+import type {
+  CreateFoundationMemberPayload,
+  FoundationMemberListParams,
+} from "@/types/foundation";
 
-export function useAdminFoundationList(params: FoundationMemberListParams = {}) {
+export function useAdminFoundationList(
+  params: FoundationMemberListParams = {},
+) {
   const { data: session } = useSession();
   const token = session?.accessToken ?? "";
 
@@ -25,7 +30,8 @@ export function useAdminCreateFoundationMember() {
   const token = session?.accessToken ?? "";
 
   return useMutation({
-    mutationFn: (payload: CreateFoundationMemberPayload) => adminCreateFoundationMember(token, payload),
+    mutationFn: (payload: CreateFoundationMemberPayload) =>
+      adminCreateFoundationMember(token, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "foundation"] });
       queryClient.invalidateQueries({ queryKey: ["foundation"] });
@@ -39,8 +45,13 @@ export function useAdminUpdateFoundationMember() {
   const token = session?.accessToken ?? "";
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: CreateFoundationMemberPayload }) =>
-      adminUpdateFoundationMember(token, id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: CreateFoundationMemberPayload;
+    }) => adminUpdateFoundationMember(token, id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "foundation"] });
       queryClient.invalidateQueries({ queryKey: ["foundation"] });

@@ -220,13 +220,12 @@ export default function ProgramStudiForm({
       fieldErrors.description ||
       fieldErrors.degree ||
       fieldErrors.credits ||
-      fieldErrors.duration ||
-      fieldErrors.accreditation
+      fieldErrors.duration
     ) {
       setTab("info");
     } else if (fieldErrors.objectives || fieldErrors.courses) {
       setTab("curriculum");
-    } else if (fieldErrors.coverImageUrl) {
+    } else if (fieldErrors.coverImageUrl || fieldErrors.accreditation) {
       setTab("media");
     }
   };
@@ -318,10 +317,9 @@ export default function ProgramStudiForm({
                 errors.description ||
                 errors.degree ||
                 errors.credits ||
-                errors.duration ||
-                errors.accreditation)) ||
+                errors.duration)) ||
               (t.id === "curriculum" && (errors.objectives || errors.courses)) ||
-              (t.id === "media" && errors.coverImageUrl)) && (
+              (t.id === "media" && (errors.coverImageUrl || errors.accreditation))) && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#E62129] rounded-full" />
             )}
             </button>
@@ -441,6 +439,16 @@ export default function ProgramStudiForm({
               />
             </Field>
           </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              type="button"
+              onClick={() => setTab("curriculum")}
+              className="px-6 py-2.5 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#08235c] transition-colors"
+            >
+              Selanjutnya
+            </button>
+          </div>
         </div>
       )}
 
@@ -502,6 +510,23 @@ export default function ProgramStudiForm({
                 />
               </Field>
             </div>
+          </div>
+
+          <div className="flex justify-between pt-4">
+            <button
+              type="button"
+              onClick={() => setTab("info")}
+              className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              Sebelumnya
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("media")}
+              className="px-6 py-2.5 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#08235c] transition-colors"
+            >
+              Selanjutnya
+            </button>
           </div>
         </div>
       )}
@@ -620,6 +645,16 @@ export default function ProgramStudiForm({
                 </div>
               )}
             />
+          </div>
+
+          <div className="flex justify-start pt-4">
+            <button
+              type="button"
+              onClick={() => setTab("curriculum")}
+              className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              Sebelumnya
+            </button>
           </div>
         </div>
       )}

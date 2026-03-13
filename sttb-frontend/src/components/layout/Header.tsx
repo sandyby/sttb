@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "../ui/utils";
 import Image from "next/image";
+import { useStudyProgramsList } from "@/hooks/useStudyPrograms";
 
 /* ─── Nav data ───────────────────────────────────────────── */
 
@@ -286,6 +287,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const { data: programs = [] } = useStudyProgramsList();
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
@@ -451,8 +453,20 @@ export function Header() {
 
           {/* Desktop nav — xl+ */}
           <div className="hidden xl:flex items-center gap-0.5 flex-1 justify-center px-4">
-            {navItems.map((item) =>
-              item.children ? (
+            {navItems.map((item) => {
+              let displayChildren = item.children;
+              if (item.label === "Akademik") {
+                const published = programs.filter((p) => p.isPublished);
+                displayChildren = [
+                  ...published.map((p) => ({
+                    label: p.name,
+                    href: `/program-studi/${p.slug}`,
+                  })),
+                  { label: "Lihat Semua Program", href: "/program-studi" },
+                ];
+              }
+
+              return item.children ? (
                 <div
                   key={item.label}
                   className="relative"
@@ -479,7 +493,7 @@ export function Header() {
                   </button>
                   <DesktopDropdown
                     itemLabel={item.label}
-                    items={item.children}
+                    items={displayChildren!}
                     isVisible={activeDropdown === item.label}
                   />
                 </div>
@@ -499,8 +513,8 @@ export function Header() {
                 >
                   {item.label}
                 </Link>
-              ),
-            )}
+              );
+            })}
           </div>
 
           {/* Right CTAs */}
@@ -588,14 +602,30 @@ export function Header() {
             >
               {/* Scrollable nav items */}
               <div className="flex-1 overflow-y-auto overscroll-contain px-3 py-3 space-y-0.5">
-                {navItems.map((item, i) => (
-                  <MobileNavItem
-                    key={item.label}
-                    item={item}
-                    onClose={() => setMobileOpen(false)}
-                    delay={i * 0.04}
-                  />
-                ))}
+                {navItems.map((item, i) => {
+                  let displayItem = item;
+                  if (item.label === "Akademik") {
+                    const published = programs.filter((p) => p.isPublished);
+                    displayItem = {
+                      ...item,
+                      children: [
+                        ...published.map((p) => ({
+                          label: p.name,
+                          href: `/program-studi/${p.slug}`,
+                        })),
+                        { label: "Lihat Semua Program", href: "/program-studi" },
+                      ],
+                    };
+                  }
+                  return (
+                    <MobileNavItem
+                      key={item.label}
+                      item={displayItem}
+                      onClose={() => setMobileOpen(false)}
+                      delay={i * 0.04}
+                    />
+                  );
+                })}
               </div>
 
               {/* Footer CTAs */}

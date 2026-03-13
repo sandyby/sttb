@@ -200,6 +200,9 @@ export function EventForm({
       streamingUrl: initialData?.streamingUrl ?? "",
       tags: initialData?.tags ?? [],
       onGoing: (initialData as any)?.onGoing ?? false,
+      mode:
+        (initialData as any)?.mode ??
+        (initialData?.isOnline ? "online" : "offline"),
     },
   });
 
@@ -228,18 +231,21 @@ export function EventForm({
     handleSubmit(submitHandler, (fieldErrors) => {
       setSaving(null);
       toast.error("Lengkapi semua field yang diperlukan");
-      if (
+      const hasBasicError =
         fieldErrors.title ||
         fieldErrors.startDate ||
         fieldErrors.startTime ||
-        fieldErrors.endDate ||
-        fieldErrors.endTime ||
         fieldErrors.location ||
         fieldErrors.description ||
-        fieldErrors.category ||
-        fieldErrors.organizer
-      ) {
+        fieldErrors.category;
+
+      if (hasBasicError) {
         setTab("basic");
+      } else if (
+        fieldErrors.registrationUrl ||
+        fieldErrors.registrationDeadline
+      ) {
+        setTab("registration");
       }
     })();
   };
@@ -372,14 +378,19 @@ export function EventForm({
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 mb-1 rounded-2xl">
         {TABS.map((t) => {
           const Icon = t.icon;
+          const hasBasicError =
+            errors.title ||
+            errors.startDate ||
+            errors.startTime ||
+            errors.location ||
+            errors.description ||
+            errors.category;
+          const hasRegError =
+            errors.registrationUrl || errors.registrationDeadline;
           const hasError =
-            t.id === "basic" &&
-            (errors.title ||
-              errors.startDate ||
-              errors.startTime ||
-              errors.location ||
-              errors.description ||
-              errors.category);
+            (t.id === "basic" && hasBasicError) ||
+            (t.id === "registration" && hasRegError);
+
           return (
             <button
               key={t.id}
@@ -463,17 +474,34 @@ export function EventForm({
               error={errors.endDate?.message}
               hint="Opsional untuk acara multi-hari"
             >
-              <div className="flex gap-2">
-                <input
-                  type="date"
-                  {...register("endDate")}
-                  className={inputCls() + " flex-1"}
-                />
-                <input
-                  type="time"
-                  {...register("endTime")}
-                  className={inputCls() + " w-28"}
-                />
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    {...register("endDate")}
+                    disabled={onGoing}
+                    className={inputCls() + " flex-1 disabled:opacity-50"}
+                  />
+                  <input
+                    type="time"
+                    {...register("endTime")}
+                    disabled={onGoing}
+                    className={inputCls() + " w-28 disabled:opacity-50"}
+                  />
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer group w-fit">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      {...register("onGoing")}
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none dark:bg-gray-700 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600 rounded-full"></div>
+                  </div>
+                  <span className="text-xs font-medium text-gray-500 group-hover:text-gray-700 transition-colors">
+                    Acara sedang berlangsung / Ongoing
+                  </span>
+                </label>
               </div>
             </Field>
           </div>
@@ -483,21 +511,30 @@ export function EventForm({
                 Mode Acara
               </p>
               <Controller
-                name="isOnline"
+                name="mode"
                 control={control}
                 render={({ field }) => (
-                  <>
-                    {["Offline", "Online", "Hybrid"].map((mode, mi) => (
+                  <div className="flex gap-1.5">
+                    {(
+                      [
+                        { id: "offline", label: "Offline" },
+                        { id: "online", label: "Online" },
+                        { id: "hybrid", label: "Hybrid" },
+                      ] as const
+                    ).map((m) => (
                       <button
-                        key={mode}
+                        key={m.id}
                         type="button"
-                        onClick={() => field.onChange(mi === 1)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${(mi === 1 ? field.value : !field.value) ? "bg-[#0A2C74] text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500"}`}
+                        onClick={() => {
+                          field.onChange(m.id);
+                          setValue("isOnline", m.id !== "offline");
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${field.value === m.id ? "bg-[#0A2C74] text-white shadow-md shadow-blue-500/20" : "bg-gray-100 dark:bg-gray-800 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700"}`}
                       >
-                        {mode}
+                        {m.label}
                       </button>
                     ))}
-                  </>
+                  </div>
                 )}
               />
             </div>
@@ -559,6 +596,16 @@ export function EventForm({
               className={inputCls(errors.description?.message) + " resize-none"}
             />
           </Field>
+
+          <div className="flex justify-end pt-4">
+            <button
+              type="button"
+              onClick={() => setTab("registration")}
+              className="px-6 py-2.5 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#08235c] transition-colors"
+            >
+              Selanjutnya
+            </button>
+          </div>
         </div>
       )}
 
@@ -664,6 +711,23 @@ export function EventForm({
                 className={inputCls()}
               />
             </Field>
+          </div>
+
+          <div className="flex justify-between pt-4">
+            <button
+              type="button"
+              onClick={() => setTab("basic")}
+              className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              Sebelumnya
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("details")}
+              className="px-6 py-2.5 rounded-xl bg-[#0A2C74] text-white text-sm font-medium hover:bg-[#08235c] transition-colors"
+            >
+              Selanjutnya
+            </button>
           </div>
         </div>
       )}
@@ -797,6 +861,16 @@ export function EventForm({
                 </span>
               </div>
             ))}
+          </div>
+
+          <div className="flex justify-start pt-4">
+            <button
+              type="button"
+              onClick={() => setTab("registration")}
+              className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              Sebelumnya
+            </button>
           </div>
         </div>
       )}

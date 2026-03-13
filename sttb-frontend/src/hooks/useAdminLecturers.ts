@@ -6,7 +6,7 @@ import {
   adminUpdateLecturer,
   adminDeleteLecturer,
   type LecturerPayload,
-} from "@/lib/admin-api";
+} from "@/libs/admin-api";
 
 interface LecturerListParams {
   page?: number;
@@ -33,7 +33,8 @@ export function useAdminCreateLecturer() {
   const token = session?.accessToken ?? "";
 
   return useMutation({
-    mutationFn: (payload: LecturerPayload) => adminCreateLecturer(token, payload),
+    mutationFn: (payload: LecturerPayload) =>
+      adminCreateLecturer(token, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "lecturers"] });
       queryClient.invalidateQueries({ queryKey: ["lecturers"] });

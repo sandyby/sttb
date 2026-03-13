@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/libs/api";
-import { getNewsList, getNewsCategories } from "@/lib/api";
-import { adminCreateNewsCategory } from "@/lib/admin-api";
+import { apiClient } from "@/libs/api-client";
+import { getNewsList, getNewsCategories } from "@/libs/api";
+import { adminCreateNewsCategory } from "@/libs/admin-api";
 import { useSession } from "next-auth/react";
 import type {
   NewsListItem,

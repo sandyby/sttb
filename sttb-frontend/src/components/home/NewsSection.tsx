@@ -213,7 +213,7 @@ export function NewsSection() {
 
               {/* Regular news list */}
               <div className="lg:col-span-7 space-y-5">
-                {regularNews.map((article, i) => (
+                {regularNews.map((article: NewsListItem, i: number) => (
                   <motion.article
                     key={article.id}
                     initial={{ opacity: 0, x: 20 }}

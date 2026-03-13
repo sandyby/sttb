@@ -24,6 +24,11 @@ public class GetStudyProgramListRequestHandler : IRequestHandler<GetStudyProgram
             query = query.Where(p => p.Level == request.Level);
         }
 
+        if (request.IsPublished.HasValue)
+        {
+            query = query.Where(p => p.IsPublished == request.IsPublished.Value);
+        }
+
         return await query
             .OrderBy(p => p.Level)
             .ThenBy(p => p.Name)

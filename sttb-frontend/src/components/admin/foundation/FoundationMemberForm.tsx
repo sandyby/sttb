@@ -7,12 +7,15 @@ import * as z from "zod";
 import { ArrowLeft, Save, Plus, X, Upload, Loader2, Users } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { useUploadImage } from "@/hooks/useUpload";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import type { FoundationMember, CreateFoundationMemberPayload } from "@/types/foundation";
+import type {
+  FoundationMember,
+  CreateFoundationMemberPayload,
+} from "@/types/foundation";
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
 
@@ -85,7 +88,9 @@ export function FoundationMemberForm({
     defaultValues: {
       name: initialData?.name ?? "",
       position: initialData?.position ?? "",
-      category: (initialData?.category as "pembina" | "pengurus" | "anggota") ?? "pengurus",
+      category:
+        (initialData?.category as "pembina" | "pengurus" | "anggota") ??
+        "pengurus",
       description: initialData?.description ?? "",
       imageUrl: initialData?.imageUrl ?? "",
       displayOrder: initialData?.displayOrder ?? 0,
@@ -120,7 +125,9 @@ export function FoundationMemberForm({
             <h1 className="text-lg font-bold text-gray-900 dark:text-white">
               {initialData ? "Edit Anggota" : "Tambah Anggota Baru"}
             </h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Pengurus Yayasan STTB</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Pengurus Yayasan STTB
+            </p>
           </div>
         </div>
         <button
@@ -128,7 +135,11 @@ export function FoundationMemberForm({
           disabled={isPending}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E62129] text-white text-sm font-medium hover:bg-[#c4131a] disabled:opacity-50 transition-colors"
         >
-          {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
           {isPending ? "Menyimpan..." : initialData ? "Perbarui" : "Simpan"}
         </button>
       </div>
@@ -137,7 +148,9 @@ export function FoundationMemberForm({
         {/* Left: Main fields */}
         <div className="lg:col-span-2 space-y-5">
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Identitas Anggota</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Identitas Anggota
+            </h2>
 
             <Field label="Nama Lengkap" required error={errors.name?.message}>
               <input
@@ -165,7 +178,10 @@ export function FoundationMemberForm({
               </Field>
             </div>
 
-            <Field label="Deskripsi Singkat (Khusus Pembina)" error={errors.description?.message}>
+            <Field
+              label="Deskripsi Singkat (Khusus Pembina)"
+              error={errors.description?.message}
+            >
               <Textarea
                 {...register("description")}
                 rows={4}
@@ -174,7 +190,10 @@ export function FoundationMemberForm({
               />
             </Field>
 
-            <Field label="URL Gambar (Opsional)" error={errors.imageUrl?.message}>
+            <Field
+              label="URL Gambar (Opsional)"
+              error={errors.imageUrl?.message}
+            >
               <div className="flex gap-2">
                 <input
                   {...register("imageUrl")}
@@ -214,7 +233,9 @@ export function FoundationMemberForm({
         <div className="space-y-5">
           {/* Photo Preview Section - Matching LecturerForm style */}
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Foto Anggota</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Foto Anggota
+            </h2>
 
             {imageUrl ? (
               <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 group">
@@ -247,7 +268,9 @@ export function FoundationMemberForm({
                 ) : (
                   <>
                     <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                    <p className="text-xs text-gray-500 font-medium">Klik untuk upload foto</p>
+                    <p className="text-xs text-gray-500 font-medium">
+                      Klik untuk upload foto
+                    </p>
                     <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP</p>
                   </>
                 )}
@@ -272,7 +295,9 @@ export function FoundationMemberForm({
           </div>
 
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Pengaturan</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Pengaturan
+            </h2>
 
             <Field label="Urutan Tampil" error={errors.displayOrder?.message}>
               <input
@@ -282,13 +307,19 @@ export function FoundationMemberForm({
                 className={inputCls}
                 placeholder="0"
               />
-              <p className="mt-1 text-xs text-gray-400">Angka kecil = tampil lebih awal</p>
+              <p className="mt-1 text-xs text-gray-400">
+                Angka kecil = tampil lebih awal
+              </p>
             </Field>
 
             <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
               <div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Status Aktif</p>
-                <p className="text-xs text-gray-400">Tampil di halaman publik</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Status Aktif
+                </p>
+                <p className="text-xs text-gray-400">
+                  Tampil di halaman publik
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input

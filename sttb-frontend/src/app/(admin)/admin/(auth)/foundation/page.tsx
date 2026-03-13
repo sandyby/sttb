@@ -16,8 +16,11 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAdminFoundationList, useAdminDeleteFoundationMember } from "@/hooks/useAdminFoundation";
-import { getImageUrl } from "@/lib/api";
+import {
+  useAdminFoundationList,
+  useAdminDeleteFoundationMember,
+} from "@/hooks/useAdminFoundation";
+import { getImageUrl } from "@/libs/api";
 import { Button } from "@/components/ui/button";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -58,7 +61,10 @@ export default function AdminFoundationPage() {
   const items = data?.members ?? [];
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Hapus anggota "${name}"? Tindakan ini tidak dapat dibatalkan.`)) return;
+    if (
+      !confirm(`Hapus anggota "${name}"? Tindakan ini tidak dapat dibatalkan.`)
+    )
+      return;
     setDeletingId(id);
     try {
       await deleteMember.mutateAsync(id);
@@ -74,7 +80,9 @@ export default function AdminFoundationPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Pengurus Yayasan</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+            Pengurus Yayasan
+          </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {data?.totalCount ?? 0} orang terdaftar
           </p>
@@ -91,7 +99,10 @@ export default function AdminFoundationPage() {
       <div className="flex flex-col sm:flex-row gap-3">
         <select
           value={categoryFilter}
-          onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setCategoryFilter(e.target.value);
+            setPage(1);
+          }}
           className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#E62129]/40"
         >
           <option value="">Semua Kategori</option>
@@ -109,7 +120,9 @@ export default function AdminFoundationPage() {
         ) : items.length === 0 ? (
           <div className="text-center py-20">
             <Users className="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-            <p className="text-gray-500 dark:text-gray-400 text-sm">Belum ada anggota yayasan</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Belum ada anggota yayasan
+            </p>
             <Link
               href="/admin/foundation/create"
               className="inline-flex items-center gap-1 mt-3 text-[#E62129] text-sm font-medium hover:underline"
@@ -121,24 +134,39 @@ export default function AdminFoundationPage() {
           <table className="w-full text-sm">
             <thead className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
               <tr>
-                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">Nama & Jabatan</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">Kategori</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400 hidden md:table-cell">Urutan</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">Status</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-500 dark:text-gray-400">Aksi</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                  Nama & Jabatan
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                  Kategori
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400 hidden md:table-cell">
+                  Urutan
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+                  Status
+                </th>
+                <th className="text-right py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                  Aksi
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
               {items.map((member) => {
                 const Icon = CATEGORY_ICONS[member.category] || Users;
                 return (
-                  <tr key={member.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <tr
+                    key={member.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  >
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         <div className="relative w-10 h-10 flex-shrink-0 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700">
                           {member.imageUrl ? (
                             <Image
-                              src={getImageUrl(member.imageUrl) ?? member.imageUrl}
+                              src={
+                                getImageUrl(member.imageUrl) ?? member.imageUrl
+                              }
                               alt={member.name}
                               fill
                               className="object-cover"
@@ -150,13 +178,19 @@ export default function AdminFoundationPage() {
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white line-clamp-1">{member.name}</p>
-                          <p className="text-xs text-gray-400 line-clamp-1">{member.position}</p>
+                          <p className="font-medium text-gray-900 dark:text-white line-clamp-1">
+                            {member.name}
+                          </p>
+                          <p className="text-xs text-gray-400 line-clamp-1">
+                            {member.position}
+                          </p>
                         </div>
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${CATEGORY_COLORS[member.category] ?? ""}`}>
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${CATEGORY_COLORS[member.category] ?? ""}`}
+                      >
                         <Icon className="w-3 h-3" />
                         {CATEGORY_LABELS[member.category] ?? member.category}
                       </span>
@@ -167,11 +201,13 @@ export default function AdminFoundationPage() {
                       </p>
                     </td>
                     <td className="py-3 px-4 hidden lg:table-cell">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        member.isActive
-                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          member.isActive
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                        }`}
+                      >
                         {member.isActive ? "Aktif" : "Nonaktif"}
                       </span>
                     </td>

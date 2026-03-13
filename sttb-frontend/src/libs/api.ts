@@ -157,6 +157,7 @@ export async function getPageBySlug(slug: string): Promise<PageDetail | null> {
 export async function getStudyProgramsList(): Promise<StudyProgramListItem[]> {
   const { data } = await apiClient.get<StudyProgramListItem[]>(
     "/api/study-programs/list",
+    { params: { isPublished: true } },
   );
   return data;
 }

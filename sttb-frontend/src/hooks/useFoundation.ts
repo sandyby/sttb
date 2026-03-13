@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { adminGetFoundationMemberList } from "@/lib/admin-api";
+import { adminGetFoundationMemberList } from "@/libs/admin-api";
 
 export function useFoundationMembers() {
   return useQuery({

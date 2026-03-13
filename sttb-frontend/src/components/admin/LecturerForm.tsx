@@ -7,7 +7,7 @@ import { z } from "zod";
 import { ArrowLeft, Save, Plus, X, Upload, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/libs/api";
 import { useUploadImage } from "@/hooks/useUpload";
 
 // ─── Schema ──────────────────────────────────────────────────────────────────
@@ -19,7 +19,11 @@ const lecturerFormSchema = z.object({
   degree: z.string().min(1, "Gelar/Pendidikan wajib diisi"),
   specialization: z.string().min(1, "Bidang keahlian wajib diisi"),
   imageUrl: z.string().optional(),
-  email: z.string().email("Format email tidak valid").optional().or(z.literal("")),
+  email: z
+    .string()
+    .email("Format email tidak valid")
+    .optional()
+    .or(z.literal("")),
   bio: z.string().min(1, "Bio wajib diisi"),
   almaMater: z.string().min(1, "Alma mater wajib diisi"),
   origin: z.string().min(1, "Asal institusi wajib diisi"),
@@ -134,7 +138,12 @@ function CoursesInput({
 
 // ─── Main Form ────────────────────────────────────────────────────────────────
 
-export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEditing }: LecturerFormProps) {
+export function LecturerForm({
+  initialData,
+  onSaveAction: onSave,
+  backHref,
+  isEditing,
+}: LecturerFormProps) {
   const [courses, setCourses] = useState<string[]>(initialData?.courses ?? []);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -200,7 +209,9 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
             <h1 className="text-lg font-bold text-gray-900 dark:text-white">
               {isEditing ? "Edit Dosen" : "Tambah Dosen Baru"}
             </h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Dewan Dosen STTB</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Dewan Dosen STTB
+            </p>
           </div>
         </div>
         <button
@@ -217,10 +228,16 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
         {/* Left: Main fields */}
         <div className="lg:col-span-2 space-y-5">
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Identitas</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Identitas
+            </h2>
 
             <Field label="Nama Lengkap" required error={errors.name?.message}>
-              <input {...register("name")} className={inputCls} placeholder="Prof. Dr. ..." />
+              <input
+                {...register("name")}
+                className={inputCls}
+                placeholder="Prof. Dr. ..."
+              />
             </Field>
 
             <div className="grid sm:grid-cols-2 gap-4">
@@ -241,7 +258,11 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
               </Field>
             </div>
 
-            <Field label="Gelar / Pendidikan" required error={errors.degree?.message}>
+            <Field
+              label="Gelar / Pendidikan"
+              required
+              error={errors.degree?.message}
+            >
               <input
                 {...register("degree")}
                 className={inputCls}
@@ -249,7 +270,11 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
               />
             </Field>
 
-            <Field label="Bidang Keahlian" required error={errors.specialization?.message}>
+            <Field
+              label="Bidang Keahlian"
+              required
+              error={errors.specialization?.message}
+            >
               <input
                 {...register("specialization")}
                 className={inputCls}
@@ -269,10 +294,16 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
 
           {/* Academic info */}
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Akademik</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Akademik
+            </h2>
 
             <div className="grid sm:grid-cols-2 gap-4">
-              <Field label="Alma Mater" required error={errors.almaMater?.message}>
+              <Field
+                label="Alma Mater"
+                required
+                error={errors.almaMater?.message}
+              >
                 <input
                   {...register("almaMater")}
                   className={inputCls}
@@ -280,7 +311,11 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
                 />
               </Field>
 
-              <Field label="Asal Kota/Negara" required error={errors.origin?.message}>
+              <Field
+                label="Asal Kota/Negara"
+                required
+                error={errors.origin?.message}
+              >
                 <input
                   {...register("origin")}
                   className={inputCls}
@@ -307,7 +342,9 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
         {/* Right: Settings + Photo */}
         <div className="space-y-5">
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Foto</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Foto
+            </h2>
 
             {/* Upload zone / preview */}
             {imageUrl ? (
@@ -341,7 +378,9 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
                 ) : (
                   <>
                     <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                    <p className="text-xs text-gray-500 font-medium">Klik untuk upload foto</p>
+                    <p className="text-xs text-gray-500 font-medium">
+                      Klik untuk upload foto
+                    </p>
                     <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP</p>
                   </>
                 )}
@@ -379,7 +418,9 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
           </div>
 
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Pengaturan</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+              Pengaturan
+            </h2>
 
             <Field label="Urutan Tampil" error={errors.displayOrder?.message}>
               <input
@@ -389,16 +430,26 @@ export function LecturerForm({ initialData, onSaveAction: onSave, backHref, isEd
                 className={inputCls}
                 placeholder="0"
               />
-              <p className="mt-1 text-xs text-gray-400">Angka kecil = tampil lebih awal</p>
+              <p className="mt-1 text-xs text-gray-400">
+                Angka kecil = tampil lebih awal
+              </p>
             </Field>
 
             <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
               <div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Status Aktif</p>
-                <p className="text-xs text-gray-400">Tampil di halaman publik</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Status Aktif
+                </p>
+                <p className="text-xs text-gray-400">
+                  Tampil di halaman publik
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" {...register("isActive")} className="sr-only peer" />
+                <input
+                  type="checkbox"
+                  {...register("isActive")}
+                  className="sr-only peer"
+                />
                 <div className="w-10 h-5 bg-gray-200 dark:bg-gray-600 peer-checked:bg-[#E62129] rounded-full peer peer-focus:ring-2 peer-focus:ring-[#E62129]/30 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:w-4 after:h-4 after:transition-all peer-checked:after:translate-x-5" />
               </label>
             </div>

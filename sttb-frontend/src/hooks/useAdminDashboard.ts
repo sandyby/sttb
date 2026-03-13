@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { adminGetNewsList, adminGetEventList, adminGetMediaList } from "@/lib/admin-api";
+import {
+  adminGetNewsList,
+  adminGetEventList,
+  adminGetMediaList,
+} from "@/libs/admin-api";
 
 export function useAdminDashboard() {
   const { data: session } = useSession();
@@ -34,12 +38,16 @@ export function useAdminDashboard() {
 
   const now = new Date();
   const upcomingEvents = (events.data?.items ?? [])
-    .filter(e => new Date(e.startDate) >= now)
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+    .filter((e) => new Date(e.startDate) >= now)
+    .sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    )
     .slice(0, 3);
 
-  const activeEventsCount = (events.data?.items ?? [])
-    .filter(e => new Date(e.startDate) >= now).length;
+  const activeEventsCount = (events.data?.items ?? []).filter(
+    (e) => new Date(e.startDate) >= now,
+  ).length;
 
   return {
     stats: {
@@ -47,11 +55,16 @@ export function useAdminDashboard() {
       activeEvents: activeEventsCount,
       totalMedia: media.data?.totalCount ?? 0,
       // Visitors remains mock or 0 for now as no backend exists
-      visitors: "12.4K", 
+      visitors: "12.4K",
     },
     recentNews: recentNews.data?.items ?? [],
     upcomingEvents,
-    isLoading: news.isLoading || events.isLoading || media.isLoading || recentNews.isLoading,
-    isError: news.isError || events.isError || media.isError || recentNews.isError,
+    isLoading:
+      news.isLoading ||
+      events.isLoading ||
+      media.isLoading ||
+      recentNews.isLoading,
+    isError:
+      news.isError || events.isError || media.isError || recentNews.isError,
   };
 }
